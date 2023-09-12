@@ -1,0 +1,31 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("NEXT_DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid()) @db.VarChar(44)
+  email     String?  @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  mints     Mint[]
+}
+
+model Mint {
+  id          Int      @id @default(autoincrement())
+  mintAddress String   @unique
+  nftMetadata Json
+  template    Json
+  signature   String   @unique
+  location    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+}
