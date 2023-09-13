@@ -54,9 +54,14 @@ const Embeddable = () => {
     <Grid container spacing={2} p={1}>
       <Grid item xs={3} sx={{ maxHeight: 150, overflow: "hidden" }}>
         <Box display="flex" justifyContent="center">
-          <Typography variant="h4" sx={{ fontSize: 14 }}>
-            {mixtapeTitle}
-          </Typography>
+          <Link href={`/sol/${address}`} target="_blank" passHref>
+            <Typography
+              variant="h4"
+              sx={{ fontSize: 14, textDecoration: "underline" }}
+            >
+              {mixtapeTitle}
+            </Typography>
+          </Link>
         </Box>
         <Box
           height="60vh"
@@ -72,7 +77,7 @@ const Embeddable = () => {
             backgroundRepeat: "no-repeat",
           }}
         />
-        <Stack direction="row" spacing={1} justifyContent="center">
+        {/* <Stack direction="row" spacing={1} justifyContent="center">
           <Link href={`/sol/${address}`} target="_blank" passHref>
             <StyledIconButton>
               <Share sx={{ width: 18 }} />
@@ -88,7 +93,7 @@ const Embeddable = () => {
               <Launch sx={{ width: 20 }} />
             </StyledIconButton>
           </Link>
-        </Stack>
+        </Stack> */}
       </Grid>
       <Grid
         item
