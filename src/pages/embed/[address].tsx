@@ -65,6 +65,7 @@ const Embeddable = () => {
           alignItems="center"
           justifyContent="center"
           sx={{
+            maxHeight: 95,
             backgroundImage: `url(${mixtapeImg})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
