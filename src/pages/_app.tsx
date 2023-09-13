@@ -9,7 +9,7 @@ import { CacheProvider, EmotionCache } from "@emotion/react";
 import { RecoilRoot } from "recoil";
 import { SnackbarProvider } from "../contexts/SnackbarProvider";
 import theme from "../utils/theme";
-import DevnetBanner from "../components/DevnetBanner";
+import { useRouter } from 'next/router';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -20,6 +20,7 @@ interface MyAppProps extends AppProps {
 
 export default function MyApp(props: MyAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+  const router = useRouter();
   return (
     <RecoilRoot>
       <SnackbarProvider>
@@ -48,10 +49,8 @@ export default function MyApp(props: MyAppProps) {
               <meta name="twitter:image" content="/images/mixtape-1024.png" />
             </Head>
             <ThemeProvider theme={theme}>
-              {process.env.NEXT_PUBLIC_SOLANA_NETWORK ===
-                "https://api.devnet.solana.com" && <DevnetBanner />}
               <CssBaseline />
-              <WalletButton />
+              {!router.pathname.includes('embed') && <WalletButton />}
               <Component {...pageProps} />
             </ThemeProvider>
           </CacheProvider>

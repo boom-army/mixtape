@@ -19,7 +19,7 @@ import Image from "next/image";
 dayjs.extend(duration);
 
 interface TrackListProps {
-  data: TrackMeta[] | null;
+  data: TrackMeta[] | null | undefined;
 }
 
 const TrackList: React.FC<TrackListProps> = ({ data }) => {
@@ -128,7 +128,7 @@ const TrackList: React.FC<TrackListProps> = ({ data }) => {
     }
   }, [audioURL]);
 
-  if (data === null || data.length === 0) {
+  if (data === null || data?.length === 0) {
     return (
       <List>
         {Array.from(new Array(5)).map((_, index) => (
