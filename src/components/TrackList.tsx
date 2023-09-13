@@ -188,6 +188,7 @@ const TrackList: React.FC<TrackListProps> = ({ data, embedded = false }) => {
               <Box display="flex" alignItems="center">
                 <Typography
                   variant={embedded ? "body2" : "body1"}
+                  sx={{ fontSize: embedded ? 12 : "inherit" }}
                   align="left"
                   display="inline"
                 >
