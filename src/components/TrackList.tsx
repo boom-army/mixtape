@@ -20,9 +20,10 @@ dayjs.extend(duration);
 
 interface TrackListProps {
   data: TrackMeta[] | null | undefined;
+  embedded?: boolean;
 }
 
-const TrackList: React.FC<TrackListProps> = ({ data }) => {
+const TrackList: React.FC<TrackListProps> = ({ data, embedded = false }) => {
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [playingTime, setPlayingTime] = useState(0);
   const [currentPlayingTrackId, setCurrentPlayingTrackId] = useState<
@@ -177,11 +178,19 @@ const TrackList: React.FC<TrackListProps> = ({ data }) => {
               xs={10}
               sx={{ display: "flex", flexDirection: "column" }}
             >
-              <Typography variant="h5" align="left" component="p">
+              <Typography
+                variant={embedded ? "body2" : "h5"}
+                align="left"
+                component="p"
+              >
                 {track.title}
               </Typography>
               <Box display="flex" alignItems="center">
-                <Typography variant="body1" align="left" display="inline">
+                <Typography
+                  variant={embedded ? "body2" : "body1"}
+                  align="left"
+                  display="inline"
+                >
                   {formatDuration(track.lengthSeconds)}
                 </Typography>
                 {(currentPlayingTrackId === track.id &&
@@ -223,7 +232,7 @@ const TrackList: React.FC<TrackListProps> = ({ data }) => {
                 {currentPlayingTrackId === track.id && isLoading ? (
                   <CircularProgress size={50} sx={{ display: "inline-flex" }} />
                 ) : (
-                  <Typography variant="h3" component="p">
+                  <Typography variant={embedded ? "h6" : "h3"} component="p">
                     {currentPlayingTrackId === track.id &&
                       audioURL &&
                       formatDuration(playingTime)}

@@ -90,7 +90,7 @@ const Embeddable = () => {
         </Stack>
       </Grid>
       <Grid item xs={9} sx={{ maxHeight: 150, overflowY: "scroll" }}>
-        <TrackList data={trackMeta} />
+        <TrackList data={trackMeta} embedded={true} />
       </Grid>
     </Grid>
   );
