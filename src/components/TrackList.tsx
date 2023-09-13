@@ -170,6 +170,7 @@ const TrackList: React.FC<TrackListProps> = ({ data, embedded = false }) => {
               currentPlayingTrackId === track.id
                 ? theme.palette.secondary.main
                 : "transparent",
+            padding: embedded ? 0.5 : "inherit",
           }}
         >
           <Grid container sx={{ height: "100%" }}>
