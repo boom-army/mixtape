@@ -90,7 +90,23 @@ const Embeddable = () => {
           </Link>
         </Stack>
       </Grid>
-      <Grid item xs={9} sx={{ maxHeight: 150, overflowY: "scroll" }}>
+      <Grid
+        item
+        xs={9}
+        sx={{
+          maxHeight: 150,
+          overflowY: "scroll",
+          "&::-webkit-scrollbar": {
+            width: "3px",
+          },
+          "&::-webkit-scrollbar-track": {
+            background: "#EAEAEA",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            background: "#000",
+          },
+        }}
+      >
         <TrackList data={trackMeta} embedded={true} />
       </Grid>
     </Grid>
