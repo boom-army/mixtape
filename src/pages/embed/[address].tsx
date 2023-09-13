@@ -64,7 +64,7 @@ const Embeddable = () => {
           </Link>
         </Box>
         <Box
-          height="60vh"
+          height="50vh"
           width="100%"
           display="flex"
           alignItems="center"
@@ -72,7 +72,7 @@ const Embeddable = () => {
           sx={{
             maxHeight: 95,
             backgroundImage: `url(${mixtapeImg})`,
-            backgroundSize: "cover",
+            backgroundSize: "70%",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
           }}
