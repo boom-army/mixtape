@@ -28,7 +28,7 @@ const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
     <Box>
       <List>
         <ListItem disablePadding>
-          <LinkAction href="/create">Create<span>&nbsp;your own mix</span></LinkAction>
+          <LinkAction href="/create">Mint<span>&nbsp;your own mix</span></LinkAction>
         </ListItem>
         <ListItem disablePadding>
           <LinkAction onClick={handleMenuOpen}>
