@@ -3,6 +3,7 @@ import { TipLink } from "@tiplink/api";
 import { Transaction, SystemProgram, PublicKey } from "@solana/web3.js";
 import { useConnection } from "@solana/wallet-adapter-react";
 import { useMetaplex } from "../contexts/MetaplexProvider";
+import { getAssociatedTokenAddress } from "@solana/spl-token";
 
 const TIPLINK_MINIMUM_LAMPORTS = 4083560;
 
@@ -13,7 +14,7 @@ const useTipLink = () => {
   const { connection } = useConnection();
   const Metaplex = useMetaplex();
 
-  const fundTipLink = async (
+  const actionTipLink = async (
     nftAddress: string,
     publicKey?: PublicKey,
     signTransaction?: (transaction: Transaction) => Promise<Transaction>
@@ -21,8 +22,13 @@ const useTipLink = () => {
     if (!publicKey || !signTransaction) {
       throw new Error("Wallet not connected");
     }
+    if (!Metaplex) {
+      throw new Error("Metaplex not initialized");
+    }
     const nftData = await Metaplex?.nfts().findAllByOwner({ owner: publicKey });
-    const hasMint = nftData?.some((nft) => nft.address.toBase58() === nftAddress);
+    const hasMint = nftData?.some(
+      (nft) => nft.address.toBase58() === nftAddress
+    );
     if (!hasMint) {
       throw new Error("The user does not own the specified NFT");
     }
@@ -36,6 +42,22 @@ const useTipLink = () => {
           lamports: TIPLINK_MINIMUM_LAMPORTS,
         })
       );
+
+      const mintPublicKey = new PublicKey(nftAddress);
+      const ownerTokenAccount = await getAssociatedTokenAddress(
+        mintPublicKey,
+        publicKey
+      );
+      const recipientTokenAccount = await getAssociatedTokenAddress(
+        mintPublicKey,
+        publicKey
+      );
+      const transferInstruction = SystemProgram.transfer({
+        fromPubkey: ownerTokenAccount,
+        toPubkey: recipientTokenAccount,
+        lamports: 1,
+      });
+      transaction.add(transferInstruction);
 
       transaction.feePayer = publicKey;
       const blockhash = await connection.getLatestBlockhash();
@@ -75,7 +97,7 @@ const useTipLink = () => {
   };
 
   return {
-    fundTipLink,
+    actionTipLink,
     tipLinkURL,
     error,
   };
