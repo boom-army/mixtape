@@ -185,8 +185,6 @@ const Create: React.FC = () => {
   }, [tracklist]);
 
   useEffect(() => {
-    console.log(fetchingUrl);
-
     if (
       mixtapeTitle &&
       tracklist.length > 0 &&
@@ -219,7 +217,7 @@ const Create: React.FC = () => {
   const handleAddUrl = async () => {
     setFetchingUrl(true);
     const youtubeUrlRegex =
-      /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
+      /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be|m\.youtube\.com)\/.+$/;
 
     try {
       if (!youtubeUrlRegex.test(url)) {
