@@ -26,7 +26,6 @@ export const MetaplexProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// Custom hook for accessing the Metaplex context data
 export const useMetaplex = () => {
   const context = useContext(MetaplexContext);
   if (context === undefined) {
