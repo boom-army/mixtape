@@ -4,6 +4,7 @@ import { Transaction, SystemProgram, PublicKey } from "@solana/web3.js";
 import { useConnection } from "@solana/wallet-adapter-react";
 import { useMetaplex } from "../contexts/MetaplexProvider";
 import { getAssociatedTokenAddress } from "@solana/spl-token";
+import useGetNFTOwner from "./useGetNFTOwner";
 
 const TIPLINK_MINIMUM_LAMPORTS = 4083560;
 
@@ -13,10 +14,11 @@ const useTipLink = () => {
 
   const { connection } = useConnection();
   const Metaplex = useMetaplex();
+  const { userOwnsNFT } = useGetNFTOwner();
 
   const actionTipLink = async (
     nftAddress: string,
-    publicKey?: PublicKey,
+    publicKey?: PublicKey | null,
     signTransaction?: (transaction: Transaction) => Promise<Transaction>
   ) => {
     if (!publicKey || !signTransaction) {
@@ -25,14 +27,23 @@ const useTipLink = () => {
     if (!Metaplex) {
       throw new Error("Metaplex not initialized");
     }
-    const nftData = await Metaplex?.nfts().findAllByOwner({ owner: publicKey });
-    const hasMint = nftData?.some(
-      (nft) => nft.address.toBase58() === nftAddress
-    );
-    if (!hasMint) {
+
+    const hasMint = await userOwnsNFT(nftAddress, publicKey);
+    if (hasMint.length === 0) {
       throw new Error("The user does not own the specified NFT");
     }
 
+    const hasTipLink = await fetch("/api/tiplink", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (hasTipLink) {
+      const data = await hasTipLink.json();
+      setTipLinkURL(data.tipLinkData.tiplink);
+      return;
+    }
     const tiplink = await TipLink.create();
     try {
       const transaction = new Transaction().add(
@@ -80,7 +91,7 @@ const useTipLink = () => {
         body: JSON.stringify({
           userId: publicKey.toString(),
           mintAddress: tiplink.keypair.publicKey.toString(),
-          tiplink: tipLinkURL,
+          tipLink: tipLinkURL,
           signature: signature,
         }),
       });
