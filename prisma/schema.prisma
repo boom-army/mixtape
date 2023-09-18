@@ -19,7 +19,7 @@ model User {
 
 model TipLink {
   id        String   @id @default(uuid())
-  tiplink   String   @unique
+  tipLink   String   @unique
   signature String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
