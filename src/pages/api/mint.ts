@@ -134,6 +134,7 @@ const mint: NextApiHandler = async (req, res) => {
       updateAuthority: mintKeys,
       tokenOwner: senderAddress,
       uri: metadata.uri,
+      symbol: nftMetadata.symbol as string,
       name: nftMetadata.name as string,
       sellerFeeBasisPoints: nftMetadata.seller_fee_basis_points as number,
       collection: MIXTAPE_COLLECTION,
