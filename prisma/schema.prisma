@@ -18,13 +18,13 @@ model User {
 }
 
 model TipLink {
-  id        String   @id @default(uuid())
-  tipLink   String   @unique
-  signature String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  mintId    Int
-  mint      Mint     @relation(fields: [mintId], references: [id])
+  id          Int      @id @default(autoincrement())
+  tipLink     String   @unique
+  signature   String   @unique
+  mintAddress String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  mint        Mint     @relation(fields: [mintAddress], references: [mintAddress])
 }
 
 model Mint {

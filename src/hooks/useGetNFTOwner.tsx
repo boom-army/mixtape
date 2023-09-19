@@ -11,7 +11,8 @@ const useGetNFTOwner = () => {
       (nft) => nft.mintAddress.toBase58() === nftAddress
     );
     if (hasMint && hasMint.length > 0) {
-      return hasMint[0].address.toBase58();
+      // @ts-ignore
+      return hasMint[0].mintAddress.toBase58();
     }
     return "";
   };

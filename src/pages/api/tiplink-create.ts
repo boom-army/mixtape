@@ -1,7 +1,7 @@
 import prisma from "../../../lib/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default async function tiplink(
+export default async function createTiplink(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -21,7 +21,7 @@ export default async function tiplink(
       return res.status(404).json({ error: "Mint not found for this user" });
     }
 
-    const mint = await prisma.mint.findUnique({
+    const mint = await prisma.mint.findFirst({
       where: { mintAddress },
     });
 
@@ -33,33 +33,13 @@ export default async function tiplink(
       data: {
         tipLink,
         signature,
-        mintId: mint.id,
+        mintAddress,
       },
     });
 
-    return res.status(200).json(newTipLink);
-  } else if (req.method === "GET") {
-    const { mintAddress } = req.query;
-    if (!mintAddress) {
-      return res.status(400).json({ error: "Incorrect mintAddress" });
-    }
-
-    const tipLinkData = await prisma.tipLink.findMany({
-      where: {
-        mint: {
-          mintAddress: mintAddress as string,
-        },
-      },
-      include: {
-        mint: true,
-      },
-    });
-    if (!tipLinkData) {
-      return res.status(404).json({ error: "TipLink not found for this mint" });
-    }
-    return res.status(200).json({ tipLinkData });
+    return res.status(200).json({ tipLinkData: newTipLink });
   } else {
-    res.setHeader("Allow", ["POST", "GET"]);
+    res.setHeader("Allow", ["POST"]);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
