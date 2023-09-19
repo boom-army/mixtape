@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { TipLink } from "@tiplink/api";
 import { SystemProgram, PublicKey } from "@solana/web3.js";
-import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { useMetaplex } from "../contexts/MetaplexProvider";
 import useGetNFTOwner from "./useGetNFTOwner";
 

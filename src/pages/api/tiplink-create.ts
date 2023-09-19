@@ -11,14 +11,11 @@ export default async function createTiplink(
     const mintData = await prisma.mint.findUnique({
       where: {
         mintAddress: mintAddress,
-      },
-      include: {
-        user: true,
-      },
+      }
     });
 
-    if (!mintData || mintData.user.id !== userId) {
-      return res.status(404).json({ error: "Mint not found for this user" });
+    if (!mintData) {
+      return res.status(404).json({ error: "Mint not found for this NFT" });
     }
 
     const mint = await prisma.mint.findFirst({
@@ -34,6 +31,7 @@ export default async function createTiplink(
         tipLink,
         signature,
         mintAddress,
+        sender: userId,
       },
     });
 

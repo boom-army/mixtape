@@ -10,7 +10,7 @@ export default async function readTiplink(
 
     const tipLinkData = await prisma.tipLink.findFirst({
       where: {
-        mintId: mintAddress as string,
+        mintAddress: mintAddress as string,
       },
     });
 

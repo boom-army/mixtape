@@ -30,7 +30,7 @@ interface ActionLinksProps {
 const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
   const [isOwner, setIsOwner] = useState(false);
 
-  const { publicKey, signTransaction } = useWallet();
+  const { publicKey } = useWallet();
   const { actionTipLink, tipLinkURL, error } = useTipLink();
   const router = useRouter();
   const { userOwnsNFT } = useGetNFTOwner();
