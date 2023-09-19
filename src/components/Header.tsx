@@ -18,7 +18,7 @@ export const Header: React.FC<HeaderProps> = ({ image, heading }) => {
 
   useEffect(() => {
     const images = [
-      "/images/mixtape-rainbow-1024.png",
+      "/images/mixtape-shoey.png",
       "/images/mixtape-1024.png",
       "/images/mixtape-sol-1024.png",
     ];
