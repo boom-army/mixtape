@@ -112,7 +112,7 @@ const Embeddable = () => {
           },
         }}
       >
-        <TrackList data={trackMeta} embedded={true} />
+        <TrackList data={trackMeta} />
       </Grid>
     </Grid>
   );

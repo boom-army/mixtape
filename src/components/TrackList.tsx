@@ -20,10 +20,9 @@ dayjs.extend(duration);
 
 interface TrackListProps {
   data: TrackMeta[] | null | undefined;
-  embedded?: boolean;
 }
 
-const TrackList: React.FC<TrackListProps> = ({ data, embedded = false }) => {
+const TrackList: React.FC<TrackListProps> = ({ data }) => {
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [playingTime, setPlayingTime] = useState(0);
   const [currentPlayingTrackId, setCurrentPlayingTrackId] = useState<
@@ -170,7 +169,7 @@ const TrackList: React.FC<TrackListProps> = ({ data, embedded = false }) => {
               currentPlayingTrackId === track.id
                 ? theme.palette.secondary.main
                 : "transparent",
-            padding: embedded ? 0.5 : "inherit",
+            fontSize: { xs: 0.5, sm: "inherit" }
           }}
         >
           <Grid container sx={{ height: "100%" }}>
@@ -180,7 +179,8 @@ const TrackList: React.FC<TrackListProps> = ({ data, embedded = false }) => {
               sx={{ display: "flex", flexDirection: "column" }}
             >
               <Typography
-                variant={embedded ? "body2" : "h5"}
+                variant="h5"
+                sx={{ fontSize: { xs: "1rem", sm: "1.5rem" }, pt: 1 }}
                 align="left"
                 component="p"
               >
@@ -188,8 +188,8 @@ const TrackList: React.FC<TrackListProps> = ({ data, embedded = false }) => {
               </Typography>
               <Box display="flex" alignItems="center">
                 <Typography
-                  variant={embedded ? "body2" : "body1"}
-                  sx={{ fontSize: embedded ? 12 : "inherit" }}
+                  variant={"body1"}
+                  sx={{ fontSize: { sm: "1rem", md: "1rem" } }}
                   align="left"
                   display="inline"
                 >
@@ -234,7 +234,11 @@ const TrackList: React.FC<TrackListProps> = ({ data, embedded = false }) => {
                 {currentPlayingTrackId === track.id && isLoading ? (
                   <CircularProgress size={50} sx={{ display: "inline-flex" }} />
                 ) : (
-                  <Typography variant={embedded ? "h6" : "h3"} component="p">
+                  <Typography
+                    component="p"
+                    variant="h6"
+                    sx={{ fontSize: { xs: "1.5rem", sm: "3rem" } }}
+                  >
                     {currentPlayingTrackId === track.id &&
                       audioURL &&
                       formatDuration(playingTime)}

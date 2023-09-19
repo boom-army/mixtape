@@ -94,7 +94,7 @@ export default function AudioPlayer(props: AudioPlayerProps) {
     >
       {inline ? (
         <PlayPauseButton
-        //   disabled={loading}
+          //   disabled={loading}
           audioElement={audioElement}
           playing={playing}
           playPauseIconButtonProps={{
