@@ -375,6 +375,7 @@ const Create: React.FC = () => {
 
       <Box
         display="flex"
+        flexDirection={{ xs: "column", sm: "row" }}
         justifyContent="space-between"
         alignItems="top"
         mb={2}
@@ -388,7 +389,7 @@ const Create: React.FC = () => {
             setUrl(e.target.value);
           }}
           fullWidth
-          sx={{ marginRight: "1em", flex: 1 }}
+          sx={{ marginRight: { sm: "1em" }, flex: 1, marginBottom: { xs: "1em", sm: "0" } }}
           error={Boolean(error)}
           helperText={error}
           disabled={lastTrackError}
