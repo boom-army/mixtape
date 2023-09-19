@@ -6,19 +6,20 @@ export default async function readTiplink(
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
-    const { mintAddress } = req.query;
+    const { mintAddress } = req.body;
 
-    const tipLinkData = await prisma.tipLink.findFirst({
-      where: {
-        mintAddress: mintAddress as string,
-      },
-    });
-
-    if (!tipLinkData) {
-      return res.status(404).json({ error: "TipLink not found" });
+    if (!mintAddress) {
+      return res.status(400).json({ error: "No mintAddress in body" });
     }
 
-    return res.status(200).json({ tipLinkData });
+    try {
+      const tipLinkData = await prisma.tipLink.findFirstOrThrow({
+        where: { mintAddress: mintAddress as string },
+      });
+      return res.status(200).json({ tipLinkData });
+    } catch (error) {
+      return res.status(404).json({ error: "TipLink not found for this mint" });
+    }
   } else {
     res.setHeader("Allow", ["POST"]);
     res.status(405).end(`Method ${req.method} Not Allowed`);

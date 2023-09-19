@@ -9,14 +9,12 @@ const TIPLINK_MINIMUM_LAMPORTS = 4083560;
 
 const useTipLink = () => {
   const [tipLinkURL, setTipLinkURL] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   const Metaplex = useMetaplex();
   const { userOwnsNFT } = useGetNFTOwner();
   const wallet = useWallet();
 
   const actionTipLink = async (nftAddress: string) => {
-    setError(null);
     const { publicKey, signTransaction, signMessage, signAllTransactions } =
       wallet;
     if (
@@ -100,15 +98,13 @@ const useTipLink = () => {
       const data = await response.json();
       setTipLinkURL(data.tipLinkData.tipLink);
     } catch (err) {
-      console.log("err", err);
-      setError(err instanceof Error ? err.message : String(err));
+      return err;
     }
   };
 
   return {
     actionTipLink,
     tipLinkURL,
-    error,
   };
 };
 

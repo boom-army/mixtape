@@ -4,6 +4,8 @@ import useTipLink from "../hooks/useTipLink";
 import { useRouter } from "next/router";
 import useGetNFTOwner from "../hooks/useGetNFTOwner";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { isEmpty } from "lodash";
+import { useSnackbar } from "../contexts/SnackbarProvider";
 
 const LinkAction = styled(Link)(({ theme }) => ({
   display: "inline",
@@ -29,11 +31,33 @@ interface ActionLinksProps {
 
 const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
   const [isOwner, setIsOwner] = useState(false);
+  const [isSender, setIsSender] = useState("");
 
   const { publicKey } = useWallet();
-  const { actionTipLink, tipLinkURL, error } = useTipLink();
+  const { actionTipLink, tipLinkURL } = useTipLink();
   const router = useRouter();
   const { userOwnsNFT } = useGetNFTOwner();
+  const { enqueueSnackbar } = useSnackbar();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("/api/tiplink-read", {
+          method: "POST",
+        });
+        if (!response.ok) {
+          return;
+        }
+        const { tipLinkData } = await response.json();
+        if (tipLinkData.sender === publicKey?.toBase58()) {
+          setIsSender(tipLinkData.tipLink);
+        }
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      }
+    };
+    fetchData();
+  }, [publicKey, tipLinkURL]);
 
   useEffect(() => {
     if (!publicKey || !router.query.address) return;
@@ -42,7 +66,7 @@ const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
         const hasMint = await userOwnsNFT(
           router.query.address as string,
           publicKey
-        );        
+        );
         setIsOwner(!!hasMint);
       } catch (error) {
         console.error("Failed to fetch nft owner:", error);
@@ -52,9 +76,15 @@ const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
   }, [publicKey, router.query.address, userOwnsNFT]);
 
   const handleTipLink = async () => {
-    if (!isOwner || !router.query.address) return;
-    await actionTipLink(router.query.address as string);
-    console.log("tipLink", tipLinkURL);
+    try {
+      if (!isOwner || !router.query.address) return;
+      await actionTipLink(router.query.address as string);
+      enqueueSnackbar(
+        `Mixtape sent to ${tipLinkURL}. You can click "View tip link" when connected to see the tip link at any time.`
+      );
+    } catch (error) {
+      enqueueSnackbar((error as Error).message);
+    }
   };
 
   return (
@@ -77,6 +107,15 @@ const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
             </LinkAction>
           </ListItem>
         )}
+        {router.pathname === "/sol/[address]" &&
+          !isOwner &&
+          !isEmpty(isSender) && (
+            <ListItem disablePadding>
+              <LinkAction href={isSender} target="_blank">
+                View<span>&nbsp;your tip link</span>
+              </LinkAction>
+            </ListItem>
+          )}
       </List>
     </Box>
   );
