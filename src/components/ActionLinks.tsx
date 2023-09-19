@@ -1,4 +1,14 @@
-import { Box, Link, List, ListItem, styled } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  Link,
+  List,
+  ListItem,
+  Modal,
+  Typography,
+  styled,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import useTipLink from "../hooks/useTipLink";
 import { useRouter } from "next/router";
@@ -6,6 +16,7 @@ import useGetNFTOwner from "../hooks/useGetNFTOwner";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { isEmpty } from "lodash";
 import { useSnackbar } from "../contexts/SnackbarProvider";
+import { Close, LinkRounded } from "@mui/icons-material";
 
 const LinkAction = styled(Link)(({ theme }) => ({
   display: "inline",
@@ -32,6 +43,7 @@ interface ActionLinksProps {
 const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
   const [isOwner, setIsOwner] = useState(false);
   const [isSender, setIsSender] = useState("");
+  const [openSendLinkConfirm, setOpenSendLinkConfirm] = useState(false);
 
   const { publicKey } = useWallet();
   const { actionTipLink, tipLinkURL } = useTipLink();
@@ -44,6 +56,12 @@ const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
       try {
         const response = await fetch("/api/tiplink-read", {
           method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            mintAddress: router.query.address,
+          }),
         });
         if (!response.ok) {
           return;
@@ -57,7 +75,7 @@ const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
       }
     };
     fetchData();
-  }, [publicKey, tipLinkURL]);
+  }, [publicKey, tipLinkURL, router.query.address]);
 
   useEffect(() => {
     if (!publicKey || !router.query.address) return;
@@ -79,6 +97,7 @@ const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
     try {
       if (!isOwner || !router.query.address) return;
       await actionTipLink(router.query.address as string);
+      setOpenSendLinkConfirm(false);
       enqueueSnackbar(
         `Mixtape sent to ${tipLinkURL}. You can click "View tip link" when connected to see the tip link at any time.`
       );
@@ -102,7 +121,7 @@ const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
         </ListItem>
         {router.pathname === "/sol/[address]" && isOwner && (
           <ListItem disablePadding>
-            <LinkAction onClick={handleTipLink}>
+            <LinkAction onClick={() => setOpenSendLinkConfirm(true)}>
               Send<span>&nbsp;this mix</span>
             </LinkAction>
           </ListItem>
@@ -117,6 +136,45 @@ const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
             </ListItem>
           )}
       </List>
+      <Modal
+        open={openSendLinkConfirm}
+        onClose={() => setOpenSendLinkConfirm(false)}
+        aria-labelledby="Create send link for MixtApe NFT"
+        aria-describedby="Create send link for MixtApe NFT"
+        sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <IconButton
+            sx={{ position: "absolute", top: 8, right: 8 }}
+            onClick={() => setOpenSendLinkConfirm(false)}
+          >
+            <Close />
+          </IconButton>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            <LinkRounded sx={{ fontSize: 16 }} /> Tip Link Explanation
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2, mb: 3 }}>
+            Creating a tip link sends this MixtApe NFT to the link and anyone
+            with the link can withdraw the NFT straight to their Solana wallet,
+            safe and sound.
+          </Typography>
+          <Button variant="contained" onClick={handleTipLink}>
+            Create tip link and send NFT
+          </Button>
+        </Box>
+      </Modal>
     </Box>
   );
 };
