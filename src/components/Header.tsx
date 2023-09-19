@@ -67,7 +67,7 @@ export const Header: React.FC<HeaderProps> = ({ image, heading }) => {
           height="100%"
         >
           <Box>
-            <Typography variant="h1">{heading ?? "MixtApe"}</Typography>
+            <Typography variant="h1" sx={{ fontSize: { xs: "2.5rem", sm: "3.2rem" } }}>{heading ?? "MixtApe"}</Typography>
           </Box>
           <Box
             display="flex"

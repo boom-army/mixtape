@@ -169,7 +169,7 @@ const TrackList: React.FC<TrackListProps> = ({ data }) => {
               currentPlayingTrackId === track.id
                 ? theme.palette.secondary.main
                 : "transparent",
-            fontSize: { xs: 0.5, sm: "inherit" }
+            fontSize: { xs: 0.5, sm: "inherit" },
           }}
         >
           <Grid container sx={{ height: "100%" }}>
@@ -237,7 +237,7 @@ const TrackList: React.FC<TrackListProps> = ({ data }) => {
                   <Typography
                     component="p"
                     variant="h6"
-                    sx={{ fontSize: { xs: "1.5rem", sm: "3rem" } }}
+                    sx={{ fontSize: { xs: "1.2rem", sm: "3rem" } }}
                   >
                     {currentPlayingTrackId === track.id &&
                       audioURL &&
