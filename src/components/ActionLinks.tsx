@@ -166,12 +166,13 @@ const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
             <LinkRounded sx={{ fontSize: 16 }} /> Tip Link Explanation
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2, mb: 3 }}>
-            Creating a tip link sends this MixtApe NFT to the link and anyone
-            with the link can withdraw the NFT straight to their Solana wallet,
-            safe and sound.
+            Creating a tip link loads this MixtApe NFT onto the link. Then,
+            anyone with the link can withdraw the NFT straight to their own
+            Solana wallet. You&rsquo;ll be the only one with the link until you
+            share it.
           </Typography>
           <Button variant="contained" onClick={handleTipLink}>
-            Create tip link and send NFT
+            Create tip link and load NFT
           </Button>
         </Box>
       </Modal>
