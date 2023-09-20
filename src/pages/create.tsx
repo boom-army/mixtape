@@ -181,7 +181,7 @@ const Create: React.FC = () => {
       0
     );
     setTotalDuration(newTotalDuration);
-    setLastTrackError(newTotalDuration > 1800);
+    // setLastTrackError(newTotalDuration > 1800);
   }, [tracklist]);
 
   useEffect(() => {
@@ -246,7 +246,9 @@ const Create: React.FC = () => {
         `/api/trackmeta?urls=${encodeURIComponent(url)}`
       );
       if (!response.ok) {
-        throw new Error("Failed to load track meta. Remove and add the track to try again.");
+        throw new Error(
+          "Failed to load track meta. Remove and add the track to try again."
+        );
       }
       const data = await response.json();
       const meta = data[0];
@@ -318,7 +320,7 @@ const Create: React.FC = () => {
         trait_type: "tape_blank",
         value: `${template.name} - C${template.runtime}`,
       },
-    ];
+    ];    
 
     const mint = await mintNFT({
       template,
@@ -389,7 +391,11 @@ const Create: React.FC = () => {
             setUrl(e.target.value);
           }}
           fullWidth
-          sx={{ marginRight: { sm: "1em" }, flex: 1, marginBottom: { xs: "1em", sm: "0" } }}
+          sx={{
+            marginRight: { sm: "1em" },
+            flex: 1,
+            marginBottom: { xs: "1em", sm: "0" },
+          }}
           error={Boolean(error)}
           helperText={error}
           disabled={lastTrackError}

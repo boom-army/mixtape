@@ -7,7 +7,24 @@ dayjs.extend(duration);
 export const formatDuration = (seconds: number | undefined) => {
   if (!seconds) return "00:00";
   const dur = dayjs.duration(seconds, "seconds");
-  return dur.format("mm:ss");
+
+  const hours = dur.hours();
+  const minutes = dur.minutes();
+  const sec = dur.seconds();
+  
+  if (hours > 0) {
+    const formattedHours = hours.toString().padStart(2, '0');
+    const formattedMinutes = minutes.toString().padStart(2, '0');
+    const formattedSeconds = sec.toString().padStart(2, '0');
+    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+  } else if (minutes > 0) {
+    const formattedMinutes = minutes.toString().padStart(2, '0');
+    const formattedSeconds = sec.toString().padStart(2, '0');
+    return `${formattedMinutes}:${formattedSeconds}`;
+  } else {
+    const formattedSeconds = sec.toString().padStart(2, '0');
+    return `${formattedSeconds}`;
+  }
 };
 
 // Define the valid domains for path and query
