@@ -372,7 +372,6 @@ const Create: React.FC = () => {
       <Box
         display="flex"
         flexDirection={{ xs: "column", sm: "row" }}
-        justifyContent="space-between"
         alignItems="top"
         mb={2}
       >
@@ -389,12 +388,13 @@ const Create: React.FC = () => {
             marginRight: { sm: "1em" },
             flex: 1,
             marginBottom: { xs: "1em", sm: "0" },
+            maxWidth: { xs: "100%", sm: "50%" },
           }}
           error={Boolean(error)}
           helperText={error}
           disabled={lastTrackError}
         />
-        <PulseButton onClick={handleAddUrl}>Add URL</PulseButton>
+        <PulseButton onClick={handleAddUrl}>Add {tracklist.length > 0 && "Another"} URL</PulseButton>
       </Box>
 
       {lastTrackError && (
