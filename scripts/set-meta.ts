@@ -5,6 +5,7 @@ import { Connection, PublicKey, clusterApiUrl } from "@solana/web3.js";
 import { getBundlrURI } from "./helpers";
 import path from "path";
 import Bundlr from "@bundlr-network/client";
+import mime from "mime-types";
 
 program
   .command("updateNFT")
@@ -39,6 +40,7 @@ program
       const bundlr = new Bundlr(bundlrURI, "solana", keyToJSON, {
         providerUrl: cluster,
       });
+      const uploader = bundlr.uploader.chunkedUploader;
 
       const mintPubKey = new PublicKey(mintAddress);
       const nft = await metaplex.nfts().findByMint({ mintAddress: mintPubKey });
@@ -50,6 +52,7 @@ program
       const filePath = path.join(__dirname, "data", "metadata.json");
       const file = readFileSync(filePath, "utf8");
       const fileType = path.extname(filePath).slice(1);
+      const transactionOptions = { tags: [{ name: "Content-Type", value: mime.lookup(fileType) as string }] };      
 
       // Get size of file
       const size = Buffer.byteLength(file);
@@ -61,7 +64,7 @@ program
       // Fund the node
       await bundlr.fund(price);
 
-      const response = await bundlr.upload(file);
+      const response = await bundlr.upload(file, transactionOptions);
       console.log(
         `File uploaded ==> https://arweave.net/${response.id}`,
         response
