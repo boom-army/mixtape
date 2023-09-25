@@ -1,7 +1,7 @@
 import { readFileSync } from "fs";
 import { program } from "commander";
-import { Metaplex } from "@metaplex-foundation/js";
-import { Connection, PublicKey, clusterApiUrl } from "@solana/web3.js";
+import { Metaplex, walletAdapterIdentity } from "@metaplex-foundation/js";
+import { Connection, Keypair, PublicKey, clusterApiUrl } from "@solana/web3.js";
 import { getBundlrURI } from "./helpers";
 import path from "path";
 import Bundlr from "@bundlr-network/client";
@@ -28,19 +28,20 @@ program
     try {
       const { key, env } = options;
 
+      const keyFile = readFileSync(key, "utf8");
+      const keyToJSON = JSON.parse(keyFile);
+      const seed = Uint8Array.from(keyToJSON).slice(0, 32);
+      const keypair = Keypair.fromSeed(seed);
+
       const cluster = clusterApiUrl(env);
       const bundlrURI = getBundlrURI(env);
 
       const connection = new Connection(cluster, "confirmed");
-      const metaplex = new Metaplex(connection);
-
-      const keyFile = readFileSync(key, "utf8");
-      const keyToJSON = JSON.parse(keyFile);
+      const metaplex = new Metaplex(connection).use(walletAdapterIdentity(keypair));
 
       const bundlr = new Bundlr(bundlrURI, "solana", keyToJSON, {
         providerUrl: cluster,
       });
-      const uploader = bundlr.uploader.chunkedUploader;
 
       const mintPubKey = new PublicKey(mintAddress);
       const nft = await metaplex.nfts().findByMint({ mintAddress: mintPubKey });
@@ -52,7 +53,7 @@ program
       const filePath = path.join(__dirname, "data", "metadata.json");
       const file = readFileSync(filePath, "utf8");
       const fileType = path.extname(filePath).slice(1);
-      const transactionOptions = { tags: [{ name: "Content-Type", value: mime.lookup(fileType) as string }] };      
+      const transactionOptions = { tags: [{ name: "Content-Type", value: mime.lookup(fileType) as string }] };
 
       // Get size of file
       const size = Buffer.byteLength(file);
@@ -64,24 +65,21 @@ program
       // Fund the node
       await bundlr.fund(price);
 
-      const response = await bundlr.upload(file, transactionOptions);
+      const arweaveRes = await bundlr.upload(file, transactionOptions);
       console.log(
-        `File uploaded ==> https://arweave.net/${response.id}`,
-        response
+        `File uploaded ==> https://arweave.net/${arweaveRes.id}`
       );
 
       // const cleanMeta = {};
+      const { response } = await metaplex.nfts().update({
+        nftOrSft: nft,
+        uri: `https://arweave.net/${arweaveRes.id}`,
+        authority: keypair,
+      });
 
-      // const mintKeys = Keypair.fromSecretKey(key);
-      // const { response } = await metaplex.nfts().update({
-      //   nftOrSft: nft,
-      //   uri: uploadedMeta.uri,
-      //   authority: mintKeys,
-      // });
-
-      // if (!response) {
-      //   throw new Error("NFT update failed");
-      // }
+      if (!response) {
+        throw new Error("NFT update failed");
+      }
 
       console.log("NFT updated successfully");
     } catch (error) {
