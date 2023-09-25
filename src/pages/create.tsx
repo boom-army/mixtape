@@ -388,7 +388,7 @@ const Create: React.FC = () => {
             marginRight: { sm: "1em" },
             flex: 1,
             marginBottom: { xs: "1em", sm: "0" },
-            maxWidth: { xs: "100%", sm: "50%" },
+            maxWidth: { sm: "100%", md: "50%" },
           }}
           error={Boolean(error)}
           helperText={error}
