@@ -179,7 +179,6 @@ program
       };
 
       function transformAttributes(data: Option<JsonMetadata>) {
-        if (data?.track_meta) return data;
         let updatedData = {
           ...data,
         };
@@ -212,7 +211,14 @@ program
             .nfts()
             .findByMint({ mintAddress: new PublicKey(mintAddress) });
           const data = nft.json;
-          if (data?.track_meta) Promise.resolve();
+          if (
+            !data?.attributes?.find((attr) =>
+              attr?.trait_type?.includes("duration")
+            )
+          ) {
+            Promise.resolve();
+            return;
+          }
           const result = transformAttributes(data);
           const arweaveRes = await bundlr.upload(
             JSON.stringify(result),
