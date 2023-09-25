@@ -308,19 +308,13 @@ const Create: React.FC = () => {
     nftMetadata.tracks = tracklist;
     nftMetadata.attributes = [
       ...(nftMetadata.attributes || []),
-      ...tracklist.map((track, index) => ({
-        trait_type: `track_${index + 1}`,
-        value: track.title,
-      })),
-      { trait_type: "duration", value: formatDuration(totalDuration) },
-      { trait_type: "tracks", value: tracklist.length.toString() },
-      { trait_type: "tape_blank_release_date", value: template.releaseDate },
+      { trait_type: "template_date", value: template.releaseDate },
       { trait_type: "mint_price", value: template.price.toString() },
       {
         trait_type: "tape_blank",
         value: `${template.name} - C${template.runtime}`,
       },
-    ];    
+    ];
 
     const mint = await mintNFT({
       template,

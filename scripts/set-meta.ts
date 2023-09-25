@@ -182,14 +182,6 @@ program
         if (data?.track_meta) return data;
         let updatedData = {
           ...data,
-          track_meta: {
-            duration: data?.attributes?.find((attr) =>
-              attr?.trait_type?.includes("duration")
-            )?.value,
-            tracks: data?.attributes?.find((attr) =>
-              attr?.trait_type?.includes("tracks")
-            )?.value,
-          },
         };
         // Filter out attributes with a trait_type that includes "track"
         let filteredAttributes = data?.attributes
@@ -220,6 +212,7 @@ program
             .nfts()
             .findByMint({ mintAddress: new PublicKey(mintAddress) });
           const data = nft.json;
+          if (data?.track_meta) Promise.resolve();
           const result = transformAttributes(data);
           const arweaveRes = await bundlr.upload(
             JSON.stringify(result),
