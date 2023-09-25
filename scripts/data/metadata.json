@@ -1,0 +1,89 @@
+{
+  "name": "MixtApe #69",
+  "symbol": "MXTAPE",
+  "description": "69",
+  "external_url": "https://mixt-ape.com",
+  "attributes": [
+    {
+      "trait_type": "track_1",
+      "value": "U2 - One"
+    },
+    {
+      "trait_type": "track_2",
+      "value": "NENA | 99 Red Balloons [1984]"
+    },
+    {
+      "trait_type": "track_3",
+      "value": "Chicago - 25 Or 6 To 4 (HD)"
+    },
+    {
+      "trait_type": "track_4",
+      "value": "Kiss Off"
+    },
+    {
+      "trait_type": "duration",
+      "value": "16:26"
+    },
+    {
+      "trait_type": "tracks",
+      "value": "4"
+    },
+    {
+      "trait_type": "tape_blank_release_date",
+      "value": "2023-09-06"
+    },
+    {
+      "trait_type": "mint_price",
+      "value": "0.142069"
+    },
+    {
+      "trait_type": "tape_blank",
+      "value": "SOL - C30"
+    }
+  ],
+  "seller_fee_basis_points": 500,
+  "collection": {
+    "name": "MixtApe 1",
+    "family": "MixtApe"
+  },
+  "properties": {
+    "files": [
+      {
+        "uri": "https://arweave.net/pJUVQUIje1B2QNYEQBJeJtSp0Sp2zqDMZwjfhSljzaE",
+        "type": "image/png"
+      }
+    ],
+    "category": "image",
+    "creators": [
+      {
+        "address": "harkLSUe2Puud2TVQUhHW4vs45mF1YMLU3PThPCuWd8",
+        "share": 100
+      }
+    ]
+  },
+  "tracks": [
+    {
+      "id": "ftjEcrrf7r0",
+      "title": "U2 - One",
+      "lengthSeconds": 274
+    },
+    {
+      "id": "hiwgOWo7mDc",
+      "title": "NENA | 99 Red Balloons [1984]",
+      "lengthSeconds": 235
+    },
+    {
+      "id": "iUAYeN3Rp2E",
+      "title": "Chicago - 25 Or 6 To 4 (HD)",
+      "lengthSeconds": 300
+    },
+    {
+      "id": "hTUAaW3oGGo",
+      "title": "Kiss Off",
+      "lengthSeconds": 177
+    }
+  ],
+  "image": "https://arweave.net/pJUVQUIje1B2QNYEQBJeJtSp0Sp2zqDMZwjfhSljzaE?ext=image/png",
+  "type": "image/png",
+  "payer": "MXTPExF3AYg6bW31ucCWHjh2wYaoDsF1Kx8jbHpD41N"
+}
