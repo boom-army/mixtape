@@ -17,6 +17,9 @@ import {
   Modal,
   CircularProgress,
   styled,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
 } from "@mui/material";
 import { formatDuration, fromYouTubeURL } from "../utils/tracks";
 import Link from "next/link";
@@ -29,6 +32,7 @@ import { NftTemplates } from "../types/nftTemplates";
 import { useMintNFT } from "../hooks/useMintNFT";
 import router from "next/router";
 import { isEmpty } from "lodash";
+import { ExpandMore } from "@mui/icons-material";
 
 const PASSWORD = "HYPERVIBES";
 
@@ -120,6 +124,7 @@ const Create: React.FC = () => {
   const [fetchingUrl, setFetchingUrl] = useState(false);
 
   const [mixtapeTitle, setMixtapeTitle] = useState("");
+  const [coverNotes, setCoverNotes] = useState("");
   const [totalDuration, setTotalDuration] = useState(0);
   const [tracklist, setTracklist] = useState<TrackMeta[]>([]);
   const [selectedTape, setSelectedTape] = useState<string | null>();
@@ -306,6 +311,9 @@ const Create: React.FC = () => {
     nftMetadata.name = "Mixtape NFT";
     nftMetadata.description = mixtapeTitle;
     nftMetadata.tracks = tracklist;
+    nftMetadata.track_meta = {
+      cover_notes: coverNotes,
+    };
     nftMetadata.attributes = [
       ...(nftMetadata.attributes || []),
       { trait_type: "template_date", value: template.releaseDate },
@@ -349,6 +357,29 @@ const Create: React.FC = () => {
           fullWidth
           inputProps={{ maxLength: 62 }}
         />
+      </Box>
+      <Box mb={2}>
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<ExpandMore />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography>Cover Notes</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <TextField
+              label="Add a presonalised message or cover notes for your mix"
+              variant="outlined"
+              value={coverNotes}
+              onChange={(e) => setCoverNotes(e.target.value)}
+              fullWidth
+              multiline
+              rows={4}
+              sx={{ backgroundColor: "white" }}
+            />
+          </AccordionDetails>
+        </Accordion>
       </Box>
 
       <Typography variant="h5" mb={1}>
@@ -394,7 +425,9 @@ const Create: React.FC = () => {
           helperText={error}
           disabled={lastTrackError}
         />
-        <PulseButton onClick={handleAddUrl}>Add {tracklist.length > 0 && "Another"} URL</PulseButton>
+        <PulseButton onClick={handleAddUrl}>
+          Add {tracklist.length > 0 && "Another"} URL
+        </PulseButton>
       </Box>
 
       {lastTrackError && (
