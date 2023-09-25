@@ -7,8 +7,9 @@ import path from "path";
 import Bundlr from "@bundlr-network/client";
 import mime from "mime-types";
 
+// yarn meta:update 7goCia2zgSjKx3qVofbNEF5DdvtAsLionktZahAYuWqu -e devnet -k '/Users/bowie/SitesC/mixt-ape/testKey-MXTPExF3AYg6bW31ucCWHjh2wYaoDsF1Kx8jbHpD41N.json'
 program
-  .command("updateNFT")
+  .command("updateNFTByMint")
   .argument(
     "<mintAddress>",
     "JSON file containing an array of mints to update",
@@ -37,23 +38,22 @@ program
       const bundlrURI = getBundlrURI(env);
 
       const connection = new Connection(cluster, "confirmed");
-      const metaplex = new Metaplex(connection).use(walletAdapterIdentity(keypair));
+      const metaplex = new Metaplex(connection).use(
+        walletAdapterIdentity(keypair)
+      );
 
       const bundlr = new Bundlr(bundlrURI, "solana", keyToJSON, {
         providerUrl: cluster,
       });
 
-      const mintPubKey = new PublicKey(mintAddress);
-      const nft = await metaplex.nfts().findByMint({ mintAddress: mintPubKey });
-
-      if (!nft) {
-        throw new Error("NFT not found");
-      }
-
       const filePath = path.join(__dirname, "data", "metadata.json");
       const file = readFileSync(filePath, "utf8");
       const fileType = path.extname(filePath).slice(1);
-      const transactionOptions = { tags: [{ name: "Content-Type", value: mime.lookup(fileType) as string }] };
+      const transactionOptions = {
+        tags: [
+          { name: "Content-Type", value: mime.lookup(fileType) as string },
+        ],
+      };
 
       // Get size of file
       const size = Buffer.byteLength(file);
@@ -66,9 +66,14 @@ program
       await bundlr.fund(price);
 
       const arweaveRes = await bundlr.upload(file, transactionOptions);
-      console.log(
-        `File uploaded ==> https://arweave.net/${arweaveRes.id}`
-      );
+      console.log(`File uploaded ==> https://arweave.net/${arweaveRes.id}`);
+
+      const mintPubKey = new PublicKey(mintAddress);
+      const nft = await metaplex.nfts().findByMint({ mintAddress: mintPubKey });
+
+      if (!nft) {
+        throw new Error("NFT not found");
+      }
 
       // const cleanMeta = {};
       const { response } = await metaplex.nfts().update({
