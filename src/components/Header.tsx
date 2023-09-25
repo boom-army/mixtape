@@ -70,6 +70,7 @@ export const Header: React.FC<HeaderProps> = ({ image, heading, meta }) => {
               height={360}
               sx={{
                 backgroundColor: "white",
+                border: `2px solid ${theme.palette.primary.main}`,
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
