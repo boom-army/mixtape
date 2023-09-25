@@ -30,6 +30,9 @@ const Address: React.FC<AddressProps> = ({
   const [mixtapeTitleState, setMixtapeTitleState] = useState<
     string | undefined
   >();
+  const [mixtapeMetaState, setMixtapeMetaState] = useState<
+    TrackMetadata | undefined
+  >();
   const [loadError, setLoadError] = useState(false);
 
   const router = useRouter();
@@ -51,6 +54,7 @@ const Address: React.FC<AddressProps> = ({
         setMixtapeImgState(metadata?.json?.image);
         setMixtapeTitleState(metadata?.json?.name);
         setTrackMetaState((metadata?.json?.tracks as TrackMeta[]) || []);
+        setMixtapeMetaState(metadata?.json?.track_meta as TrackMetadata);
       } catch (error) {
         enqueueSnackbar(`Failed to fetch metadata: ${error}`);
         setLoadError(true);
@@ -84,6 +88,7 @@ const Address: React.FC<AddressProps> = ({
         <Header
           image={mixtapeImgState ?? mixtapeImg}
           heading={mixtapeTitleState ?? mixtapeTitle}
+          meta={mixtapeMetaState}
         />
         {!trackMetaState && !trackMeta ? (
           <Typography variant="h6" align="center" style={{ padding: "100px" }}>

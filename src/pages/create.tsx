@@ -369,10 +369,10 @@ const Create: React.FC = () => {
           </AccordionSummary>
           <AccordionDetails>
             <TextField
-              label="Add a presonalised message or cover notes for your mix"
+              label="Add a personalised message or cover notes for your mix"
               variant="outlined"
               value={coverNotes}
-              onChange={(e) => setCoverNotes(e.target.value)}
+              onChange={(e) => setCoverNotes(e.target.value.substring(0, 430))}
               fullWidth
               multiline
               rows={4}

@@ -3,3 +3,7 @@ interface TrackMeta {
   title: string;
   lengthSeconds?: number;
 }
+
+interface TrackMetadata {
+  cover_notes: string;
+}

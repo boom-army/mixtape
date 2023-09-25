@@ -34,6 +34,16 @@ export const handjetFont = localFont({
   ],
 });
 
+export const indieFlowerFont = localFont({
+  src: [
+    {
+      path: "../fonts/IndieFlower-Regular.ttf",
+      weight: "400",
+      style: "normal",
+    },
+  ],
+});
+
 declare module "@mui/material/styles" {
   interface Palette {
     backgroundSecondary?: {
