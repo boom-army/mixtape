@@ -11,6 +11,7 @@ import { getBundlrURI } from "./helpers";
 import path from "path";
 import Bundlr from "@bundlr-network/client";
 import mime from "mime-types";
+import { promisify } from "util";
 
 program
   .name("mixtape-utils")
@@ -44,7 +45,7 @@ program
       const seed = Uint8Array.from(keyToJSON).slice(0, 32);
       const keypair = Keypair.fromSeed(seed);
 
-      const cluster = env.includes('https://') ? env : clusterApiUrl(env);
+      const cluster = env.includes("https://") ? env : clusterApiUrl(env);
       const bundlrURI = getBundlrURI(env);
 
       const connection = new Connection(cluster, "confirmed");
@@ -113,7 +114,7 @@ program
     try {
       const { env } = options;
 
-      const cluster = env.includes('https://') ? env : clusterApiUrl(env);
+      const cluster = env.includes("https://") ? env : clusterApiUrl(env);
 
       const connection = new Connection(cluster, "confirmed");
       const metaplex = new Metaplex(connection);
@@ -161,9 +162,9 @@ program
 
       const filePath = path.join(__dirname, "data", "nfts.json");
       const file = readFileSync(filePath, "utf8");
-      const fileArray = JSON.parse(file);      
+      const fileArray = JSON.parse(file);
 
-      const cluster = env.includes('https://') ? env : clusterApiUrl(env);
+      const cluster = env.includes("https://") ? env : clusterApiUrl(env);
       const bundlrURI = getBundlrURI(env);
 
       const connection = new Connection(cluster, "confirmed");
@@ -205,37 +206,42 @@ program
         return { ...updatedData };
       }
 
-      const updateAll = fileArray.map(async (mintAddress: string) => {
-        try {
-          const nft = await metaplex
-            .nfts()
-            .findByMint({ mintAddress: new PublicKey(mintAddress) });
-          const data = nft.json;
-          if (
-            !data?.attributes?.find((attr) =>
-              attr?.trait_type?.includes("duration")
-            )
-          ) {
-            Promise.resolve();
-            return;
+      const delay = promisify(setTimeout);
+      const updateAll = async () => {
+        for (const mintAddress of fileArray) {
+          try {
+            const nft = await metaplex
+              .nfts()
+              .findByMint({ mintAddress: new PublicKey(mintAddress) });
+            const data = nft.json;
+            if (
+              !data?.attributes?.find((attr) =>
+                attr?.trait_type?.includes("duration")
+              )
+            ) {
+              continue;
+            }
+            const result = transformAttributes(data);
+            const arweaveRes = await bundlr.upload(
+              JSON.stringify(result),
+              transactionOptions
+            );
+            await metaplex.nfts().update({
+              nftOrSft: nft,
+              uri: `https://arweave.net/${arweaveRes.id}`,
+              authority: keypair,
+            });
+            console.log(
+              `${mintAddress} updated ==> https://arweave.net/${arweaveRes.id}`
+            );
+            // await delay(500);
+          } catch (error) {
+            console.log(`Failed: ${mintAddress} - ${error}`);
           }
-          const result = transformAttributes(data);
-          const arweaveRes = await bundlr.upload(
-            JSON.stringify(result),
-            transactionOptions
-          );
-          await metaplex.nfts().update({
-            nftOrSft: nft,
-            uri: `https://arweave.net/${arweaveRes.id}`,
-            authority: keypair,
-          });
-          Promise.resolve();
-        } catch (error) {
-          Promise.reject(error);
         }
-      });
+      };
 
-      await Promise.all(updateAll);
+      await updateAll();
 
       console.log("NFT updated successfully");
     } catch (error) {
