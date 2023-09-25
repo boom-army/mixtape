@@ -14,7 +14,7 @@
     "build": "next build && prisma generate",
     "start": "next start",
     "lint": "next lint",
-    "meta:update": "ts-node scripts/set-meta.ts updateNFT",
+    "meta:update": "ts-node scripts/set-meta.ts updateNFTs",
     "backup:prod": "bash scripts/backup-prod.sh",
     "prisma:generate": "prisma generate",
     "prisma:migrate:dev": "prisma migrate dev",

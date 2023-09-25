@@ -1,4 +1,5 @@
-import { Cluster } from "@solana/web3.js";
+import { Cluster, Keypair } from "@solana/web3.js";
+import { readFileSync } from "fs";
 
 export const ARWEAVE_PROTOCOL = "https";
 
