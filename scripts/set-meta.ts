@@ -27,7 +27,7 @@ program
   )
   .option(
     "-e, --env <string>",
-    "Solana cluster env name. One of: mainnet-beta, testnet, devnet",
+    "Solana cluster env name. One of: mainnet-beta, testnet, devnet (or URI)",
     "devnet"
   )
   .option(
@@ -44,7 +44,7 @@ program
       const seed = Uint8Array.from(keyToJSON).slice(0, 32);
       const keypair = Keypair.fromSeed(seed);
 
-      const cluster = clusterApiUrl(env);
+      const cluster = env.includes('https://') ? env : clusterApiUrl(env);
       const bundlrURI = getBundlrURI(env);
 
       const connection = new Connection(cluster, "confirmed");
@@ -106,14 +106,14 @@ program
   .command("getCreated")
   .option(
     "-e, --env <string>",
-    "Solana cluster env name. One of: mainnet-beta, testnet, devnet",
+    "Solana cluster env name. One of: mainnet-beta, testnet, devnet (or URI)",
     "devnet"
   )
   .action(async (options) => {
     try {
       const { env } = options;
 
-      const cluster = clusterApiUrl(env);
+      const cluster = env.includes('https://') ? env : clusterApiUrl(env);
 
       const connection = new Connection(cluster, "confirmed");
       const metaplex = new Metaplex(connection);
@@ -142,7 +142,7 @@ program
   .command("updateNFTs")
   .option(
     "-e, --env <string>",
-    "Solana cluster env name. One of: mainnet-beta, testnet, devnet",
+    "Solana cluster env name. One of: mainnet-beta, testnet, devnet (or URI)",
     "devnet"
   )
   .option(
@@ -161,9 +161,9 @@ program
 
       const filePath = path.join(__dirname, "data", "nfts.json");
       const file = readFileSync(filePath, "utf8");
-      const fileArray = JSON.parse(file);
+      const fileArray = JSON.parse(file);      
 
-      const cluster = clusterApiUrl(env);
+      const cluster = env.includes('https://') ? env : clusterApiUrl(env);
       const bundlrURI = getBundlrURI(env);
 
       const connection = new Connection(cluster, "confirmed");
