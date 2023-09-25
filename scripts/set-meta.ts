@@ -1,6 +1,11 @@
 import { readFileSync, writeFileSync } from "fs";
 import { program } from "commander";
-import { Metaplex, walletAdapterIdentity } from "@metaplex-foundation/js";
+import {
+  Option,
+  JsonMetadata,
+  Metaplex,
+  walletAdapterIdentity,
+} from "@metaplex-foundation/js";
 import { Connection, Keypair, PublicKey, clusterApiUrl } from "@solana/web3.js";
 import { getBundlrURI } from "./helpers";
 import path from "path";
@@ -97,7 +102,7 @@ program
     }
   });
 
-  program
+program
   .command("getCreated")
   .option(
     "-e, --env <string>",
@@ -154,7 +159,6 @@ program
       const seed = Uint8Array.from(keyToJSON).slice(0, 32);
       const keypair = Keypair.fromSeed(seed);
 
-      console.log({ key, env });
       const filePath = path.join(__dirname, "data", "nfts.json");
       const file = readFileSync(filePath, "utf8");
       const fileArray = JSON.parse(file);
@@ -167,67 +171,72 @@ program
         walletAdapterIdentity(keypair)
       );
 
-      // const bundlr = new Bundlr(bundlrURI, "solana", keyToJSON, {
-      //   providerUrl: cluster,
-      // });
-
-      const nftCollection = await metaplex.nfts().findAllByCreator({
-        creator: new PublicKey("MXTPExF3AYg6bW31ucCWHjh2wYaoDsF1Kx8jbHpD41N"),
+      const bundlr = new Bundlr(bundlrURI, "solana", keyToJSON, {
+        providerUrl: cluster,
       });
-      const mintAddresses = nftCollection.map(
-        (nft) =>
-          // @ts-ignore
-          nft.mintAddress
-      );
-      // Write to JSON file
-      writeFileSync(
-        path.join(__dirname, "data", "nfts.json"),
-        JSON.stringify(mintAddresses, null, 2)
-      );
+      const transactionOptions = {
+        tags: [{ name: "Content-Type", value: mime.lookup("json") as string }],
+      };
 
-      console.log({ nftCollection });
+      function transformAttributes(data: Option<JsonMetadata>) {
+        if (data?.track_meta) return data;
+        let updatedData = {
+          ...data,
+          track_meta: {
+            duration: data?.attributes?.find((attr) =>
+              attr?.trait_type?.includes("duration")
+            )?.value,
+            tracks: data?.attributes?.find((attr) =>
+              attr?.trait_type?.includes("tracks")
+            )?.value,
+          },
+        };
+        // Filter out attributes with a trait_type that includes "track"
+        let filteredAttributes = data?.attributes
+          ?.filter(
+            (attr) =>
+              !(
+                attr?.trait_type?.includes("track") ||
+                attr?.trait_type?.includes("duration")
+              )
+          )
+          .map((attr) => {
+            // Update "template_release_date" to "template_date"
+            if (
+              attr.trait_type === "tape_blank_release_date" ||
+              attr.trait_type === "template_release_date"
+            ) {
+              attr.trait_type = "template_date";
+            }
+            return attr;
+          });
+        updatedData.attributes = filteredAttributes;
+        return { ...updatedData };
+      }
 
-      // const updateAll = fileArray.map(async (mintAddress: string) => {});
+      const updateAll = fileArray.map(async (mintAddress: string) => {
+        try {
+          const nft = await metaplex
+            .nfts()
+            .findByMint({ mintAddress: new PublicKey(mintAddress) });
+          const data = nft.json;
+          const result = transformAttributes(data);
+          const arweaveRes = await bundlr.upload(
+            JSON.stringify(result),
+            transactionOptions
+          );
+          await metaplex.nfts().update({
+            nftOrSft: nft,
+            uri: `https://arweave.net/${arweaveRes.id}`,
+            authority: keypair,
+          });
+          Promise.resolve();
+        } catch (error) {
+          Promise.reject(error);
+        }
+      });
 
-      // await Promise.all(updateAll);
-
-      // const fileType = path.extname(filePath).slice(1);
-      // const transactionOptions = {
-      //   tags: [
-      //     { name: "Content-Type", value: mime.lookup(fileType) as string },
-      //   ],
-      // };
-
-      // // Get size of file
-      // const size = Buffer.byteLength(file);
-      // // Get cost to upload "size" bytes
-      // const price = await bundlr.getPrice(size);
-      // console.log(
-      //   `Uploading ${size} bytes costs ${bundlr.utils.fromAtomic(price)}`
-      // );
-      // // Fund the node
-      // await bundlr.fund(price);
-
-      // const arweaveRes = await bundlr.upload(file, transactionOptions);
-      // console.log(`File uploaded ==> https://arweave.net/${arweaveRes.id}`);
-
-      // const mintPubKey = new PublicKey(mintAddress);
-      // const nft = await metaplex.nfts().findByMint({ mintAddress: mintPubKey });
-
-      // if (!nft) {
-      //   throw new Error("NFT not found");
-      // }
-
-      // // const cleanMeta = {};
-      // const { response } = await metaplex.nfts().update({
-      //   nftOrSft: nft,
-      //   uri: `https://arweave.net/${arweaveRes.id}`,
-      //   authority: keypair,
-      // });
-
-      // if (!response) {
-      //   throw new Error("NFT update failed");
-      // }
+      await Promise.all(updateAll);
 
       console.log("NFT updated successfully");
     } catch (error) {
