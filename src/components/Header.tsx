@@ -68,15 +68,17 @@ export const Header: React.FC<HeaderProps> = ({ image, heading, meta }) => {
           justifyContent="center"
           sx={{ position: "relative" }}
         >
-          <Box sx={{ position: "absolute", top: "2em", left: "3em" }}>
-            <IconButton onClick={() => setShowCoverNotes(!showCoverNotes)}>
-              {showCoverNotes ? (
-                <Photo sx={{ fill: theme.palette.secondary.dark }} />
-              ) : (
-                <TextSnippet sx={{ fill: theme.palette.secondary.dark }} />
-              )}
-            </IconButton>
-          </Box>
+          {meta?.cover_notes && (
+            <Box sx={{ position: "absolute", top: "2em", left: "3em" }}>
+              <IconButton onClick={() => setShowCoverNotes(!showCoverNotes)}>
+                {showCoverNotes ? (
+                  <Photo sx={{ fill: theme.palette.secondary.dark }} />
+                ) : (
+                  <TextSnippet sx={{ fill: theme.palette.secondary.dark }} />
+                )}
+              </IconButton>
+            </Box>
+          )}
           {meta?.cover_notes && showCoverNotes ? (
             <Box
               width={360}
