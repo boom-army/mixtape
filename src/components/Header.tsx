@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import ActionLinks from "./ActionLinks";
 import { useSnackbar } from "../contexts/SnackbarProvider";
-import { Photo, TextSnippet } from "@mui/icons-material";
+import { MusicVideoOutlined, TextSnippetOutlined } from "@mui/icons-material";
 import { indieFlowerFont } from "../utils/theme";
 
 interface HeaderProps {
@@ -63,22 +63,7 @@ export const Header: React.FC<HeaderProps> = ({ image, heading, meta }) => {
   return (
     <Grid container>
       <Grid item xs={12} sm={6}>
-        <Box
-          display="flex"
-          justifyContent="center"
-          sx={{ position: "relative" }}
-        >
-          {meta?.cover_notes && (
-            <Box sx={{ position: "absolute", top: "2em", left: "3em" }}>
-              <IconButton onClick={() => setShowCoverNotes(!showCoverNotes)}>
-                {showCoverNotes ? (
-                  <Photo sx={{ fill: theme.palette.secondary.dark }} />
-                ) : (
-                  <TextSnippet sx={{ fill: theme.palette.secondary.dark }} />
-                )}
-              </IconButton>
-            </Box>
-          )}
+        <Box display="flex" justifyContent="center">
           {meta?.cover_notes && showCoverNotes ? (
             <Box
               width={360}
@@ -129,9 +114,30 @@ export const Header: React.FC<HeaderProps> = ({ image, heading, meta }) => {
           <Box>
             <Typography
               variant="h1"
-              sx={{ fontSize: { xs: "2.5rem", sm: "3.2rem" } }}
+              sx={{
+                fontSize: { xs: "2.5rem", sm: "3.2rem" },
+                position: "relative",
+              }}
+              display="inline"
             >
               {heading ?? "MixtApe"}
+              {meta?.cover_notes && (
+                <Box display="inline" sx={{ position: "absolute", top: -15 }}>
+                  <IconButton
+                    onClick={() => setShowCoverNotes(!showCoverNotes)}
+                  >
+                    {showCoverNotes ? (
+                      <MusicVideoOutlined
+                        sx={{ fill: theme.palette.secondary.dark }}
+                      />
+                    ) : (
+                      <TextSnippetOutlined
+                        sx={{ fill: theme.palette.secondary.dark }}
+                      />
+                    )}
+                  </IconButton>
+                </Box>
+              )}
             </Typography>
           </Box>
           <Box
