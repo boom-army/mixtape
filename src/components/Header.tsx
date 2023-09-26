@@ -75,20 +75,21 @@ export const Header: React.FC<HeaderProps> = ({ image, heading, meta }) => {
                 justifyContent: "center",
                 alignItems: "center",
                 flexDirection: "column",
-                gap: "1em",
-                padding: "1em",
+                gap: "1rem",
+                padding: "1rem",
                 background: `repeating-linear-gradient(white, white 24px, ${theme.palette.error.light} 25px, ${theme.palette.error.light} 26px)`,
-                paddingTop: "0.7em",
+                paddingTop: "2.3rem",
                 overflow: "hidden",
               }}
             >
               <Typography
                 sx={{
                   fontFamily: `${indieFlowerFont.style.fontFamily}, "Comic Sans MS", "Bradley Hand", "Brush Script MT", cursive;`,
-                  lineHeight: "1.5em",
+                  lineHeight: "1.62rem",
                   fontSize: "1.1rem",
                   color: "black",
-                  textAlign: "center",
+                  textAlign: "left",
+                  whiteSpace: "pre-line",
                 }}
               >
                 {meta?.cover_notes}
