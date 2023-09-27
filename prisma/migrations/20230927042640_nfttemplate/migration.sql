@@ -20,7 +20,7 @@ CREATE TABLE "NftTemplate" (
 -- Insert default rows
 INSERT INTO "NftTemplate" ("id", "name", "runtime", "price", "image", "releaseDate", "endDate", "maxQuantity", "status", "createdAt", "updatedAt")
 VALUES 
-('123e4567-e89b-12d3-a456-426614174000', 'MixtApe', 30, 0.1, '/images/mixtape-1024.png', '2023-09-27 04:45:57.757', NULL, NULL, 'active', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('123e4567-e89b-12d3-a456-426614174000', 'MixtApe', 30, 0.1, '/images/mixtape-1024.png', '2023-09-08 00:00:00', NULL, NULL, 'active', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('123e4567-e89b-12d3-a456-426614174001', 'Brite', 30, 0.1, '/images/mixtape-rainbow-1024.png', '2023-09-06 00:00:00', NULL, NULL, 'active', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('123e4567-e89b-12d3-a456-426614174002', 'Shoey', 30, 0.1337, '/images/mixtape-shoey.png', '2023-09-19 00:00:00', NULL, NULL, 'active', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('123e4567-e89b-12d3-a456-426614174003', 'SOL', 30, 0.142069, '/images/mixtape-sol-1024.png', '2023-09-06 00:00:00', NULL, NULL, 'active', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
