@@ -64,3 +64,4 @@ _static
 .sentryclirc
 
 scripts/backup-prod.sh
+prisma/*.sql
