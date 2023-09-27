@@ -29,15 +29,32 @@ model TipLink {
 }
 
 model Mint {
-  id          Int       @id @default(autoincrement())
-  mintAddress String    @unique
+  id          Int         @id @default(autoincrement())
+  mintAddress String      @unique
   nftMetadata Json
   template    Json
-  signature   String    @unique
+  signature   String      @unique
   location    Json?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  userId      String
+  user        User        @relation(fields: [userId], references: [id])
+  tipLinks    TipLink[]
+  templateId  String
+  nftTemplate NftTemplate @relation(fields: [templateId], references: [id])
+}
+
+model NftTemplate {
+  id          String    @id @default(uuid())
+  name        String
+  runtime     Int
+  price       Float
+  image       String
+  releaseDate DateTime
+  endDate     DateTime?
+  maxQuantity Int?
+  status      String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  userId      String
-  user        User      @relation(fields: [userId], references: [id])
-  tipLinks    TipLink[]
+  mints       Mint[]
 }
