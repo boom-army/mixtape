@@ -32,7 +32,6 @@ model Mint {
   id          Int         @id @default(autoincrement())
   mintAddress String      @unique
   nftMetadata Json
-  template    Json
   signature   String      @unique
   location    Json?
   createdAt   DateTime    @default(now())

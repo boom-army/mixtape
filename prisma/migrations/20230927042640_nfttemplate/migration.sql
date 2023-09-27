@@ -40,4 +40,5 @@ ALTER TABLE "Mint" ALTER COLUMN "templateId" SET NOT NULL;
 -- AddForeignKey
 ALTER TABLE "Mint" ADD CONSTRAINT "Mint_templateId_fkey" FOREIGN KEY ("templateId") REFERENCES "NftTemplate"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
-
+-- Drop template column
+ALTER TABLE "Mint" DROP COLUMN "template";
