@@ -51,7 +51,7 @@ model NftTemplate {
   image       String
   releaseDate DateTime
   endDate     DateTime?
-  maxQuantity Int?
+  maxSupply   Int?
   status      String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
