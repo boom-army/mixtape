@@ -1,34 +1,14 @@
-export const NftTemplates = {
-  // MIXTAPE: {
-  //   name: "MixtApe",
-  //   runtime: 30,
-  //   price: 0.1,
-  //   image: "/images/mixtape-ape-1024.png",
-  //   releaseDate: "2023-09-08",
-  // },
-  BRITE: {
-    name: "Brite",
-    runtime: 30,
-    price: 0.1,
-    image: "/images/mixtape-rainbow-1024.png",
-    releaseDate: "2023-09-06",
-  },
-  SHOEY: {
-    name: "Shoey",
-    runtime: 30,
-    price: 0.1337,
-    image: "/images/mixtape-shoey.png",
-    releaseDate: "2023-09-19",
-  },
-  BTC: {
-    name: "SOL",
-    runtime: 30,
-    price: 0.142069,
-    image: "/images/mixtape-sol-1024.png",
-    releaseDate: "2023-09-06",
-  },
+export type NftTemplate = {
+  id: string;
+  name: string;
+  runtime: number;
+  price: number;
+  image: string;
+  releaseDate: string;
+  endDate?: string;
+  maxSupply?: number;
+  status?: string;
 };
-export type NftTemplate = (typeof NftTemplates)[keyof typeof NftTemplates];
 
 export type Track = {
   id: string;

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import TapeGallery from "../components/TapeGallery";
 import { Button, CircularProgress, Stack, TextField } from "@mui/material";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { Attribute, NftTemplates } from "../types/nftTemplates";
+import { Attribute } from "../types/nftTemplates";
 import { toPng } from "html-to-image";
 import { PublicKey } from "@solana/web3.js";
 import { MetaplexContext } from "../contexts/MetaplexProvider";

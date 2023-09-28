@@ -1,24 +1,18 @@
-import prisma from "../../../lib/prisma";
 import {
   Metaplex,
   walletAdapterIdentity,
   bundlrStorage,
   toMetaplexFile,
-  Metadata,
-  Creator,
 } from "@metaplex-foundation/js";
 import { Connection, Keypair, PublicKey } from "@solana/web3.js";
-import { MIXTAPE_COLLECTION } from "../../utils/nft";
 import { NextApiRequest, NextApiResponse } from "next";
-import { toPng } from "html-to-image";
-import { Mixtape, NftTemplate, NftTemplates } from "../../types/nftTemplates";
-import { compact, findKey, values } from "lodash";
-import { TokenStandard } from "@metaplex-foundation/mpl-token-metadata";
+import { compact, values } from "lodash";
 
 // Initialize connection
-const connection = new Connection("https://api.mainnet-beta.solana.com");
+const connection = new Connection(process.env.NEXT_PUBLIC_SOLANA_NETWORK!, "confirmed");
 
 const update = async (req: NextApiRequest, res: NextApiResponse) => {
+  return res.status(404).json({ message: "Not found" });
   if (req.method === "POST") {
     const { mintAddress, password, image, fetchedMeta } = req.body;
     const errors = {
