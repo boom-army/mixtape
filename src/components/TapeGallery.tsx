@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Card,
@@ -9,8 +9,9 @@ import {
   styled,
 } from "@mui/material";
 import { handjetFont } from "../utils/theme";
-import { NftTemplates } from "../types/nftTemplates";
 import { map } from "lodash";
+import { useRecoilState } from "recoil";
+import { activeNFTTemplates } from "../state";
 
 const TapeText = styled(Typography)(({ theme }) => ({
   color: theme.palette.primary.main,
@@ -41,23 +42,42 @@ const TapeGallery: React.FC<GalleryItems> = ({
   selectedTape,
   setSelectedTape,
 }) => {
+  const [nftTemplates, setNftTemplates] = useRecoilState(activeNFTTemplates);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("/api/nft-templates");
+        if (!response.ok) {
+          return;
+        }
+        const { nftTemplates } = await response.json();
+        setNftTemplates(nftTemplates);
+        setSelectedTape(nftTemplates[0].id);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <Grid container spacing={2} mb={4}>
-      {map(NftTemplates, (item, key) => (
-        <Grid item key={key}>
+      {map(nftTemplates, (item) => (
+        <Grid item key={item.id}>
           <Card
             sx={{
               width: 250,
               cursor: "pointer",
-              border: selectedTape === key ? "5px solid black" : "none",
+              border: selectedTape === item.id ? "5px solid black" : "none",
             }}
-            onClick={() => setSelectedTape(key)}
+            onClick={() => setSelectedTape(item.id)}
           >
             <Box
               sx={{ width: "100%", paddingTop: "100%", position: "relative" }}
             >
               <Box
-                id={key}
+                id={item.id}
                 sx={{
                   position: "absolute",
                   top: 0,
@@ -74,7 +94,9 @@ const TapeGallery: React.FC<GalleryItems> = ({
                   image={item.image}
                   sx={{ objectFit: "contain", backgroundColor: "transparent" }}
                 />
-                {selectedTape === key && <TapeText>{mixtapeTitle}</TapeText>}
+                {selectedTape === item.id && (
+                  <TapeText>{mixtapeTitle}</TapeText>
+                )}
               </Box>
             </Box>
             <CardContent>

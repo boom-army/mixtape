@@ -28,11 +28,13 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import HelpIcon from "@mui/icons-material/Help";
 import { useSnackbar } from "../contexts/SnackbarProvider";
 import { nftMetaTemplate } from "../utils/nft";
-import { NftTemplates } from "../types/nftTemplates";
 import { useMintNFT } from "../hooks/useMintNFT";
 import router from "next/router";
 import { isEmpty } from "lodash";
 import { ExpandMore } from "@mui/icons-material";
+import { useRecoilValue } from "recoil";
+import { activeNFTTemplates } from "../state";
+import dayjs from "dayjs";
 
 const PASSWORD = "HYPERVIBES";
 
@@ -128,6 +130,8 @@ const Create: React.FC = () => {
   const [totalDuration, setTotalDuration] = useState(0);
   const [tracklist, setTracklist] = useState<TrackMeta[]>([]);
   const [selectedTape, setSelectedTape] = useState<string | null>();
+
+  const nftTemplates = useRecoilValue(activeNFTTemplates);
 
   const { connected } = useWallet();
   const { enqueueSnackbar } = useSnackbar();
@@ -300,7 +304,9 @@ const Create: React.FC = () => {
   const handleMint = async () => {
     const tapeElement = selectedTape && document.getElementById(selectedTape);
     if (!tapeElement) throw new Error("Tape not selected");
-    const template = NftTemplates[selectedTape as keyof typeof NftTemplates];
+    const template = nftTemplates?.find((t) => t.id === selectedTape);
+    if (!template) throw new Error("Template not found");
+    
     const nftImageBlob = await toPng(tapeElement, {
       canvasWidth: 1024,
       canvasHeight: 1024,
@@ -316,12 +322,14 @@ const Create: React.FC = () => {
     };
     nftMetadata.attributes = [
       ...(nftMetadata.attributes || []),
-      { trait_type: "template_date", value: template.releaseDate },
+      { trait_type: "template_date", value: dayjs(template.releaseDate).format('DD MMM YY') },
       { trait_type: "mint_price", value: template.price.toString() },
       {
         trait_type: "tape_blank",
         value: `${template.name} - C${template.runtime}`,
       },
+      ...(template.maxSupply ? [{ trait_type: "supply", value: String(template.maxSupply) }] : []),
+      ...(template.endDate ? [{ trait_type: "template_end_date", value: dayjs(template.endDate).format('DD MMM YY') }] : []),
     ];
 
     const mint = await mintNFT({

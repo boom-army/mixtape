@@ -152,10 +152,10 @@ const mint: NextApiHandler = async (req, res) => {
       data: {
         mintAddress,
         nftMetadata: JSON.parse(JSON.stringify(nftMetadata)),
-        template: template,
         signature: signature,
         // location,
         userId: user.id,
+        templateId: template.id,
       },
     });
 
