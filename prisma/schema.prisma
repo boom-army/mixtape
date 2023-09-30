@@ -52,7 +52,7 @@ model NftTemplate {
   releaseDate DateTime
   endDate     DateTime?
   maxSupply   Int?
-  status      String
+  status      String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   mints       Mint[]
