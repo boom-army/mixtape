@@ -2,6 +2,7 @@ import {
   Card,
   CardContent,
   CardMedia,
+  CircularProgress,
   Grid,
   Typography,
   useTheme,
@@ -14,14 +15,21 @@ interface TrackCardProps {
 
 const TrackCards: React.FC<TrackCardProps> = ({ latestTracks }) => {
   const theme = useTheme();
-  
+
   return (
     <Grid container mb={4}>
       <Grid item xs={12}>
-        <h3>Latest degen mixes:</h3>
+        <h3>Latest mixes: {!latestTracks && <CircularProgress size={12} />}</h3>
       </Grid>
       {latestTracks.map((track: any) => (
-        <Grid item xs={12} sm={6} md={3} key={`track-${track.mint}`} sx={{ p: 1 }}>
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          md={3}
+          key={`track-${track.mint}`}
+          sx={{ p: 1 }}
+        >
           <Link href={`/sol/${track.mint}`}>
             <Card
               variant="outlined"
