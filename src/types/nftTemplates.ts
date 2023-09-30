@@ -9,6 +9,7 @@ export type NftTemplate = {
   maxSupply?: number;
   status?: string;
   mintCount?: number;
+  isExpired?: boolean;
 };
 
 export type Track = {

@@ -65,6 +65,7 @@ const theme = createTheme({
     },
     secondary: {
       main: "#ccc",
+      dark: "#777",
     },
     error: {
       main: red[700],

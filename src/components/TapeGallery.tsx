@@ -1,34 +1,10 @@
-import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Card,
-  CardContent,
-  CardMedia,
-  Grid,
-  Typography,
-  styled,
-} from "@mui/material";
-import { handjetFont } from "../utils/theme";
+import React, { useEffect } from "react";
+import { Grid } from "@mui/material";
 import { map } from "lodash";
 import { useRecoilState } from "recoil";
 import { activeNFTTemplates } from "../state";
-import dayjs from "dayjs";
-
-const TapeText = styled(Typography)(({ theme }) => ({
-  color: theme.palette.primary.main,
-  fontFamily: `${handjetFont.style.fontFamily}, "Courier New", "Consolas", "Monaco", monospace;`,
-  fontSize: "14px",
-  top: "78px",
-  left: "50%",
-  lineHeight: "12px",
-  position: "absolute",
-  width: "59%",
-  wordBreak: "break-word",
-  overflow: "hidden",
-  maxHeight: "34px",
-  textAlign: "center",
-  transform: "translate(-50%, -50%)",
-}));
+import { NftTemplate } from "../types/nftTemplates";
+import { TapeGalleryItem } from "./TapeGalleryItem";
 
 interface GalleryItems {
   mixtapeTitle: string;
@@ -55,7 +31,12 @@ const TapeGallery: React.FC<GalleryItems> = ({
         const { nftTemplates } = await response.json();
         console.log(nftTemplates);
         setNftTemplates(nftTemplates);
-        setSelectedTape(nftTemplates[0].id);
+        const firstNonExpiredTape = nftTemplates.find(
+          (tape: NftTemplate) => !tape.isExpired
+        );
+        if (firstNonExpiredTape) {
+          setSelectedTape(firstNonExpiredTape.id);
+        }
       } catch (error) {
         console.error("Failed to fetch data:", error);
       }
@@ -66,65 +47,12 @@ const TapeGallery: React.FC<GalleryItems> = ({
   return (
     <Grid container spacing={2} mb={4}>
       {map(nftTemplates, (item) => (
-        <Grid item key={item.id}>
-          <Card
-            sx={{
-              width: 250,
-              cursor: "pointer",
-              border: selectedTape === item.id ? "5px solid black" : "none",
-            }}
-            onClick={() => setSelectedTape(item.id)}
-          >
-            <Box
-              sx={{ width: "100%", paddingTop: "100%", position: "relative" }}
-            >
-              <Box sx={{ position: "absolute", top: 0 }} p={2}>
-                {item.endDate && (
-                  <Typography
-                    variant="body2"
-                    sx={{ fontWeight: 100 }}
-                  >{`minting until: ${dayjs(item.endDate).format(
-                    "h:mm A, MMM D, YY"
-                  )}`}</Typography>
-                )}
-                {item.maxSupply && (
-                  <Typography
-                    variant="body2"
-                    sx={{ fontWeight: 100 }}
-                  >{`supply remaining: ${
-                    item.maxSupply - (item.mintCount || 0)
-                  }/${item.maxSupply}`}</Typography>
-                )}
-              </Box>
-              <Box
-                id={item.id}
-                sx={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  backgroundColor: "transparent",
-                }}
-              >
-                <CardMedia
-                  component="img"
-                  alt={item.name}
-                  height="100%"
-                  image={item.image}
-                  sx={{ objectFit: "contain", backgroundColor: "transparent" }}
-                />
-                {selectedTape === item.id && (
-                  <TapeText>{mixtapeTitle}</TapeText>
-                )}
-              </Box>
-            </Box>
-            <CardContent>
-              <Typography variant="h5">{`${item.name} - C${item.runtime}`}</Typography>
-              <Typography variant="body2">{`mint: ⦾${item.price}`}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+        <TapeGalleryItem
+          item={item}
+          mixtapeTitle={mixtapeTitle}
+          selectedTape={selectedTape}
+          setSelectedTape={setSelectedTape}
+        />
       ))}
     </Grid>
   );
