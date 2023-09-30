@@ -10,9 +10,19 @@ export default async function activeTemplates(
       where: {
         status: 'active',
       },
+      include: {
+        mints: true,
+      },
+    });
+    const nftTemplatesWithMintCount = nftTemplates.map(template => {
+      const { mints, ...rest } = template;
+      return {
+        ...rest,
+        mintCount: mints.length,
+      };
     });
 
-    res.status(200).json({ nftTemplates });
+    res.status(200).json({ nftTemplates: nftTemplatesWithMintCount });
   } else {
     res.status(405).json({ message: 'Method not allowed' });
   }

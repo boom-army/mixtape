@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Card,
@@ -12,6 +12,7 @@ import { handjetFont } from "../utils/theme";
 import { map } from "lodash";
 import { useRecoilState } from "recoil";
 import { activeNFTTemplates } from "../state";
+import dayjs from "dayjs";
 
 const TapeText = styled(Typography)(({ theme }) => ({
   color: theme.palette.primary.main,
@@ -52,6 +53,7 @@ const TapeGallery: React.FC<GalleryItems> = ({
           return;
         }
         const { nftTemplates } = await response.json();
+        console.log(nftTemplates);
         setNftTemplates(nftTemplates);
         setSelectedTape(nftTemplates[0].id);
       } catch (error) {
@@ -76,6 +78,24 @@ const TapeGallery: React.FC<GalleryItems> = ({
             <Box
               sx={{ width: "100%", paddingTop: "100%", position: "relative" }}
             >
+              <Box sx={{ position: "absolute", top: 0 }} p={2}>
+                {item.endDate && (
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: 100 }}
+                  >{`minting until: ${dayjs(item.endDate).format(
+                    "h:mm A, MMM D, YY"
+                  )}`}</Typography>
+                )}
+                {item.maxSupply && (
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: 100 }}
+                  >{`supply remaining: ${
+                    item.maxSupply - (item.mintCount || 0)
+                  }/${item.maxSupply}`}</Typography>
+                )}
+              </Box>
               <Box
                 id={item.id}
                 sx={{
