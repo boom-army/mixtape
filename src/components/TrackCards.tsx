@@ -17,7 +17,7 @@ const TrackCards: React.FC<TrackCardProps> = ({ latestTracks }) => {
   const theme = useTheme();
 
   return (
-    <Grid container mb={4}>
+    <Grid container mb={4} mt={1}>
       <Grid item xs={12}>
         <h3>Latest mixes: {!latestTracks && <CircularProgress size={12} />}</h3>
       </Grid>
@@ -28,7 +28,7 @@ const TrackCards: React.FC<TrackCardProps> = ({ latestTracks }) => {
           sm={6}
           md={3}
           key={`track-${track.mint}`}
-          sx={{ p: 1 }}
+          sx={{ pb: 1 }}
         >
           <Link href={`/sol/${track.mint}`}>
             <Card
@@ -61,11 +61,7 @@ const TrackCards: React.FC<TrackCardProps> = ({ latestTracks }) => {
                   <CardMedia
                     component="img"
                     sx={{ height: "80px", width: "80px", objectFit: "contain" }}
-                    image={
-                      track.meta.properties.files[0]
-                        ? track.meta.properties.files[0].uri
-                        : track.image
-                    }
+                    image={track.meta.properties.files[0]?.uri || track.image || "/images/mixtape-1024.png"}
                     alt={track.title}
                   />
                 </Grid>
