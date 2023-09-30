@@ -29,7 +29,6 @@ const TapeGallery: React.FC<GalleryItems> = ({
           return;
         }
         const { nftTemplates } = await response.json();
-        console.log(nftTemplates);
         setNftTemplates(nftTemplates);
         const firstNonExpiredTape = nftTemplates.find(
           (tape: NftTemplate) => !tape.isExpired
