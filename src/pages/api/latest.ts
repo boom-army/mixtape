@@ -11,10 +11,14 @@ export default async function latest(
       orderBy: {
         id: "desc",
       },
+      include: {
+        nftTemplate: true,
+      },
     });
+    
     const latestTracks = latestMints.map((mint) => ({
       mint: mint.mintAddress,
-      image: (mint.template as any)?.image,
+      image: mint.nftTemplate.image,
       meta: mint.nftMetadata,
     }));
     res.status(200).json({ latestTracks });
