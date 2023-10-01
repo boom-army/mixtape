@@ -1,7 +1,5 @@
-import React, { ReactNode, useEffect, useState } from "react";
-import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
-import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
-import CloseIcon from "@mui/icons-material/Close";
+import React, { useEffect, useState } from "react";
+import { DndContext } from "@dnd-kit/core";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import { toPng } from "html-to-image";
 import {
@@ -9,9 +7,6 @@ import {
   Button,
   TextField,
   Typography,
-  List,
-  ListItem,
-  useTheme,
   Tooltip,
   IconButton,
   Modal,
@@ -35,85 +30,9 @@ import { ExpandMore } from "@mui/icons-material";
 import { useRecoilValue } from "recoil";
 import { activeNFTTemplates } from "../state";
 import dayjs from "dayjs";
+import { DroppableArea, DraggableItem } from "../components/CreateDragDrop";
 
 const PASSWORD = "HYPERVIBES";
-
-interface DraggableItemProps {
-  id: string;
-  children: ReactNode;
-  onRemove: (id: string) => void;
-  trackError?: boolean;
-}
-
-const DraggableItem: React.FC<DraggableItemProps> = ({
-  id,
-  children,
-  onRemove,
-  trackError,
-}) => {
-  const [isCloseHovered, setCloseHovered] = useState(false);
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id,
-    disabled: isCloseHovered,
-  });
-  const theme = useTheme();
-
-  const style = transform
-    ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        cursor: "grabbing",
-        display: "flex",
-        alignItems: "center",
-      }
-    : {
-        cursor: "grab",
-        display: "flex",
-        alignItems: "center",
-      };
-
-  return (
-    <ListItem
-      ref={setNodeRef}
-      sx={{
-        backgroundColor: trackError ? theme.palette.error.light : "inherit",
-        ...style,
-      }}
-      {...listeners}
-      {...attributes}
-    >
-      <DragIndicatorIcon
-        style={{ marginRight: "0.25em", fill: theme.palette.secondary.dark }}
-      />{" "}
-      {children}
-      <CloseIcon
-        sx={{ marginLeft: "auto", cursor: "pointer" }}
-        onClick={() => onRemove(id)}
-        onMouseEnter={() => setCloseHovered(true)}
-        onMouseLeave={() => setCloseHovered(false)}
-      />
-    </ListItem>
-  );
-};
-
-interface DroppableAreaProps {
-  children: ReactNode;
-}
-
-const DroppableArea: React.FC<DroppableAreaProps> = ({ children }) => {
-  const theme = useTheme();
-  const { isOver, setNodeRef } = useDroppable({
-    id: "tracklist",
-  });
-  const style = {
-    backgroundColor: isOver ? theme.palette.secondary.main : undefined,
-  };
-
-  return (
-    <List ref={setNodeRef} sx={style}>
-      {children}
-    </List>
-  );
-};
 
 const Create: React.FC = () => {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -189,7 +108,7 @@ const Create: React.FC = () => {
       (total, track) => total + (track.lengthSeconds || 0),
       0
     );
-    setTotalDuration(newTotalDuration);
+    setTotalDuration(newTotalDuration);    
     // setLastTrackError(newTotalDuration > 1800);
   }, [tracklist]);
 
@@ -297,6 +216,14 @@ const Create: React.FC = () => {
     }
   };
 
+  const handleEdit = (id: string, newTitle: string) => {
+    setTracklist((prevTracklist) =>
+      prevTracklist.map((track) =>
+        track.id === id ? { ...track, title: newTitle } : track
+      )
+    );
+  };
+
   const handleRemoveTrack = (id: string) => {
     setTracklist((prev) => prev.filter((track) => track.id !== id));
   };
@@ -306,7 +233,7 @@ const Create: React.FC = () => {
     if (!tapeElement) throw new Error("Tape not selected");
     const template = nftTemplates?.find((t) => t.id === selectedTape);
     if (!template) throw new Error("Template not found");
-    
+
     const nftImageBlob = await toPng(tapeElement, {
       canvasWidth: 1024,
       canvasHeight: 1024,
@@ -322,14 +249,26 @@ const Create: React.FC = () => {
     };
     nftMetadata.attributes = [
       ...(nftMetadata.attributes || []),
-      { trait_type: "template_date", value: dayjs(template.releaseDate).format('DD MMM YY') },
+      {
+        trait_type: "template_date",
+        value: dayjs(template.releaseDate).format("DD MMM YY"),
+      },
       { trait_type: "mint_price", value: template.price.toString() },
       {
         trait_type: "tape_blank",
         value: `${template.name} - C${template.runtime}`,
       },
-      ...(template.maxSupply ? [{ trait_type: "supply", value: String(template.maxSupply) }] : []),
-      ...(template.endDate ? [{ trait_type: "template_end_date", value: dayjs(template.endDate).format('DD MMM YY') }] : []),
+      ...(template.maxSupply
+        ? [{ trait_type: "supply", value: String(template.maxSupply) }]
+        : []),
+      ...(template.endDate
+        ? [
+            {
+              trait_type: "template_end_date",
+              value: dayjs(template.endDate).format("DD MMM YY"),
+            },
+          ]
+        : []),
     ];
 
     const mint = await mintNFT({
@@ -451,26 +390,11 @@ const Create: React.FC = () => {
             <DraggableItem
               key={index}
               id={track.id}
+              track={track}
               onRemove={handleRemoveTrack}
+              onEdit={handleEdit}
               trackError={lastTrackError}
-            >
-              {track.title ? (
-                <>
-                  <Typography sx={{ fontWeight: 700 }}>
-                    {track.title}
-                  </Typography>
-                  &nbsp;
-                  <Typography variant="body1">
-                    ({formatDuration(track.lengthSeconds)})
-                  </Typography>
-                </>
-              ) : (
-                <>
-                  <CircularProgress size={20} sx={{ mr: 1 }} />
-                  {track.id}
-                </>
-              )}
-            </DraggableItem>
+            />
           ))}
         </DroppableArea>
       </DndContext>

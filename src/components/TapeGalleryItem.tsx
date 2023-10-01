@@ -10,9 +10,10 @@ import {
 } from "@mui/material";
 import { handjetFont } from "../utils/theme";
 import dayjs from "dayjs";
+import { NftTemplate } from "../types/nftTemplates";
 
 interface GalleryItem {
-  item: any;
+  item: NftTemplate;
   mixtapeTitle: string;
   selectedTape: string | null | undefined;
   setSelectedTape: React.Dispatch<
