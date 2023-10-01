@@ -63,6 +63,7 @@ export const TapeGalleryItem: React.FC<GalleryItem> = ({
           const countdownString = `${Math.floor(totalDays)}d ${duration.hours()}h ${duration.minutes()}m ${duration.seconds()}s`;
           setCountdown(`Mint closes in ${countdownString}`);
         } else {
+          item.isExpired = true;
           setCountdown("Minting closed");
         }
       }
