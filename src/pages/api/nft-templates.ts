@@ -17,7 +17,9 @@ export default async function activeTemplates(
     });
     const nftTemplatesWithMintCount = nftTemplates.map((template) => {
       const { mints, ...rest } = template;
-      const isExpired = dayjs().isAfter(dayjs(rest.endDate));
+      const isExpired =
+        dayjs().isAfter(dayjs(rest.endDate)) ||
+        (template.maxSupply !== null && mints.length >= template.maxSupply);
       return {
         ...rest,
         mintCount: mints.length,
