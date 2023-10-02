@@ -8,7 +8,7 @@ export default async function createTiplink(
   if (req.method === "POST") {
     const { userId, mintAddress, tipLink, signature } = req.body;
 
-    const mintData = await prisma.mint.findUnique({
+    const mintData = await prisma.mint.findFirst({
       where: {
         mintAddress: mintAddress,
       }
