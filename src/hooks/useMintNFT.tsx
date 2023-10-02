@@ -50,7 +50,7 @@ export const useMintNFT = () => {
         const signature = await connection.sendRawTransaction(
           signedTransaction.serialize()
         );
-        await connection.confirmTransaction(signature, "singleGossip");
+        await connection.confirmTransaction(signature, "finalized");
 
         // const locReq = await fetch("https://www.cloudflare.com/cdn-cgi/trace", {
         //   method: "GET",
