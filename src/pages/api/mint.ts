@@ -122,25 +122,31 @@ const mint: NextApiHandler = async (req, res) => {
     const metaName = lastMint ? `MixtApe #${lastMint.id + 1}` : `MixtApe`;
     nftMetadata.name = metaName;
 
-    const metadata = await metaplex?.nfts().uploadMetadata({
-      ...nftMetadata,
-      image: imageAddress + `?ext=${imageType}`,
-      type: imageType,
-      payer: mintKeys.publicKey,
-    });
+    const metadata = await metaplex?.nfts().uploadMetadata(
+      {
+        ...nftMetadata,
+        image: imageAddress + `?ext=${imageType}`,
+        type: imageType,
+        payer: mintKeys.publicKey,
+      },
+      { commitment: "finalized" }
+    );
     if (!metadata) throw new Error("Metadata upload failed");
 
-    const transaction = await metaplex?.nfts().create({
-      updateAuthority: mintKeys,
-      tokenOwner: senderAddress,
-      uri: metadata.uri,
-      symbol: nftMetadata.symbol as string,
-      name: nftMetadata.name as string,
-      sellerFeeBasisPoints: nftMetadata.seller_fee_basis_points as number,
-      collection: MIXTAPE_COLLECTION,
-      collectionAuthority: mintKeys,
-      tokenStandard: TokenStandard.ProgrammableNonFungible,
-    });
+    const transaction = await metaplex?.nfts().create(
+      {
+        updateAuthority: mintKeys,
+        tokenOwner: senderAddress,
+        uri: metadata.uri,
+        symbol: nftMetadata.symbol as string,
+        name: nftMetadata.name as string,
+        sellerFeeBasisPoints: nftMetadata.seller_fee_basis_points as number,
+        collection: MIXTAPE_COLLECTION,
+        collectionAuthority: mintKeys,
+        tokenStandard: TokenStandard.ProgrammableNonFungible,
+      },
+      { commitment: "finalized" }
+    );
 
     if (transaction.response.confirmResponse.value.err) {
       return res.status(400).json({ error: "Minting failed" });
