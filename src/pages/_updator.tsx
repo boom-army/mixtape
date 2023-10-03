@@ -2,12 +2,9 @@ import React, { useContext, useEffect, useState } from "react";
 import TapeGallery from "../components/TapeGallery";
 import { Button, CircularProgress, Stack, TextField } from "@mui/material";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { Attribute } from "../types/nftTemplates";
 import { toPng } from "html-to-image";
 import { PublicKey } from "@solana/web3.js";
 import { MetaplexContext } from "../contexts/MetaplexProvider";
-import { map } from "lodash";
-import { formatDuration, fromYouTubeURL } from "../utils/tracks";
 import { Sft, SftWithToken, Nft, NftWithToken } from "@metaplex-foundation/js";
 
 const UpdateNFT = () => {
@@ -37,69 +34,49 @@ const UpdateNFT = () => {
 
         if (fetchedMetadata.json) {
           fetchedMetadata.json.description = mixtapeTitle;
+          // fetchedMetadata.json.tracks = fetchedMetadata.json.tracks || [];
+          fetchedMetadata.json.track_meta = {
+            // @ts-ignore
+            cover_notes: fetchedMetadata.json.track_meta?.cover_notes || "",
+          };
+          fetchedMetadata.json.attributes =
+            fetchedMetadata.json.attributes || [];
           if (fetchedMetadata.json.attributes) {
             fetchedMetadata.json.attributes =
               fetchedMetadata.json.attributes.filter(
-                (attribute) => !attribute?.trait_type?.includes("track")
+                (attribute) =>
+                  !attribute?.trait_type?.includes("track") &&
+                  !attribute?.trait_type?.includes("duration")
               );
           }
-          if (fetchedMetadata.json.tracks) {
-            fetchedMetadata.json.tracks = await Promise.all(
-              map(fetchedMetadata.json.tracks, async (track: TrackMeta) => {
-                let videoId: string;
-                try {
-                  videoId = fromYouTubeURL(track.id);
-                } catch (error) {
-                  console.error(`Invalid YouTube URL: ${track.id}`);
-                  return track;
-                }
-                const response = await fetch(
-                  `/api/trackmeta?urls=${encodeURIComponent(track.id)}`
-                );
-                if (!response.ok) {
-                  throw new Error(
-                    "Failed to load track meta. Remove and add the track to try again."
-                  );
-                }
-                const data = await response.json();
-                const meta = data[0];
-                const trackIndex: any =
-                  (fetchedMetadata?.json?.tracks as TrackMeta[])?.indexOf(
-                    track
-                  ) + 1;
-                fetchedMetadata?.json?.attributes?.push({
-                  trait_type: `track_${trackIndex}`,
-                  value: meta.title,
-                });
-                return {
-                  id: meta.id || videoId,
-                  title: meta.title,
-                  lengthSeconds: meta.lengthSeconds,
-                };
-              })
-            );
-            const newTotalDuration = (
-              fetchedMetadata.json.tracks as { lengthSeconds: number }[]
-            ).reduce((total, track) => total + (track.lengthSeconds || 0), 0);
-            const formattedDuration = formatDuration(newTotalDuration);
-            const durationAttributeIndex =
-              fetchedMetadata?.json?.attributes?.findIndex(
-                (attribute) => attribute.trait_type === "duration"
-              );
-            if (
-              durationAttributeIndex !== undefined &&
-              durationAttributeIndex !== -1
-            ) {
-              (fetchedMetadata?.json?.attributes as Attribute[])[
-                durationAttributeIndex
-              ].value = formattedDuration;
-            } else if (fetchedMetadata?.json?.attributes) {
-              fetchedMetadata.json.attributes.push({
-                trait_type: "duration",
-                value: formattedDuration,
-              });
-            }
-          }
+          // if (fetchedMetadata.json.tracks) {
+          //   fetchedMetadata.json.tracks = await Promise.all(
+          //     map(fetchedMetadata.json.tracks, async (track: TrackMeta) => {
+          //       let videoId: string;
+          //       try {
+          //         videoId = fromYouTubeURL(track.id);
+          //       } catch (error) {
+          //         console.error(`Invalid YouTube URL: ${track.id}`);
+          //         return track;
+          //       }
+          //       const response = await fetch(
+          //         `/api/trackmeta?urls=${encodeURIComponent(track.id)}`
+          //       );
+          //       if (!response.ok) {
+          //         throw new Error(
+          //           "Failed to load track meta. Remove and add the track to try again."
+          //         );
+          //       }
+          //       const data = await response.json();
+          //       const meta = data[0];
+          //       return {
+          //         id: meta.id || videoId,
+          //         title: meta.title,
+          //         lengthSeconds: meta.lengthSeconds,
+          //       };
+          //     })
+          //   );
+          // }
         }
         console.log(fetchedMetadata);
         setFetchedMeta(fetchedMetadata);

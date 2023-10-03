@@ -241,7 +241,6 @@ const Create: React.FC = () => {
     });
 
     const nftMetadata = nftMetaTemplate();
-    nftMetadata.name = "Mixtape NFT";
     nftMetadata.description = mixtapeTitle;
     nftMetadata.tracks = tracklist;
     nftMetadata.track_meta = {

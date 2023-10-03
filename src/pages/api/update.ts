@@ -16,10 +16,10 @@ const update = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
     const { mintAddress, password, image, fetchedMeta } = req.body;
     const errors = {
-      password:
-        password !== "G1p59D3CScwE9r31RNFsGm3q5xZapt6EXHmtHV7Jq5AS"
-          ? "Invalid password"
-          : null,
+      // password:
+      //   password !== "G1p59D3CScwE9r31RNFsGm3q5xZapt6EXHmtHV7Jq5AS"
+      //     ? "Invalid password"
+      //     : null,
       mintAddress: !mintAddress ? "Mint address is required" : null,
       image: !image ? "Image is required" : null,
       fetchedMeta: !fetchedMeta ? "Metadata is required" : null,
