@@ -12,6 +12,9 @@ import { handjetFont } from "../utils/theme";
 import dayjs from "dayjs";
 import { NftTemplate } from "../types/nftTemplates";
 
+import duration from "dayjs/plugin/duration";
+dayjs.extend(duration);
+
 interface GalleryItem {
   item: NftTemplate;
   mixtapeTitle: string;
