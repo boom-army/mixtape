@@ -108,7 +108,7 @@ const Create: React.FC = () => {
       (total, track) => total + (track.lengthSeconds || 0),
       0
     );
-    setTotalDuration(newTotalDuration);    
+    setTotalDuration(newTotalDuration);
     // setLastTrackError(newTotalDuration > 1800);
   }, [tracklist]);
 
