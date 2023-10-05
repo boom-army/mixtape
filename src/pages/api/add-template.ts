@@ -5,7 +5,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     const { name, runtime, price, image, releaseDate, endDate, maxSupply, status, password } = req.body;
 
-    if (password !== "storeroom-utopia-path-cardboard") {
+    if (password !== process.env.NEXT_ADMIN_PASSWORD) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
@@ -28,7 +28,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(500).json({ error: "Failed to create NFT template", details: error instanceof Error ? error.message : "Unknown error" });
     }
   } else {
-    return res.status(405).json({ error: "Method not allowed. Please use POST" });
+    return res.status(405).json({ error: "Method not allowed." });
   }
 };
 

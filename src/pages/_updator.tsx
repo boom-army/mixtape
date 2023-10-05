@@ -92,13 +92,13 @@ const UpdateNFT = () => {
     if (!mixtapeTitle) throw new Error("Mixtape title not set");
     const tapeElement = selectedTape && document.getElementById(selectedTape);
     if (!tapeElement) throw new Error("Tape not selected");
-    const image = await toPng(tapeElement, {
-      canvasWidth: 1024,
-      canvasHeight: 1024,
-      backgroundColor: "transparent",
-    });
 
     try {
+      const image = await toPng(tapeElement, {
+        canvasWidth: 1024,
+        canvasHeight: 1024,
+        backgroundColor: "transparent",
+      });
       const response = await fetch("/api/update", {
         method: "POST",
         headers: {

@@ -31,6 +31,7 @@ import { useRecoilValue } from "recoil";
 import { activeNFTTemplates } from "../state";
 import dayjs from "dayjs";
 import { DroppableArea, DraggableItem } from "../components/CreateDragDrop";
+import { handleNFTError } from "../utils";
 
 const PASSWORD = "HYPERVIBES";
 
@@ -234,11 +235,17 @@ const Create: React.FC = () => {
     const template = nftTemplates?.find((t) => t.id === selectedTape);
     if (!template) throw new Error("Template not found");
 
-    const nftImageBlob = await toPng(tapeElement, {
-      canvasWidth: 1024,
-      canvasHeight: 1024,
-      backgroundColor: "transparent",
-    });
+    let nftImageBlob;
+
+    try {
+      nftImageBlob = await toPng(tapeElement, {
+        canvasWidth: 1024,
+        canvasHeight: 1024,
+        backgroundColor: "transparent",
+      });
+    } catch (error) {
+      handleNFTError(error);
+    }
 
     const nftMetadata = nftMetaTemplate();
     nftMetadata.description = mixtapeTitle;
@@ -270,11 +277,16 @@ const Create: React.FC = () => {
         : []),
     ];
 
+    if (!nftImageBlob || !nftMetadata) {
+      throw new Error("Failed to generate NFT image and metadata");
+    }
+
     const mint = await mintNFT({
       template,
       nftImageBlob,
       nftMetadata,
     });
+
     if (!isEmpty(mint?.mintAddress)) {
       router.push(`/sol/${mint?.mintAddress}`);
     }

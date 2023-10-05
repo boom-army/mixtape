@@ -38,7 +38,7 @@ const mint: NextApiHandler = async (req, res) => {
 
   try {
     const url = process.env.NEXT_PUBLIC_SOLANA_NETWORK!;
-    const connection = new Connection(url, "confirmed");
+    const connection = new Connection(url, "finalized");
 
     // Check tx exists
     const transactionResponse = await connection.getTransaction(signature);
