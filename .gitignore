@@ -64,4 +64,4 @@ _static
 .sentryclirc
 
 scripts/backup-prod.sh
-*/backup-dev.sql
+*/backup-*
