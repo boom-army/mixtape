@@ -9,12 +9,13 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid()) @db.VarChar(44)
-  email     String?  @unique
+  id        String      @id @default(uuid()) @db.VarChar(44)
+  email     String?     @unique
   name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
   mints     Mint[]
+  MintEmote MintEmote[]
 }
 
 model TipLink {
@@ -41,6 +42,7 @@ model Mint {
   tipLinks    TipLink[]
   templateId  String
   nftTemplate NftTemplate @relation(fields: [templateId], references: [id])
+  MintEmote   MintEmote[]
 }
 
 model NftTemplate {
@@ -56,4 +58,28 @@ model NftTemplate {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   mints       Mint[]
+}
+
+model NftEmote {
+  id          String      @id @default(uuid())
+  name        String      @unique
+  image       String
+  collection  String
+  description String?
+  symbol      String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  MintEmote   MintEmote[]
+}
+
+model MintEmote {
+  id        Int      @id @default(autoincrement())
+  mintId    Int
+  emoteId   String
+  userId    String
+  mint      Mint     @relation(fields: [mintId], references: [id])
+  emote     NftEmote @relation(fields: [emoteId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
