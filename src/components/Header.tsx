@@ -2,14 +2,12 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import {
   Box,
-  Fab,
   Grid,
   IconButton,
   Link,
   Menu,
   MenuItem,
   Typography,
-  styled,
   useTheme,
 } from "@mui/material";
 import ActionLinks from "./ActionLinks";
@@ -17,28 +15,19 @@ import { useSnackbar } from "../contexts/SnackbarProvider";
 import { MusicVideoOutlined, TextSnippetOutlined } from "@mui/icons-material";
 import { indieFlowerFont } from "../utils/theme";
 import { useWallet } from "@solana/wallet-adapter-react";
-import AddReactionOutlinedIcon from "@mui/icons-material/AddReactionOutlined";
 import { useRouter } from "next/router";
 import { HeaderProps } from "../types/nftTemplates";
-
-const StyledFab = styled(Fab)(({ theme }) => ({
-  position: "fixed",
-  bottom: theme.spacing(2),
-  right: theme.spacing(2),
-}));
-
-type EmoteType = {
-  cImage: string;
-  name: string;
-};
+import { ReactionMenu } from "./ReactionMenu";
+import { EmoteType } from "../types";
 
 export const Header: React.FC<HeaderProps> = ({ meta }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [showCoverNotes, setShowCoverNotes] = useState(false);
-  const [emote, setEmote] = useState<EmoteType | null>(null);
   const [randomImage, setRandomImage] = useState(
     meta?.image ?? "/images/mixtape-1024.png"
   );
+  const [emote, setEmote] = useState<EmoteType | null>(null);
+
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
   const { publicKey } = useWallet();
@@ -55,35 +44,10 @@ export const Header: React.FC<HeaderProps> = ({ meta }) => {
       );
       const data = await response.json();
 
-      setEmote(data.mintEmote[0].emote);
+      data.mintEmote.length && setEmote(data.mintEmote[0].emote);
     };
     fetchEmotes();
   }, [publicKey, address]);
-
-  const handleReactionToggle = async () => {
-    const { address } = router.query;
-    try {
-      const response = await fetch("/api/reaction/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: publicKey?.toBase58(),
-          emoteId: "J4MbMmQizFtwMo5PCWvCKPXrtrGv3FgLmXy4jaqhPoXN",
-          mintAddress: address,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error);
-      }
-    } catch (error) {
-      enqueueSnackbar(`Failed to add reaction: ${error}`);
-    }
-  };
 
   useEffect(() => {
     const images = [
@@ -238,16 +202,7 @@ export const Header: React.FC<HeaderProps> = ({ meta }) => {
         </Grid>
       </Grid>
       {publicKey && (
-        <StyledFab color="primary" aria-label="add reaction">
-          {emote ? (
-            <Image src={emote.cImage} alt={emote.name} width={30} height={30} />
-          ) : (
-            <AddReactionOutlinedIcon
-              style={{ fill: "white" }}
-              onClick={handleReactionToggle}
-            />
-          )}
-        </StyledFab>
+        <ReactionMenu emote={emote} setEmote={setEmote} />
       )}
     </>
   );
