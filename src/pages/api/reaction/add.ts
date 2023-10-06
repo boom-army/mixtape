@@ -7,8 +7,6 @@ export default async function fetchReactions(
 ) {
   const { userId, emoteId, mintAddress } = req.body;
 
-  console.log({ userId, emoteId, mintAddress });
-
   if (!userId || !emoteId || !mintAddress) {
     return res.status(400).json({ error: "Missing required fields" });
   }

@@ -15,6 +15,7 @@ import duration from "dayjs/plugin/duration";
 import { useRouter } from "next/router";
 import { formatDuration } from "../utils/tracks";
 import Image from "next/image";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 dayjs.extend(duration);
 
@@ -32,7 +33,10 @@ const TrackList: React.FC<TrackListProps> = ({ data }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const theme = useTheme();
+  const { publicKey } = useWallet();
   const router = useRouter();
+
+  const { address } = router.query;
 
   useEffect(() => {
     audioRef.current = new Audio();
@@ -47,7 +51,11 @@ const TrackList: React.FC<TrackListProps> = ({ data }) => {
   const handleFetchAudioURL = async (trackId: string) => {
     const apiUrl = `/api/stream?url=${encodeURIComponent(
       `http://www.youtube.com/watch?v=${trackId}`
-    )}`;
+    )}${publicKey ? `&publicKey=${publicKey}` : ""}${
+      address ? `&mintAddress=${address}` : ""
+    }`;
+    console.log("apiUrl", apiUrl);
+    
     try {
       setAudioURL(apiUrl);
       setCurrentPlayingTrackId(trackId);
