@@ -27,9 +27,15 @@ const StyledFab = styled(Fab)(({ theme }) => ({
   right: theme.spacing(2),
 }));
 
+type EmoteType = {
+  cImage: string;
+  name: string;
+};
+
 export const Header: React.FC<HeaderProps> = ({ meta }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [showCoverNotes, setShowCoverNotes] = useState(false);
+  const [emote, setEmote] = useState<EmoteType | null>(null);
   const [randomImage, setRandomImage] = useState(
     meta?.image ?? "/images/mixtape-1024.png"
   );
@@ -38,7 +44,21 @@ export const Header: React.FC<HeaderProps> = ({ meta }) => {
   const { publicKey } = useWallet();
   const router = useRouter();
 
+  const { address } = router.query;
 
+  useEffect(() => {
+    const fetchEmotes = async () => {
+      if (!publicKey || !address) return;
+
+      const response = await fetch(
+        `/api/reaction/read?mintAddress=${address}&userId=${publicKey.toBase58()}`
+      );
+      const data = await response.json();
+
+      setEmote(data.mintEmote[0].emote);
+    };
+    fetchEmotes();
+  }, [publicKey, address]);
 
   const handleReactionToggle = async () => {
     const { address } = router.query;
@@ -55,7 +75,7 @@ export const Header: React.FC<HeaderProps> = ({ meta }) => {
         }),
       });
 
-      const data = await response.json();      
+      const data = await response.json();
 
       if (!response.ok) {
         throw new Error(data.error);
@@ -218,12 +238,15 @@ export const Header: React.FC<HeaderProps> = ({ meta }) => {
         </Grid>
       </Grid>
       {publicKey && (
-        <StyledFab
-          color="primary"
-          aria-label="add reaction"
-          onClick={handleReactionToggle}
-        >
-          <AddReactionOutlinedIcon style={{ fill: "white" }} />
+        <StyledFab color="primary" aria-label="add reaction">
+          {emote ? (
+            <Image src={emote.cImage} alt={emote.name} width={30} height={30} />
+          ) : (
+            <AddReactionOutlinedIcon
+              style={{ fill: "white" }}
+              onClick={handleReactionToggle}
+            />
+          )}
         </StyledFab>
       )}
     </>
