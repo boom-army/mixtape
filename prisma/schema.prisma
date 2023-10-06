@@ -62,14 +62,17 @@ model NftTemplate {
 
 model NftEmote {
   id          String      @id @default(uuid())
-  name        String      @unique
+  name        String      @unique @db.VarChar(255)
   image       String
+  cImage      String
   collection  String
   description String?
   symbol      String?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   MintEmote   MintEmote[]
+
+  @@index([name])
 }
 
 model MintEmote {
