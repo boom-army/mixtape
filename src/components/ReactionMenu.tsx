@@ -1,8 +1,8 @@
 import AddReactionOutlinedIcon from "@mui/icons-material/AddReactionOutlined";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import { EmoteType } from "../types";
-import { Fab, styled } from "@mui/material";
+import { Fab, Grid, Menu, MenuItem, styled } from "@mui/material";
 import { useRouter } from "next/router";
 import { useSnackbar } from "../contexts/SnackbarProvider";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -22,6 +22,24 @@ export const ReactionMenu: React.FC<ReactionMenuProps> = ({
   emote,
   setEmote,
 }) => {
+  const [emojiMenuAnchorEl, setEmojiMenuAnchorEl] =
+    useState<null | HTMLElement>(null);
+
+  const handleEmojiMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setEmojiMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleEmojiMenuClose = () => {
+    setEmojiMenuAnchorEl(null);
+  };
+
+  const handleEmojiClick = (emoji: string) => {
+    handleReactionToggle();
+    handleEmojiMenuClose();
+  };
+
+  const emojis = ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣"]; // Add your emojis here
+
   const { enqueueSnackbar } = useSnackbar();
   const { publicKey } = useWallet();
   const router = useRouter();
@@ -58,15 +76,36 @@ export const ReactionMenu: React.FC<ReactionMenuProps> = ({
     }
   };
   return (
-    <StyledFab color="primary" aria-label="add reaction">
-      {emote ? (
-        <Image src={emote.cImage} alt={emote.name} width={30} height={30} />
-      ) : (
-        <AddReactionOutlinedIcon
-          style={{ fill: "white" }}
-          onClick={handleReactionToggle}
-        />
-      )}
-    </StyledFab>
+    <>
+      <StyledFab
+        color="primary"
+        aria-label="add reaction"
+        onClick={handleEmojiMenuOpen}
+      >
+        {emote ? (
+          <Image src={emote.cImage} alt={emote.name} width={30} height={30} />
+        ) : (
+          <AddReactionOutlinedIcon style={{ fill: "white" }} />
+        )}
+      </StyledFab>
+      <Menu
+        anchorEl={emojiMenuAnchorEl}
+        open={Boolean(emojiMenuAnchorEl)}
+        onClose={handleEmojiMenuClose}
+        sx={{
+          transform: 'translateY(-5rem)',
+        }}
+      >
+        <Grid container>
+          {emojis.map((emoji, index) => (
+            <Grid item xs={4} key={index}>
+              <MenuItem onClick={() => handleEmojiClick(emoji)}>
+                {emoji}
+              </MenuItem>
+            </Grid>
+          ))}
+        </Grid>
+      </Menu>
+    </>
   );
 };
