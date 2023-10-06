@@ -12,6 +12,7 @@ import { Connection, Keypair } from "@solana/web3.js";
 import sharp from "sharp";
 
 interface NftEmote {
+  id: string;
   image: string;
   cImage: string;
   name: string;
@@ -91,6 +92,7 @@ export default async function loadNFTs(
             };
             const imageAddress = await uploadNFTImage();
             resolve({
+              id: nft.id,
               cImage: imageAddress,
               image: nft.content?.links?.image || "",
               name: nft.content?.metadata?.name || "",

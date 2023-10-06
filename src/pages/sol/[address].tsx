@@ -1,10 +1,10 @@
 import Head from "next/head";
 import TrackList from "../../components/TrackList";
 import { Box, Container, Link, Typography } from "@mui/material";
-import { Header } from "../../components/Header";
+import { ExtendedJsonMetadata, Header } from "../../components/Header";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { GetServerSideProps } from "next";
-import { Metaplex } from "@metaplex-foundation/js";
+import { JsonMetadata, Metaplex } from "@metaplex-foundation/js";
 import { useRouter } from "next/router";
 import { useState, useContext, useEffect } from "react";
 import { MetaplexContext } from "../../contexts/MetaplexProvider";
@@ -26,12 +26,8 @@ const Address: React.FC<AddressProps> = ({
   const [trackMetaState, setTrackMetaState] = useState<
     TrackMeta[] | undefined
   >();
-  const [mixtapeImgState, setMixtapeImgState] = useState<string | undefined>();
-  const [mixtapeTitleState, setMixtapeTitleState] = useState<
-    string | undefined
-  >();
   const [mixtapeMetaState, setMixtapeMetaState] = useState<
-    TrackMetadata | undefined
+    ExtendedJsonMetadata | undefined
   >();
   const [loadError, setLoadError] = useState(false);
 
@@ -51,10 +47,8 @@ const Address: React.FC<AddressProps> = ({
           ?.nfts()
           .findByMint({ mintAddress: metadataAddress });
         if (!metadata?.json?.tracks) return setLoadError(true);
-        setMixtapeImgState(metadata?.json?.image);
-        setMixtapeTitleState(metadata?.json?.name);
         setTrackMetaState((metadata?.json?.tracks as TrackMeta[]) || []);
-        setMixtapeMetaState(metadata?.json?.track_meta as TrackMetadata);
+        setMixtapeMetaState(metadata?.json as ExtendedJsonMetadata);
       } catch (error) {
         enqueueSnackbar(`Failed to fetch metadata: ${error}`);
         setLoadError(true);
@@ -85,11 +79,7 @@ const Address: React.FC<AddressProps> = ({
             <Typography>&lt; Home</Typography>
           </Link>
         </Box>
-        <Header
-          image={mixtapeImgState ?? mixtapeImg}
-          heading={mixtapeTitleState ?? mixtapeTitle}
-          meta={mixtapeMetaState}
-        />
+        <Header meta={mixtapeMetaState} />
         {!trackMetaState && !trackMeta ? (
           <Typography variant="h6" align="center" style={{ padding: "100px" }}>
             No mixtape tracks loaded

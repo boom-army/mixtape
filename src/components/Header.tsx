@@ -14,18 +14,21 @@ import ActionLinks from "./ActionLinks";
 import { useSnackbar } from "../contexts/SnackbarProvider";
 import { MusicVideoOutlined, TextSnippetOutlined } from "@mui/icons-material";
 import { indieFlowerFont } from "../utils/theme";
+import { JsonMetadata } from "@metaplex-foundation/js";
 
-interface HeaderProps {
-  image?: string;
-  heading?: string;
-  meta?: TrackMetadata;
+export interface ExtendedJsonMetadata extends JsonMetadata {
+  track_meta: any;
 }
 
-export const Header: React.FC<HeaderProps> = ({ image, heading, meta }) => {
+interface HeaderProps {
+  meta?: ExtendedJsonMetadata;
+}
+
+export const Header: React.FC<HeaderProps> = ({ meta }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [showCoverNotes, setShowCoverNotes] = useState(false);
   const [randomImage, setRandomImage] = useState(
-    image ?? "/images/mixtape-1024.png"
+    meta?.image ?? "/images/mixtape-1024.png"
   );
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
@@ -64,7 +67,7 @@ export const Header: React.FC<HeaderProps> = ({ image, heading, meta }) => {
     <Grid container>
       <Grid item xs={12} sm={6}>
         <Box display="flex" justifyContent="center">
-          {meta?.cover_notes && showCoverNotes ? (
+          {meta?.track_meta.cover_notes && showCoverNotes ? (
             <Box
               width={360}
               height={360}
@@ -92,12 +95,12 @@ export const Header: React.FC<HeaderProps> = ({ image, heading, meta }) => {
                   whiteSpace: "pre-line",
                 }}
               >
-                {meta?.cover_notes}
+                {meta?.track_meta.cover_notes}
               </Typography>
             </Box>
           ) : (
             <Image
-              src={image ?? randomImage}
+              src={meta?.image ?? randomImage}
               alt="cassette"
               width={360}
               height={360}
@@ -122,8 +125,8 @@ export const Header: React.FC<HeaderProps> = ({ image, heading, meta }) => {
               }}
               display="inline"
             >
-              {heading ?? "MixtApe"}
-              {meta?.cover_notes && (
+              {meta?.name ?? "MixtApe"}
+              {meta?.track_meta.cover_notes && (
                 <Box display="inline" sx={{ position: "absolute", top: -15 }}>
                   <IconButton
                     onClick={() => setShowCoverNotes(!showCoverNotes)}
