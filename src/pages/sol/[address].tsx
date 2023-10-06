@@ -1,14 +1,15 @@
 import Head from "next/head";
 import TrackList from "../../components/TrackList";
 import { Box, Container, Link, Typography } from "@mui/material";
-import { ExtendedJsonMetadata, Header } from "../../components/Header";
+import { Header } from "../../components/Header";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { GetServerSideProps } from "next";
-import { JsonMetadata, Metaplex } from "@metaplex-foundation/js";
+import { Metaplex } from "@metaplex-foundation/js";
 import { useRouter } from "next/router";
 import { useState, useContext, useEffect } from "react";
 import { MetaplexContext } from "../../contexts/MetaplexProvider";
 import { useSnackbar } from "../../contexts/SnackbarProvider";
+import { ExtendedJsonMetadata } from "../../types/nftTemplates";
 
 interface AddressProps {
   mixtapeImg: string;
@@ -23,9 +24,6 @@ const Address: React.FC<AddressProps> = ({
   mixtapeDescription,
   trackMeta,
 }) => {
-  const [trackMetaState, setTrackMetaState] = useState<
-    TrackMeta[] | undefined
-  >();
   const [mixtapeMetaState, setMixtapeMetaState] = useState<
     ExtendedJsonMetadata | undefined
   >();
@@ -47,8 +45,7 @@ const Address: React.FC<AddressProps> = ({
           ?.nfts()
           .findByMint({ mintAddress: metadataAddress });
         if (!metadata?.json?.tracks) return setLoadError(true);
-        setTrackMetaState((metadata?.json?.tracks as TrackMeta[]) || []);
-        setMixtapeMetaState(metadata?.json as ExtendedJsonMetadata);
+        setMixtapeMetaState(metadata.json as ExtendedJsonMetadata);
       } catch (error) {
         enqueueSnackbar(`Failed to fetch metadata: ${error}`);
         setLoadError(true);
@@ -80,12 +77,12 @@ const Address: React.FC<AddressProps> = ({
           </Link>
         </Box>
         <Header meta={mixtapeMetaState} />
-        {!trackMetaState && !trackMeta ? (
+        {!mixtapeMetaState?.tracks && !trackMeta ? (
           <Typography variant="h6" align="center" style={{ padding: "100px" }}>
             No mixtape tracks loaded
           </Typography>
         ) : (
-          <TrackList data={trackMetaState ?? trackMeta} />
+          <TrackList data={mixtapeMetaState?.tracks ?? trackMeta} />
         )}
       </Container>
     </>

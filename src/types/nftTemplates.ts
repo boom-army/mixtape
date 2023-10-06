@@ -1,3 +1,5 @@
+import { JsonMetadata } from "@metaplex-foundation/js";
+
 export type NftTemplate = {
   id: string;
   name: string;
@@ -55,3 +57,12 @@ export type Mixtape = {
   external_url: string;
   seller_fee_basis_points: number;
 };
+
+export interface ExtendedJsonMetadata extends JsonMetadata {
+  track_meta: any;
+  tracks: TrackMeta[];
+}
+
+export interface HeaderProps {
+  meta?: ExtendedJsonMetadata;
+}

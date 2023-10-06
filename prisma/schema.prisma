@@ -16,6 +16,7 @@ model User {
   updatedAt DateTime    @updatedAt
   mints     Mint[]
   MintEmote MintEmote[]
+  Points    Points[]
 }
 
 model TipLink {
@@ -43,6 +44,7 @@ model Mint {
   templateId  String
   nftTemplate NftTemplate @relation(fields: [templateId], references: [id])
   MintEmote   MintEmote[]
+  Points      Points[]
 }
 
 model NftTemplate {
@@ -76,13 +78,25 @@ model NftEmote {
 }
 
 model MintEmote {
-  id        Int      @id @default(autoincrement())
-  mintId    Int
-  emoteId   String
-  userId    String
-  mint      Mint     @relation(fields: [mintId], references: [id])
-  emote     NftEmote @relation(fields: [emoteId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          Int      @id @default(autoincrement())
+  mintAddress String
+  emoteId     String
+  userId      String
+  mint        Mint     @relation(fields: [mintAddress], references: [mintAddress])
+  emote       NftEmote @relation(fields: [emoteId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Points {
+  id          Int      @id @default(autoincrement())
+  points      Int
+  awardedId   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  mintAddress String?
+  mint        Mint?    @relation(fields: [mintAddress], references: [mintAddress])
 }

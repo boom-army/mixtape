@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import ytdl from "@distube/ytdl-core";
 
 const stream = (req: NextApiRequest, res: NextApiResponse) => {
-  const url = req.query.url as string;  
+  const url = req.query.url as string;
   if (!url) {
     return res.status(400).json({ error: "URL is required" });
   }
