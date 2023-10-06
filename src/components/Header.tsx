@@ -38,10 +38,12 @@ export const Header: React.FC<HeaderProps> = ({ meta }) => {
   const { publicKey } = useWallet();
   const router = useRouter();
 
+
+
   const handleReactionToggle = async () => {
     const { address } = router.query;
     try {
-      const response = await fetch("/api/reaction/add", {
+      const response = await fetch("/api/reaction/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
