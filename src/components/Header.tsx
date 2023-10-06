@@ -38,8 +38,6 @@ export const Header: React.FC<HeaderProps> = ({ meta }) => {
   const { publicKey } = useWallet();
   const router = useRouter();
 
-  console.log(meta);
-
   const handleReactionToggle = async () => {
     const { address } = router.query;
     try {
@@ -55,17 +53,13 @@ export const Header: React.FC<HeaderProps> = ({ meta }) => {
         }),
       });
 
-      const data = await response.json();
-      console.log("emote", data);
-      
+      const data = await response.json();      
 
       if (!response.ok) {
         throw new Error(data.error);
       }
-
-      // handle successful reaction toggle
     } catch (error) {
-      // handle error
+      enqueueSnackbar(`Failed to add reaction: ${error}`);
     }
   };
 
