@@ -27,33 +27,28 @@ const Address: React.FC<AddressProps> = ({
   const [mixtapeMetaState, setMixtapeMetaState] = useState<
     ExtendedJsonMetadata | undefined
   >();
-  const [loadError, setLoadError] = useState(false);
 
   const router = useRouter();
   const metaplex = useContext(MetaplexContext);
-  const { enqueueSnackbar } = useSnackbar();
 
   const { address } = router.query;
 
   useEffect(() => {
     const fetchMetadata = async () => {
-      setLoadError(false);
       if (!address) return;
       try {
         const metadataAddress = new PublicKey(address);
         const metadata = await metaplex
           ?.nfts()
           .findByMint({ mintAddress: metadataAddress });
-        if (!metadata?.json?.tracks) return setLoadError(true);
+        if (!metadata?.json?.tracks) return;
         setMixtapeMetaState(metadata.json as ExtendedJsonMetadata);
       } catch (error) {
-        enqueueSnackbar(`Failed to fetch metadata: ${error}`);
-        setLoadError(true);
-        return;
+        console.error(error);
       }
     };
     fetchMetadata();
-  }, [address, enqueueSnackbar, metaplex]);
+  }, [address, metaplex]);
 
   return (
     <>
