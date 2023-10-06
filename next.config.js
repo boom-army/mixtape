@@ -17,12 +17,10 @@ const moduleExports = {
   // },
   distDir: '_static',
   images: {
-    unoptimized: true
+    unoptimized: false,
+    domains: ['pbs.twimg.com', 'arweave.net', 'www.arweave.net'],
   },
   reactStrictMode: true,
-  // images: {
-  //   domains: ["pbs.twimg.com", "arweave.net", "www.arweave.net"],
-  // },
 };
 
 module.exports = withSentryConfig(
