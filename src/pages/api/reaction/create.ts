@@ -5,23 +5,18 @@ export default async function createReaction(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { userId, emoteId, mintAddress } = req.body;
-  console.log({ userId, emoteId, mintAddress });
-  
+  const { userId, emoteId, mintAddress } = req.body;  
 
   if (!userId || !emoteId || !mintAddress) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
   try {
-    const user = await prisma.user.findUnique({
+    await prisma.user.upsert({
       where: { id: userId },
+      update: {},
+      create: { id: userId },
     });
-    if (!user) {
-      await prisma.user.create({
-        data: { id: userId },
-      });
-    }
 
     await prisma.$transaction([
       prisma.mintEmote.create({
