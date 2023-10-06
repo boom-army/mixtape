@@ -119,7 +119,7 @@ export default async function loadNFTs(
       res.status(200).json({ nftEmotes });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ error });
+    return res.status(500).json({ error: (error as Error).message });
     }
   } else {
     res.status(405).json({ error: "Method not allowed" });

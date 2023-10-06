@@ -1,5 +1,4 @@
 import prisma from "../../../lib/prisma";
-import { filter, some, map, uniqBy } from "lodash";
 import { Helius } from "helius-sdk";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -11,7 +10,7 @@ const nftCollections = [
   "7soPY36PaM8Ck1EycPq5WJ3CVHjZK47aneFniK5GNFyQ", // null - computers
 ];
 
-export default async function latest(
+export default async function fetchReactions(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -55,7 +54,8 @@ export default async function latest(
 
       res.status(200).json({ nftEmotes });
     } catch (error) {
-      res.status(500).json({ error: "Error fetching NFTs" });
+      console.log(error);
+      return res.status(500).json({ error: (error as Error).message });
     }
   } else {
     res.status(405).json({ error: "We only support POST" });
