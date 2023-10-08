@@ -3,6 +3,7 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { EmoteType } from "../types";
 import {
+  Box,
   CircularProgress,
   Fab,
   Menu,
@@ -118,7 +119,16 @@ export const ReactionMenu: React.FC<ReactionMenuProps> = ({
         ref={fabRef}
         color="primary"
         aria-label="add reaction"
-        onClick={handleEmojiMenuOpen}
+        onClick={(e) => !emote && handleEmojiMenuOpen(e)}
+        sx={
+          emote
+            ? {
+                backgroundColor: "white",
+                border: "5px solid black",
+                cursor: "default",
+              }
+            : {}
+        }
       >
         {emote ? (
           <Image src={emote.cImage} alt={emote.name} width={30} height={30} />
@@ -132,28 +142,31 @@ export const ReactionMenu: React.FC<ReactionMenuProps> = ({
         onClose={handleEmojiMenuClose}
         sx={{
           transform: "translateY(-5rem)",
-          right: "5rem",
           width: "100%",
           overflowY: "auto",
         }}
       >
-        <Stack direction="row" spacing={0.5}>
-          <MenuItem>
-            {loading ? (
+        <Stack
+          direction="row"
+          spacing={0.5}
+          sx={{ width: "300px", flexWrap: "wrap" }}
+        >
+          {loading ? (
+            <Box p={2} display="flex" justifyContent="center" width="100%">
               <CircularProgress size={20} />
-            ) : reactions.length ? (
-              reactions.map((item, index) => (
-                <MenuItem key={index} onClick={() => handleEmojiClick(item.id)}>
-                  <Image
-                    src={item.cImage}
-                    alt={item.name}
-                    width={20}
-                    height={20}
-                  />
-                </MenuItem>
-              ))
-            ) : null}
-          </MenuItem>
+            </Box>
+          ) : reactions.length ? (
+            reactions.map((item, index) => (
+              <MenuItem key={index} onClick={() => handleEmojiClick(item.id)}>
+                <Image
+                  src={item.cImage}
+                  alt={item.name}
+                  width={20}
+                  height={20}
+                />
+              </MenuItem>
+            ))
+          ) : null}
         </Stack>
       </Menu>
     </>
