@@ -136,7 +136,7 @@ export const ReactionMenu: React.FC = () => {
         ref={fabRef}
         color="primary"
         aria-label="add reaction"
-        onClick={(e) => userReaction && handleEmojiMenuOpen(e)}
+        onClick={(e) => !userReaction && handleEmojiMenuOpen(e)}
         sx={
           userReaction
             ? {
