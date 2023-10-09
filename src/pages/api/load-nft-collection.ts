@@ -10,6 +10,7 @@ import {
 } from "@metaplex-foundation/js";
 import { Connection, Keypair } from "@solana/web3.js";
 import sharp from "sharp";
+import { getCluster } from "../../../scripts/helpers";
 
 interface NftEmote {
   id: string;
@@ -42,7 +43,7 @@ export default async function loadNFTs(
     const keysUint8Array = new Uint8Array(keys);
     const mintKeys = Keypair.fromSecretKey(keysUint8Array);
 
-    const helius = new Helius(process.env.NEXT_HELIUS_RPC_KEY!);
+    const helius = new Helius(process.env.NEXT_HELIUS_RPC_KEY!, getCluster());
 
     const metaplex = new Metaplex(connection);
     metaplex.use(walletAdapterIdentity(mintKeys)).use(

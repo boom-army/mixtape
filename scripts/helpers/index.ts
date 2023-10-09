@@ -11,3 +11,13 @@ export const getBundlrURI = (env: Cluster) => {
       return "https://devnet.bundlr.network";
   }
 }
+
+export const getCluster = () => {
+  switch (process.env.NEXT_PUBLIC_SOLANA_NETWORK) {
+    case 'https://api.devnet.solana.com':
+      return 'devnet';
+    default:
+      return 'mainnet-beta';
+  }
+}
+

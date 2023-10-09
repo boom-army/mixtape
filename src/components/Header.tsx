@@ -66,7 +66,7 @@ export const Header: React.FC<HeaderProps> = ({ meta }) => {
       <Grid container>
         <Grid item xs={12} sm={6}>
           <Box display="flex" justifyContent="center">
-            {meta?.track_meta.cover_notes && showCoverNotes ? (
+            {meta?.track_meta?.cover_notes && showCoverNotes ? (
               <Box
                 width={360}
                 height={360}
@@ -94,7 +94,7 @@ export const Header: React.FC<HeaderProps> = ({ meta }) => {
                     whiteSpace: "pre-line",
                   }}
                 >
-                  {meta?.track_meta.cover_notes}
+                  {meta?.track_meta?.cover_notes}
                 </Typography>
               </Box>
             ) : (
