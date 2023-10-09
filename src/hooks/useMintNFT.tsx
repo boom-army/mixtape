@@ -25,32 +25,32 @@ export const useMintNFT = () => {
         if (!publicKey || !signTransaction)
           throw new Error("Wallet not connected");
 
-        // payment gets split between harkl and mixtape
-        const payment = parseFloat((template.price - STORAGE_FEES).toFixed(4));
-        const transaction = new Transaction().add(
-          SystemProgram.transfer({
-            fromPubkey: publicKey,
-            toPubkey: HARKL_ID,
-            lamports: BigInt(Math.floor(payment * LAMPORTS_PER_SOL)),
-          })
-        );
-        transaction.add(
-          SystemProgram.transfer({
-            fromPubkey: publicKey,
-            toPubkey: MIXTAPE_TX,
-            lamports: BigInt(Math.floor(STORAGE_FEES * LAMPORTS_PER_SOL)),
-          })
-        );
+        // // payment gets split between harkl and mixtape
+        // const payment = parseFloat((template.price - STORAGE_FEES).toFixed(4));
+        // const transaction = new Transaction().add(
+        //   SystemProgram.transfer({
+        //     fromPubkey: publicKey,
+        //     toPubkey: HARKL_ID,
+        //     lamports: BigInt(Math.floor(payment * LAMPORTS_PER_SOL)),
+        //   })
+        // );
+        // transaction.add(
+        //   SystemProgram.transfer({
+        //     fromPubkey: publicKey,
+        //     toPubkey: MIXTAPE_TX,
+        //     lamports: BigInt(Math.floor(STORAGE_FEES * LAMPORTS_PER_SOL)),
+        //   })
+        // );
 
-        transaction.feePayer = publicKey;
-        const blockhash = await connection.getLatestBlockhash();
-        transaction.recentBlockhash = blockhash.blockhash;
+        // transaction.feePayer = publicKey;
+        // const blockhash = await connection.getLatestBlockhash();
+        // transaction.recentBlockhash = blockhash.blockhash;
 
-        const signedTransaction = await signTransaction(transaction);
-        const signature = await connection.sendRawTransaction(
-          signedTransaction.serialize()
-        );
-        await connection.confirmTransaction(signature, "finalized");
+        // const signedTransaction = await signTransaction(transaction);
+        // const signature = await connection.sendRawTransaction(
+        //   signedTransaction.serialize()
+        // );
+        // await connection.confirmTransaction(signature, "finalized");
 
         // const locReq = await fetch("https://www.cloudflare.com/cdn-cgi/trace", {
         //   method: "GET",
@@ -65,7 +65,14 @@ export const useMintNFT = () => {
         //   }, {});
         // const nonce = Buffer.from(JSON.stringify(location)).toString("base64");
 
-        const mintNFTResponse = await fetch("/api/mint", {
+        console.log(JSON.stringify({
+          nftImageBlob,
+          nftMetadata,
+          template,
+          publicKey,
+        }));
+
+        const mintNFTResponse = await fetch("/api/mint-compressed", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -74,8 +81,7 @@ export const useMintNFT = () => {
             nftImageBlob,
             nftMetadata,
             template,
-            signature,
-            // nonce,
+            publicKey,
           }),
         });
 
