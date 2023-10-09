@@ -8,6 +8,7 @@ import {
   Menu,
   MenuItem,
   Stack,
+  Typography,
   styled,
 } from "@mui/material";
 import { useRouter } from "next/router";
@@ -124,7 +125,7 @@ export const ReactionMenu: React.FC = () => {
       >
         {reactions.map((item, i) => (
           <Image
-          key={`${item.name}-${i}`}
+            key={`${item.name}-${i}`}
             src={item.cImage}
             alt={item.name}
             width={20}
@@ -188,7 +189,13 @@ export const ReactionMenu: React.FC = () => {
                 />
               </MenuItem>
             ))
-          ) : null}
+          ) : (
+            <Box p={2}>
+              <Typography variant="body2" color="text.secondary">
+                No reaction NFTs found
+              </Typography>
+            </Box>
+          )}
         </Stack>
       </Menu>
     </>
