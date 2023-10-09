@@ -125,7 +125,7 @@ export const Header: React.FC<HeaderProps> = ({ meta }) => {
                 display="inline"
               >
                 {meta?.name ?? "MixtApe"}
-                {meta?.track_meta.cover_notes && (
+                {meta?.track_meta?.cover_notes && (
                   <Box display="inline" sx={{ position: "absolute", top: -15 }}>
                     <IconButton
                       onClick={() => setShowCoverNotes(!showCoverNotes)}
