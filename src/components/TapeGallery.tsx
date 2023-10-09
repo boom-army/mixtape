@@ -47,6 +47,7 @@ const TapeGallery: React.FC<GalleryItems> = ({
     <Grid container spacing={2} mb={4}>
       {map(nftTemplates, (item) => (
         <TapeGalleryItem
+          key={item.id}
           item={item}
           mixtapeTitle={mixtapeTitle}
           selectedTape={selectedTape}

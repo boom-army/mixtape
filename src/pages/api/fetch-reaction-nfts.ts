@@ -1,6 +1,7 @@
 import prisma from "../../../lib/prisma";
 import { Helius } from "helius-sdk";
 import { NextApiRequest, NextApiResponse } from "next";
+import { getCluster } from "../../../scripts/helpers";
 
 const nftCollections = [
   "6zGB9MCm52r9vUk14BZA6p9hcZXCXf5NbCEUApGweNHU", // BRGR
@@ -22,7 +23,7 @@ export default async function fetchReactions(
       return;
     }
 
-    const helius = new Helius(process.env.NEXT_HELIUS_RPC_KEY!);
+    const helius = new Helius(process.env.NEXT_HELIUS_RPC_KEY!, getCluster());
 
     try {
       const nfts = await helius.rpc.getAssetsByOwner({
