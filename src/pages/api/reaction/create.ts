@@ -18,13 +18,16 @@ export default async function createReaction(
       create: { id: userId },
     });
 
-    await prisma.$transaction([
+    const mintEmote = await prisma.$transaction([
       prisma.mintEmote.create({
         data: {
           mintAddress,
           emoteId,
           userId,
         },
+        include: {
+          emote: true
+        }
       }),
       prisma.points.create({
         data: {
@@ -36,7 +39,7 @@ export default async function createReaction(
       }),
     ]);
 
-    res.json({ ok: true });
+    res.json({ mintEmote: mintEmote[0] });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: (error as Error).message });

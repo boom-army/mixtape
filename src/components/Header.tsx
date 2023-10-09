@@ -18,7 +18,6 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useRouter } from "next/router";
 import { HeaderProps } from "../types/nftTemplates";
 import { ReactionMenu } from "./ReactionMenu";
-import { EmoteType } from "../types";
 
 export const Header: React.FC<HeaderProps> = ({ meta }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -26,28 +25,10 @@ export const Header: React.FC<HeaderProps> = ({ meta }) => {
   const [randomImage, setRandomImage] = useState(
     meta?.image ?? "/images/mixtape-1024.png"
   );
-  const [emote, setEmote] = useState<EmoteType | null>(null);
 
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
   const { publicKey } = useWallet();
-  const router = useRouter();
-
-  const { address } = router.query;
-
-  useEffect(() => {
-    const fetchEmotes = async () => {
-      if (!publicKey || !address) return;
-
-      const response = await fetch(
-        `/api/reaction/read?mintAddress=${address}&userId=${publicKey.toBase58()}`
-      );
-      const data = await response.json();
-
-      data.mintEmote.length && setEmote(data.mintEmote[0].emote);
-    };
-    fetchEmotes();
-  }, [publicKey, address]);
 
   useEffect(() => {
     const images = [
@@ -201,9 +182,7 @@ export const Header: React.FC<HeaderProps> = ({ meta }) => {
           </Box>
         </Grid>
       </Grid>
-      {publicKey && (
-        <ReactionMenu emote={emote} setEmote={setEmote} />
-      )}
+      {publicKey && <ReactionMenu />}
     </>
   );
 };

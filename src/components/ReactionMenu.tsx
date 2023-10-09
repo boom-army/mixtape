@@ -1,7 +1,6 @@
 import AddReactionOutlinedIcon from "@mui/icons-material/AddReactionOutlined";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { EmoteType } from "../types";
 import {
   Box,
   CircularProgress,
@@ -14,6 +13,7 @@ import {
 import { useRouter } from "next/router";
 import { useSnackbar } from "../contexts/SnackbarProvider";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { Emote, EmoteData } from "../types";
 
 const StyledFab = styled(Fab)(({ theme }) => ({
   position: "fixed",
@@ -21,22 +21,10 @@ const StyledFab = styled(Fab)(({ theme }) => ({
   right: theme.spacing(2),
 }));
 
-interface Reaction {
-  id: string;
-  cImage: string;
-  name: string;
-}
-
-interface ReactionMenuProps {
-  emote: EmoteType | null;
-  setEmote: (emote: EmoteType | null) => void;
-}
-
-export const ReactionMenu: React.FC<ReactionMenuProps> = ({
-  emote,
-  setEmote,
-}) => {
-  const [reactions, setReactions] = useState<Reaction[]>([]);
+export const ReactionMenu: React.FC = () => {
+  const [reactions, setReactions] = useState<Emote[]>([]);
+  const [userReaction, setUserReaction] = useState<Emote | null>(null);
+  const [userReactionOptions, setUserReactionOptions] = useState<Emote[]>([]);
   const [emojiMenuAnchorEl, setEmojiMenuAnchorEl] =
     useState<null | HTMLElement>(null);
   const [loading, setLoading] = useState(false);
@@ -45,9 +33,27 @@ export const ReactionMenu: React.FC<ReactionMenuProps> = ({
   const { enqueueSnackbar } = useSnackbar();
   const { publicKey } = useWallet();
   const router = useRouter();
+  const { address } = router.query;
+
+  useEffect(() => {
+    const fetchEmotes = async () => {
+      if (!publicKey || !address) return;
+
+      const response = await fetch(`/api/reaction/read?mintAddress=${address}`);
+      const data = await response.json();
+
+      const userEmote = data.mintEmotes.find(
+        (d: EmoteData) => d.userId === publicKey?.toBase58()
+      );
+      setUserReaction(userEmote ? userEmote.emote : null);
+
+      setReactions(data.mintEmotes.map((d: EmoteData) => d.emote));
+    };
+    fetchEmotes();
+  }, [publicKey, address, userReactionOptions, userReaction]);
 
   const fetchReactionNFTs = async () => {
-    if (!reactions.length) {
+    if (!userReactionOptions.length) {
       setLoading(true);
       try {
         const response = await fetch("/api/fetch-reaction-nfts", {
@@ -60,7 +66,7 @@ export const ReactionMenu: React.FC<ReactionMenuProps> = ({
           }),
         });
         const data = await response.json();
-        setReactions(data.nftEmotes);
+        setUserReactionOptions(data.nftEmotes);
       } catch (error) {
         enqueueSnackbar(`Failed to fetch reaction NFTs: ${error}`);
       } finally {
@@ -103,25 +109,36 @@ export const ReactionMenu: React.FC<ReactionMenuProps> = ({
       if (!response.ok) {
         throw new Error(data.error);
       }
-      const getEmote = await fetch(
-        `/api/reaction/read?mintAddress=${address}&userId=${publicKey.toBase58()}`
-      );
-      const emote = await getEmote.json();
 
-      emote.mintEmote.length && setEmote(emote.mintEmote[0].emote);
+      setUserReaction(data.mintEmote.emote);
     } catch (error) {
       enqueueSnackbar(`Failed to add reaction: ${error}`);
     }
   };
   return (
     <>
+      <Stack
+        direction="column"
+        spacing={-0.7}
+        sx={{ position: "fixed", bottom: "4.3rem", right: "2.2rem" }}
+      >
+        {reactions.map((item, i) => (
+          <Image
+          key={`${item.name}-${i}`}
+            src={item.cImage}
+            alt={item.name}
+            width={20}
+            height={20}
+          />
+        ))}
+      </Stack>
       <StyledFab
         ref={fabRef}
         color="primary"
         aria-label="add reaction"
-        onClick={(e) => !emote && handleEmojiMenuOpen(e)}
+        onClick={(e) => userReaction && handleEmojiMenuOpen(e)}
         sx={
-          emote
+          userReaction
             ? {
                 backgroundColor: "white",
                 border: "5px solid black",
@@ -130,8 +147,13 @@ export const ReactionMenu: React.FC<ReactionMenuProps> = ({
             : {}
         }
       >
-        {emote ? (
-          <Image src={emote.cImage} alt={emote.name} width={30} height={30} />
+        {userReaction ? (
+          <Image
+            src={userReaction.cImage}
+            alt={userReaction.name}
+            width={30}
+            height={30}
+          />
         ) : (
           <AddReactionOutlinedIcon style={{ fill: "white" }} />
         )}
@@ -155,8 +177,8 @@ export const ReactionMenu: React.FC<ReactionMenuProps> = ({
             <Box p={2} display="flex" justifyContent="center" width="100%">
               <CircularProgress size={20} />
             </Box>
-          ) : reactions.length ? (
-            reactions.map((item, index) => (
+          ) : userReactionOptions.length ? (
+            userReactionOptions.map((item, index) => (
               <MenuItem key={index} onClick={() => handleEmojiClick(item.id)}>
                 <Image
                   src={item.cImage}

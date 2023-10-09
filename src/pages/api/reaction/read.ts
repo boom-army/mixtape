@@ -8,22 +8,22 @@ export default async function fetchMintEmote(
   if (req.method === "GET") {
     const { mintAddress, userId } = req.query;
 
-    if (!mintAddress || !userId) {
-      return res.status(400).json({ error: "No mintAddress or userId provided" });
+    if (!mintAddress) {
+      return res.status(400).json({ error: "No mintAddress provided" });
     }
 
     try {
-      const mintEmote = await prisma.mintEmote.findMany({
+      const mintEmotes = await prisma.mintEmote.findMany({
         where: { 
-          mintAddress: mintAddress as string,
-          userId: userId as string
+          mintAddress: Array.isArray(mintAddress) ? mintAddress[0] : mintAddress,
+          userId: userId ? (Array.isArray(userId) ? userId[0] : userId) : undefined
         },
         include: {
           emote: true
         }
       });
 
-      return res.status(200).json({ mintEmote });
+      return res.status(200).json({ mintEmotes });
     } catch (error) {
       console.log(error);
       return res.status(500).json({ error: (error as Error).message });
