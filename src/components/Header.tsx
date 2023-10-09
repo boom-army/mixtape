@@ -29,6 +29,7 @@ export const Header: React.FC<HeaderProps> = ({ meta }) => {
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
   const { publicKey } = useWallet();
+  const router = useRouter();
 
   useEffect(() => {
     const images = [
@@ -182,7 +183,7 @@ export const Header: React.FC<HeaderProps> = ({ meta }) => {
           </Box>
         </Grid>
       </Grid>
-      {publicKey && <ReactionMenu />}
+      {publicKey && router.pathname.includes('/sol/') && <ReactionMenu />}
     </>
   );
 };

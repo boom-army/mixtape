@@ -55,7 +55,7 @@
     "dayjs": "^1.11.9",
     "eslint": "8.46.0",
     "eslint-config-next": "13.4.13",
-    "helius-sdk": "^1.0.14",
+    "helius-sdk": "^1.0.15",
     "html-to-image": "^1.11.11",
     "lodash": "^4.17.21",
     "mime-types": "^2.1.35",
