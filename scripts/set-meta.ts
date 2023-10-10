@@ -7,7 +7,7 @@ import {
   walletAdapterIdentity,
 } from "@metaplex-foundation/js";
 import { Connection, Keypair, PublicKey, clusterApiUrl } from "@solana/web3.js";
-import { getBundlrURI } from "./helpers";
+import { getBundlrURI } from "../src/utils";
 import path from "path";
 import Bundlr from "@bundlr-network/client";
 import mime from "mime-types";

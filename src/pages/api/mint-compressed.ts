@@ -10,7 +10,7 @@ import { Connection, Keypair } from "@solana/web3.js";
 import { NextApiHandler } from "next";
 import { MIXTAPE_COLLECTION } from "../../utils/nft";
 import { Helius } from "helius-sdk";
-import { getCluster } from "../../../scripts/helpers";
+import { getCluster } from "../../utils";
 import { NftTemplate } from "@prisma/client";
 
 export interface MintNFT {

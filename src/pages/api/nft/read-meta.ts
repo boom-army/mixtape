@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { Helius } from "helius-sdk";
-import { getCluster } from "../../../../scripts/helpers";
+import { getCluster } from "../../../utils";
 
 const helius = new Helius(process.env.NEXT_HELIUS_RPC_KEY!, getCluster());
 

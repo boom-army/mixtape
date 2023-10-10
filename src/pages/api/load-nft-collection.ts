@@ -10,7 +10,7 @@ import {
 } from "@metaplex-foundation/js";
 import { Connection, Keypair } from "@solana/web3.js";
 import sharp from "sharp";
-import { getCluster } from "../../../scripts/helpers";
+import { getCluster } from "../../utils";
 
 interface NftEmote {
   id: string;

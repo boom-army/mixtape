@@ -1,7 +1,7 @@
 import prisma from "../../../lib/prisma";
 import { Helius } from "helius-sdk";
 import { NextApiRequest, NextApiResponse } from "next";
-import { getCluster } from "../../../scripts/helpers";
+import { getCluster } from "../../utils";
 
 const nftCollections = [
   "6zGB9MCm52r9vUk14BZA6p9hcZXCXf5NbCEUApGweNHU", // BRGR
