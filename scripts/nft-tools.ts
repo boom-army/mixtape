@@ -84,6 +84,7 @@ program
 
       const collection = await metaplex.nfts().create({
         name: collectionConfig.name,
+        symbol: collectionConfig.symbol,
         uri: metadata.uri,
         sellerFeeBasisPoints: collectionConfig.seller_fee_basis_points,
         isCollection: true,
