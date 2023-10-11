@@ -23,6 +23,6 @@ export const nftMetaTemplate = (): JsonMetadata => ({
   properties: {
     files: [],
     category: "image",
-    creators: [{ address: HARKL_ID.toBase58(), share: 100 }],
+    creators: [{ address: MIXTAPE_TX.toBase58(), share: 100 }],
   },
 });
