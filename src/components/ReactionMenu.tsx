@@ -132,7 +132,7 @@ export const ReactionMenu: React.FC = () => {
           />
         ))}
       </Stack>
-      {!publicKey && reactions.length && (
+      {!publicKey && reactions.length ? (
         <Box
           sx={{
             width: 40,
@@ -145,7 +145,7 @@ export const ReactionMenu: React.FC = () => {
             border: "5px solid black",
           }}
         />
-      )}
+      ) : null}
       {publicKey && (
         <StyledFab
           ref={fabRef}
