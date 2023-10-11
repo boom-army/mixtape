@@ -183,7 +183,7 @@ export const Header: React.FC<HeaderProps> = ({ meta }) => {
           </Box>
         </Grid>
       </Grid>
-      {publicKey && router.pathname.includes('/sol/') && <ReactionMenu />}
+      {router.pathname.includes('/sol/') && <ReactionMenu />}
     </>
   );
 };

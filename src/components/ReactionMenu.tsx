@@ -38,17 +38,16 @@ export const ReactionMenu: React.FC = () => {
 
   useEffect(() => {
     const fetchEmotes = async () => {
-      if (!publicKey || !address) return;
-
+      if (!address) return;
       const response = await fetch(`/api/reaction/read?mintAddress=${address}`);
       const data = await response.json();
+      setReactions(data.mintEmotes.map((d: EmoteData) => d.emote));
 
+      if (!publicKey) return;
       const userEmote = data.mintEmotes.find(
         (d: EmoteData) => d.userId === publicKey?.toBase58()
       );
       setUserReaction(userEmote ? userEmote.emote : null);
-
-      setReactions(data.mintEmotes.map((d: EmoteData) => d.emote));
     };
     fetchEmotes();
   }, [publicKey, address, userReactionOptions, userReaction]);
@@ -133,32 +132,48 @@ export const ReactionMenu: React.FC = () => {
           />
         ))}
       </Stack>
-      <StyledFab
-        ref={fabRef}
-        color="primary"
-        aria-label="add reaction"
-        onClick={(e) => !userReaction && handleEmojiMenuOpen(e)}
-        sx={
-          userReaction
-            ? {
-                backgroundColor: "white",
-                border: "5px solid black",
-                cursor: "default",
-              }
-            : {}
-        }
-      >
-        {userReaction ? (
-          <Image
-            src={userReaction.cImage}
-            alt={userReaction.name}
-            width={30}
-            height={30}
-          />
-        ) : (
-          <AddReactionOutlinedIcon style={{ fill: "white" }} />
-        )}
-      </StyledFab>
+      {!publicKey && reactions.length && (
+        <Box
+          sx={{
+            width: 40,
+            height: 40,
+            borderRadius: "50%",
+            backgroundColor: "white",
+            position: "fixed",
+            bottom: "2rem",
+            right: "1.5rem",
+            border: "5px solid black",
+          }}
+        />
+      )}
+      {publicKey && (
+        <StyledFab
+          ref={fabRef}
+          color="primary"
+          aria-label="add reaction"
+          onClick={(e) => !userReaction && handleEmojiMenuOpen(e)}
+          sx={
+            userReaction
+              ? {
+                  backgroundColor: "white",
+                  border: "5px solid black",
+                  cursor: "default",
+                }
+              : {}
+          }
+        >
+          {userReaction ? (
+            <Image
+              src={userReaction.cImage}
+              alt={userReaction.name}
+              width={30}
+              height={30}
+            />
+          ) : (
+            <AddReactionOutlinedIcon style={{ fill: "white" }} />
+          )}
+        </StyledFab>
+      )}
       <Menu
         anchorEl={emojiMenuAnchorEl}
         open={Boolean(emojiMenuAnchorEl)}
