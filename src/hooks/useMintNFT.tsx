@@ -64,7 +64,7 @@ export const useMintNFT = () => {
         //   }, {});
         // const nonce = Buffer.from(JSON.stringify(location)).toString("base64");
 
-        const mintNFTResponse = await fetch("/api/mint-compressed", {
+        const mintNFTResponse = await fetch("/api/nft/mint", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

@@ -454,8 +454,7 @@ const Create: React.FC = () => {
             </Box>
           </Typography>
           <Typography variant="body2" mb={2}>
-            Confirm the transaction and wait for the mint to complete. The
-            MixtApe NFT will be sent to your wallet.
+            Mixtape is minting. It&apos;ll be in your wallet shortly.
           </Typography>
         </Box>
       </Modal>

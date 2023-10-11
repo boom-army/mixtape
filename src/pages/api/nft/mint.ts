@@ -1,4 +1,4 @@
-import prisma from "../../../lib/prisma";
+import prisma from "../../../../lib/prisma";
 import {
   Metaplex,
   walletAdapterIdentity,
@@ -6,13 +6,13 @@ import {
   toMetaplexFile,
   JsonMetadata,
 } from "@metaplex-foundation/js";
-import { Connection, Keypair, PublicKey } from "@solana/web3.js";
+import { Connection, Keypair } from "@solana/web3.js";
 import { NextApiHandler } from "next";
-import { MIXTAPE_COLLECTION, MIXTAPE_TX } from "../../utils/nft";
+import { MIXTAPE_COLLECTION, MIXTAPE_TX } from "../../../utils/nft";
 import { Helius } from "helius-sdk";
-import { getCluster } from "../../utils";
+import { getCluster } from "../../../utils";
 import { NftTemplate } from "@prisma/client";
-import { AwardType } from "../../types";
+import { AwardType } from "../../../types";
 
 export interface MintNFT {
   template: NftTemplate;
@@ -25,8 +25,7 @@ const mint: NextApiHandler = async (req, res) => {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
-  const { nftImageBlob, nftMetadata, template, publicKey } =
-    req.body;
+  const { nftImageBlob, nftMetadata, template, publicKey } = req.body;
   const errors = {
     nftImageBlob: !nftImageBlob && "NFT image is required",
     nftMetadata: !nftMetadata && "NFT metadata is required",
@@ -110,7 +109,11 @@ const mint: NextApiHandler = async (req, res) => {
       sellerFeeBasisPoints: nftMetadata?.seller_fee_basis_points,
       imageUrl: imageAddress + `?ext=${imageType}`,
       attributes: nftMetadata.properties?.attributes,
-  });
+    });
+
+    if (!result) {    
+      throw new Error("Failed to mint NFT");
+    };
 
     await prisma.$transaction([
       prisma.mint.create({
