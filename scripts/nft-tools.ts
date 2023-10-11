@@ -67,6 +67,7 @@ program
         uri: "https://nftstorage.link/ipfs/bafkreibwsac5joamimxi5vseyfy3oddap4jk3zzs25qxxsnc4av6xn57l4",
         sellerFeeBasisPoints: collectionConfig.seller_fee_basis_points,
         isCollection: true,
+        collectionIsSized: true,
         updateAuthority: keypair,
       });
 
@@ -84,7 +85,7 @@ program
     }
   });
 
-// ts-node scripts/nft-tools.ts delegateCollectionToHelius DQCCPUVm89LGu7nftE8LxXwbEhAvFeAyAa9STRqxwvv8 -e devnet -k testKey-MXTPExF3AYg6bW31ucCWHjh2wYaoDsF1Kx8jbHpD41N.json
+// ts-node scripts/nft-tools.ts delegateCollectionToHelius 12goZzd26JopD1jhcXWBjDhJh74zpBJjYKgVj8DaQfU5 -e devnet -k testKey-MXTPExF3AYg6bW31ucCWHjh2wYaoDsF1Kx8jbHpD41N.json
 program
   .command("delegateCollectionToHelius")
   .argument("<collectionMint>", "The collection address to delegate to Helius")
@@ -140,56 +141,56 @@ program
 
 // ts-node scripts/nft-tools.ts revokeCollectionFromHelius DQCCPUVm89LGu7nftE8LxXwbEhAvFeAyAa9STRqxwvv8 -e devnet -k testKey-MXTPExF3AYg6bW31ucCWHjh2wYaoDsF1Kx8jbHpD41N.json
 program
-.command("revokeCollectionFromHelius")
-.argument("<collectionMint>", "The collection address to delegate to Helius")
-.option(
-  "-e, --env <string>",
-  "Solana cluster env name. One of: mainnet-beta, testnet, devnet (or URI)",
-  "devnet"
-)
-.option(
-  "-k, --key <path>",
-  `Solana wallet location`,
-  "--Solana wallet not provided"
-)
-.action(async (collectionMint, options) => {
-  try {
-    const { key, env } = options;
+  .command("revokeCollectionFromHelius")
+  .argument("<collectionMint>", "The collection address to delegate to Helius")
+  .option(
+    "-e, --env <string>",
+    "Solana cluster env name. One of: mainnet-beta, testnet, devnet (or URI)",
+    "devnet"
+  )
+  .option(
+    "-k, --key <path>",
+    `Solana wallet location`,
+    "--Solana wallet not provided"
+  )
+  .action(async (collectionMint, options) => {
+    try {
+      const { key, env } = options;
 
-    const COLLECTION = new PublicKey(collectionMint);
+      const COLLECTION = new PublicKey(collectionMint);
 
-    const HELIUS_COLLECTION_AUTHORITY =
-      env === "devnet"
-        ? "2LbAtCJSaHqTnP9M5QSjvAMXk79RNLusFspFN5Ew67TC"
-        : "HnT5KVAywGgQDhmh6Usk4bxRg4RwKxCK4jmECyaDth5R";
+      const HELIUS_COLLECTION_AUTHORITY =
+        env === "devnet"
+          ? "2LbAtCJSaHqTnP9M5QSjvAMXk79RNLusFspFN5Ew67TC"
+          : "HnT5KVAywGgQDhmh6Usk4bxRg4RwKxCK4jmECyaDth5R";
 
-    const keyFile = readFileSync(key, "utf8");
-    const keyToJSON = JSON.parse(keyFile);
-    const seed = Uint8Array.from(keyToJSON).slice(0, 32);
-    const keypair = Keypair.fromSeed(seed);
-    const cluster = env.includes("https://") ? env : clusterApiUrl(env);
+      const keyFile = readFileSync(key, "utf8");
+      const keyToJSON = JSON.parse(keyFile);
+      const seed = Uint8Array.from(keyToJSON).slice(0, 32);
+      const keypair = Keypair.fromSeed(seed);
+      const cluster = env.includes("https://") ? env : clusterApiUrl(env);
 
-    const connection = new Connection(cluster, "finalized");
-    const metaplex = new Metaplex(connection).use(
-      walletAdapterIdentity(keypair)
-    );
+      const connection = new Connection(cluster, "finalized");
+      const metaplex = new Metaplex(connection).use(
+        walletAdapterIdentity(keypair)
+      );
 
-    const { response } = await metaplex.nfts().revokeCollectionAuthority({
-      mintAddress: COLLECTION,
-      collectionAuthority: new PublicKey(HELIUS_COLLECTION_AUTHORITY),
-      revokeAuthority: keypair,
-    });
+      const { response } = await metaplex.nfts().revokeCollectionAuthority({
+        mintAddress: COLLECTION,
+        collectionAuthority: new PublicKey(HELIUS_COLLECTION_AUTHORITY),
+        revokeAuthority: keypair,
+      });
 
-    if (!response) {
-      throw new Error("Delegation failed");
+      if (!response) {
+        throw new Error("Delegation failed");
+      }
+
+      console.log(
+        `${COLLECTION.toBase58()} revoked authority address ${HELIUS_COLLECTION_AUTHORITY}`
+      );
+    } catch (error) {
+      console.error(error);
     }
-
-    console.log(
-      `${COLLECTION.toBase58()} revoked authority address ${HELIUS_COLLECTION_AUTHORITY}`
-    );
-  } catch (error) {
-    console.error(error);
-  }
-});
+  });
 
 program.parse(process.argv);
