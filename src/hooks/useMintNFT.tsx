@@ -65,13 +65,6 @@ export const useMintNFT = () => {
         //   }, {});
         // const nonce = Buffer.from(JSON.stringify(location)).toString("base64");
 
-        console.log(JSON.stringify({
-          nftImageBlob,
-          nftMetadata,
-          template,
-          publicKey,
-        }));
-
         const mintNFTResponse = await fetch("/api/mint-compressed", {
           method: "POST",
           headers: {

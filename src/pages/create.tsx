@@ -259,7 +259,7 @@ const Create: React.FC = () => {
         trait_type: "template_date",
         value: dayjs(template.releaseDate).format("DD MMM YY"),
       },
-      { trait_type: "mint_price", value: template.price.toString() },
+      // { trait_type: "mint_price", value: template.price.toString() },
       {
         trait_type: "tape_blank",
         value: `${template.name} - C${template.runtime}`,

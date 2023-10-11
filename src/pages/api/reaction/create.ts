@@ -1,5 +1,6 @@
 import prisma from "../../../../lib/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
+import { AwardType } from "../../../types";
 
 export default async function createReaction(
   req: NextApiRequest,
@@ -34,7 +35,7 @@ export default async function createReaction(
           points: 1,
           userId,
           mintAddress,
-          awardedId: "reaction",
+          awardedId: AwardType.REACT,
         },
       }),
     ]);

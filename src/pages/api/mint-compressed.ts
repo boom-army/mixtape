@@ -12,6 +12,7 @@ import { MIXTAPE_COLLECTION, MIXTAPE_TX } from "../../utils/nft";
 import { Helius } from "helius-sdk";
 import { getCluster } from "../../utils";
 import { NftTemplate } from "@prisma/client";
+import { AwardType } from "../../types";
 
 export interface MintNFT {
   template: NftTemplate;
@@ -112,15 +113,25 @@ const mint: NextApiHandler = async (req, res) => {
       attributes: nftMetadata.properties?.attributes,
   });
 
-    await prisma.mint.create({
-      data: {
-        mintAddress: result.assetId,
-        nftMetadata: JSON.parse(JSON.stringify(nftMetadata)),
-        signature: result.signature,
-        userId: publicKey,
-        templateId: template.id,
-      },
-    });
+    await prisma.$transaction([
+      prisma.mint.create({
+        data: {
+          mintAddress: result.assetId,
+          nftMetadata: JSON.parse(JSON.stringify(nftMetadata)),
+          signature: result.signature,
+          userId: publicKey,
+          templateId: template.id,
+        },
+      }),
+      prisma.points.create({
+        data: {
+          points: 5,
+          userId: publicKey,
+          mintAddress: result.assetId,
+          awardedId: AwardType.MINT,
+        },
+      }),
+    ]);
 
     return res.status(200).json({ mintAddress: result.assetId });
   } catch (error) {

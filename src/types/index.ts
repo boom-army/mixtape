@@ -19,3 +19,9 @@ export interface EmoteData {
   updatedAt: string;
   emote: Emote;
 }
+
+export enum AwardType {
+  MINT = "mint",
+  STREAM = "stream",
+  REACT = "reaction",
+}

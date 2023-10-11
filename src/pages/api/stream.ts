@@ -1,6 +1,7 @@
 import prisma from "../../../lib/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 import ytdl from "@distube/ytdl-core";
+import { AwardType } from "../../types";
 
 const stream = async (req: NextApiRequest, res: NextApiResponse) => {
   const url = req.query.url as string;
@@ -17,9 +18,9 @@ const stream = async (req: NextApiRequest, res: NextApiResponse) => {
           points: 1,
           userId: publicKey,
           mintAddress,
-          awardedId: "stream",
+          awardedId: AwardType.STREAM,
         },
-      })
+      });
     } catch (error) {
       console.log("streaming points error", error);
     }
