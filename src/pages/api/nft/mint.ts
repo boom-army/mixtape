@@ -111,9 +111,15 @@ const mint: NextApiHandler = async (req, res) => {
       attributes: nftMetadata.properties?.attributes,
     });
 
-    if (!result) {    
+    if (!result) {
       throw new Error("Failed to mint NFT");
-    };
+    }
+
+    await prisma.user.upsert({
+      where: { id: publicKey },
+      update: {},
+      create: { id: publicKey },
+    });
 
     await prisma.$transaction([
       prisma.mint.create({
