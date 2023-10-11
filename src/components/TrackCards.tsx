@@ -11,7 +11,7 @@ import {
 import Link from "next/link";
 
 interface TrackCardProps {
-  latestTracks: any;
+  latestTracks: any[];
 }
 
 const TrackCards: React.FC<TrackCardProps> = ({ latestTracks }) => {
