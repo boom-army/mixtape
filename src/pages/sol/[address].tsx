@@ -94,14 +94,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   if (address) {
     try {
-      const response = await fetch(`/api/nft/read-meta?address=${address}`);
+      const req = context.req;
+      const protocol = req.headers['x-forwarded-proto'] || 'http';
+      const host = req.headers['x-forwarded-host'] || req.headers['host'];
+      const baseUrl = `${protocol}://${host}`;
+
+      const response = await fetch(`${baseUrl}/api/nft/read-meta?address=${address}`);
       const data = await response.json();
       const metadata = data.asset;
 
       if (!metadata) throw new Error("No metadata found");
 
       const contentResponse = await fetch(metadata.content.json_uri);
-      const contentData = await contentResponse.json();
+      const contentData = await contentResponse.json();      
 
       mixtapeImg = contentData.image ?? mixtapeImg;
       mixtapeTitle = contentData.name ?? mixtapeTitle;
