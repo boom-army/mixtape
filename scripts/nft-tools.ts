@@ -1,15 +1,20 @@
 import { readFileSync } from "fs";
 import { program } from "commander";
-import { Metaplex, walletAdapterIdentity } from "@metaplex-foundation/js";
+import {
+  Metaplex,
+  bundlrStorage,
+  keypairIdentity,
+  walletAdapterIdentity,
+} from "@metaplex-foundation/js";
 import { Connection, Keypair, PublicKey, clusterApiUrl } from "@solana/web3.js";
-import { MIXTAPE_COLLECTION } from "../src/utils/nft";
+import { getBundlrURI } from "../src/utils";
 
 program
   .name("nft-tools")
   .description("CLI for general NFT interactions")
   .version("0.0.1");
 
-// ts-node scripts/nft-tools.ts createCollection -e devnet -k testKey-MXTPExF3AYg6bW31ucCWHjh2wYaoDsF1Kx8jbHpD41N.json
+// ts-node scripts/nft-tools.ts createCollection -k testKey-MXTPExF3AYg6bW31ucCWHjh2wYaoDsF1Kx8jbHpD41N.json -e devnet
 // DQCCPUVm89LGu7nftE8LxXwbEhAvFeAyAa9STRqxwvv8
 program
   .command("createCollection")
@@ -28,12 +33,12 @@ program
       const { key, env } = options;
 
       const collectionConfig = {
-        name: "MixtApe",
+        name: "MixtApe 2",
         symbol: "MXTAPE",
-        description: "MixtApes on Solana at mixt-ape.com - mix, share, repeat",
+        description: "MixtApes on Solana at mixt-ape.com - mix, share, ape, repeat",
         seller_fee_basis_points: 0,
         image:
-          "https://nftstorage.link/ipfs/bafkreiawri2iatz2fl7avzzqtgwdtveigdgmhpnm2o3lea64gzv23wo77e",
+          "https://nftstorage.link/ipfs/bafkreiawri2iatz2fl7avzzqtgwdtveigdgmhpnm2o3lea64gzv23wo77e?ext=image/png",
         properties: {
           files: [
             {
@@ -58,13 +63,28 @@ program
       const cluster = env.includes("https://") ? env : clusterApiUrl(env);
 
       const connection = new Connection(cluster, "finalized");
-      const metaplex = new Metaplex(connection).use(
-        walletAdapterIdentity(keypair)
+      const metaplex = new Metaplex(connection, env).use(keypairIdentity(keypair)).use(
+        bundlrStorage({
+          address: getBundlrURI(env),
+          timeout: 60000,
+          identity: keypair,
+        })
+      );;
+
+      const metadata = await metaplex?.nfts().uploadMetadata(
+        {
+          ...collectionConfig,
+          payer: keypair.publicKey,
+        },
+        {
+          commitment: "finalized",
+        }
       );
+      if (!metadata) throw new Error("Metadata upload failed");
 
       const collection = await metaplex.nfts().create({
         name: collectionConfig.name,
-        uri: "https://nftstorage.link/ipfs/bafkreibwsac5joamimxi5vseyfy3oddap4jk3zzs25qxxsnc4av6xn57l4",
+        uri: metadata.uri,
         sellerFeeBasisPoints: collectionConfig.seller_fee_basis_points,
         isCollection: true,
         collectionIsSized: true,
