@@ -4,6 +4,7 @@ import {
   CardMedia,
   CircularProgress,
   Grid,
+  Skeleton,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -21,6 +22,23 @@ const TrackCards: React.FC<TrackCardProps> = ({ latestTracks }) => {
       <Grid item xs={12}>
         <h3>Latest mixes: {!latestTracks && <CircularProgress size={12} />}</h3>
       </Grid>
+      {!latestTracks && (
+        <Grid container spacing={3}>
+          {[...Array(16)].map((_, index) => (
+            <Grid item xs={12} sm={6} md={3} key={index}>
+              <Grid container spacing={1}>
+                <Grid item xs={4}>
+                  <Skeleton variant="rectangular" height={80} />
+                </Grid>
+                <Grid item xs={8}>
+                  <Skeleton variant="text" sx={{ mb: 1.5 }} />
+                  <Skeleton variant="text" />
+                </Grid>
+              </Grid>
+            </Grid>
+          ))}
+        </Grid>
+      )}
       {latestTracks.map((track: any) => (
         <Grid
           item
@@ -61,7 +79,11 @@ const TrackCards: React.FC<TrackCardProps> = ({ latestTracks }) => {
                   <CardMedia
                     component="img"
                     sx={{ height: "80px", width: "80px", objectFit: "contain" }}
-                    image={track.meta.properties.files[0]?.uri || track.image || "/images/mixtape-1024.png"}
+                    image={
+                      track.meta.properties.files[0]?.uri ||
+                      track.image ||
+                      "/images/mixtape-1024.png"
+                    }
                     alt={track.title}
                   />
                 </Grid>
