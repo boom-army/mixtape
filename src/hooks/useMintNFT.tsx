@@ -15,7 +15,6 @@ export interface MintNFT {
 export const useMintNFT = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { publicKey, signTransaction } = useWallet();
-  const { connection } = useConnection();
   const [isMinting, setMinting] = useState<boolean>(false);
 
   const mintNFT = useCallback(
@@ -93,7 +92,7 @@ export const useMintNFT = () => {
         setMinting(false);
       }
     },
-    [publicKey, signTransaction, enqueueSnackbar, connection]
+    [publicKey, signTransaction, enqueueSnackbar]
   );
 
   return { mintNFT, isMinting };

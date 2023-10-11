@@ -19,7 +19,7 @@ export const nftMetaTemplate = (): JsonMetadata => ({
   external_url: "https://mixt-ape.com",
   attributes: [],
   seller_fee_basis_points: 500,
-  collection: { name: "MixtApe 1", family: "MixtApe" },
+  collection: { name: "MixtApe 2", family: "MixtApe" },
   properties: {
     files: [],
     category: "image",

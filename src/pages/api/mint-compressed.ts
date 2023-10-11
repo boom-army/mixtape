@@ -104,12 +104,11 @@ const mint: NextApiHandler = async (req, res) => {
       symbol: nftMetadata.symbol,
       description: nftMetadata.description,
       delegate: MIXTAPE_TX.toBase58(),
-      collection: "12goZzd26JopD1jhcXWBjDhJh74zpBJjYKgVj8DaQfU5",
+      collection: MIXTAPE_COLLECTION.toBase58(),
       creators: nftMetadata.properties?.creators,
       uri: metadata.uri,
       sellerFeeBasisPoints: nftMetadata?.seller_fee_basis_points,
       imageUrl: imageAddress + `?ext=${imageType}`,
-      externalUrl: "",
       attributes: nftMetadata.properties?.attributes,
   });
 
