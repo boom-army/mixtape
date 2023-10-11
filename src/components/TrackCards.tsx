@@ -22,7 +22,7 @@ const TrackCards: React.FC<TrackCardProps> = ({ latestTracks }) => {
       <Grid item xs={12}>
         <h3>Latest mixes: {!latestTracks && <CircularProgress size={12} />}</h3>
       </Grid>
-      {!latestTracks && (
+      {!latestTracks.length && (
         <Grid container spacing={3}>
           {[...Array(16)].map((_, index) => (
             <Grid item xs={12} sm={6} md={3} key={index}>
