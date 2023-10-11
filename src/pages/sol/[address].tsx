@@ -6,9 +6,7 @@ import { Connection, PublicKey } from "@solana/web3.js";
 import { GetServerSideProps } from "next";
 import { Metaplex } from "@metaplex-foundation/js";
 import { useRouter } from "next/router";
-import { useState, useContext, useEffect } from "react";
-import { MetaplexContext } from "../../contexts/MetaplexProvider";
-import { useSnackbar } from "../../contexts/SnackbarProvider";
+import { useState, useEffect } from "react";
 import { ExtendedJsonMetadata } from "../../types/nftTemplates";
 
 interface AddressProps {
@@ -38,12 +36,10 @@ const Address: React.FC<AddressProps> = ({
         const response = await fetch(`/api/nft/read-meta?address=${address}`);
         const data = await response.json();
         const metadata = data.asset;
-        console.log(metadata);
         if (!metadata) throw new Error("No metadata found");
 
         const contentResponse = await fetch(metadata.content.json_uri);
         const contentData = await contentResponse.json();
-        console.log(contentData);
 
         setMixtapeMetaState(contentData as ExtendedJsonMetadata);
       } catch (error) {
@@ -61,7 +57,7 @@ const Address: React.FC<AddressProps> = ({
         <meta property="og:image" content={mixtapeImg} />
         <meta
           property="og:url"
-          content="https://octopus-app-96gy8.ondigitalocean.app"
+          content={`https://mixt-ape.com/sol/${address}`}
         />
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content={mixtapeTitle} />
@@ -88,11 +84,9 @@ const Address: React.FC<AddressProps> = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const connection = new Connection(process.env.NEXT_PUBLIC_SOLANA_NETWORK!);
-  const metaplex = new Metaplex(connection);
-
   const params = context.params as { address: string };
   const { address } = params;
+
   let mixtapeImg = "/images/mixtape-1024.png";
   let mixtapeTitle = "Mixtape";
   let mixtapeDescription = "Mixtape";
@@ -100,14 +94,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   if (address) {
     try {
-      const metadataAddress = new PublicKey(address);
-      const metadata = await metaplex
-        ?.nfts()
-        .findByMint({ mintAddress: metadataAddress });
-      mixtapeImg = metadata?.json?.image ?? mixtapeImg;
-      mixtapeTitle = metadata?.json?.name ?? mixtapeTitle;
-      mixtapeDescription = metadata?.json?.description ?? mixtapeDescription;
-      trackMeta = metadata?.json?.tracks || [];
+      const response = await fetch(`/api/nft/read-meta?address=${address}`);
+      const data = await response.json();
+      const metadata = data.asset;
+
+      if (!metadata) throw new Error("No metadata found");
+
+      const contentResponse = await fetch(metadata.content.json_uri);
+      const contentData = await contentResponse.json();
+
+      mixtapeImg = contentData.image ?? mixtapeImg;
+      mixtapeTitle = contentData.name ?? mixtapeTitle;
+      mixtapeDescription = contentData.description ?? mixtapeDescription;
+      trackMeta = contentData.tracks || [];
     } catch (error) {
       console.error(`Failed to fetch metadata: ${error}`);
     }
