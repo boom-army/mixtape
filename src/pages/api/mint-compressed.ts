@@ -6,9 +6,9 @@ import {
   toMetaplexFile,
   JsonMetadata,
 } from "@metaplex-foundation/js";
-import { Connection, Keypair } from "@solana/web3.js";
+import { Connection, Keypair, PublicKey } from "@solana/web3.js";
 import { NextApiHandler } from "next";
-import { MIXTAPE_COLLECTION } from "../../utils/nft";
+import { MIXTAPE_COLLECTION, MIXTAPE_TX } from "../../utils/nft";
 import { Helius } from "helius-sdk";
 import { getCluster } from "../../utils";
 import { NftTemplate } from "@prisma/client";
@@ -97,38 +97,32 @@ const mint: NextApiHandler = async (req, res) => {
     );
     if (!metadata) throw new Error("Metadata upload failed");
 
-    console.log(metadata, imageAddress);
-    
-
-    const transaction = await helius.mintCompressedNft({
+    const { result } = await helius.mintCompressedNft({
       owner: publicKey,
       name: nftMetadata.name,
       symbol: nftMetadata.symbol,
       description: nftMetadata.description,
-      delegate: nftMetadata.properties?.creators?.[0].address,
-      // collection: MIXTAPE_COLLECTION.toBase58(),
+      delegate: MIXTAPE_TX.toBase58(),
+      collection: "12goZzd26JopD1jhcXWBjDhJh74zpBJjYKgVj8DaQfU5",
       creators: nftMetadata.properties?.creators,
       uri: metadata.uri,
-      sellerFeeBasisPoints: nftMetadata.properties?.seller_fee_basis_points,
+      sellerFeeBasisPoints: nftMetadata?.seller_fee_basis_points,
       imageUrl: imageAddress + `?ext=${imageType}`,
       externalUrl: "",
       attributes: nftMetadata.properties?.attributes,
   });
 
-  console.log(transaction);  
+    await prisma.mint.create({
+      data: {
+        mintAddress: result.assetId,
+        nftMetadata: JSON.parse(JSON.stringify(nftMetadata)),
+        signature: result.signature,
+        userId: publicKey,
+        templateId: template.id,
+      },
+    });
 
-    // await prisma.mint.create({
-    //   data: {
-    //     mintAddress,
-    //     nftMetadata: JSON.parse(JSON.stringify(nftMetadata)),
-    //     signature: signature,
-    //     // location,
-    //     userId: user.id,
-    //     templateId: template.id,
-    //   },
-    // });
-
-    return res.status(200).json({ mintAddress: transaction });
+    return res.status(200).json({ mintAddress: result.assetId });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: (error as Error).message });
