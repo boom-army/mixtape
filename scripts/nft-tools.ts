@@ -10,7 +10,7 @@ program
   .version("0.0.1");
 
 // ts-node scripts/nft-tools.ts createCollection -e devnet -k testKey-MXTPExF3AYg6bW31ucCWHjh2wYaoDsF1Kx8jbHpD41N.json
-//  DQCCPUVm89LGu7nftE8LxXwbEhAvFeAyAa9STRqxwvv8
+// DQCCPUVm89LGu7nftE8LxXwbEhAvFeAyAa9STRqxwvv8
 program
   .command("createCollection")
   .option(
@@ -74,14 +74,20 @@ program
         throw new Error("Collection mint failed");
       }
 
-      console.log(`Collection mint ${collection.mintAddress.toBase58()} created in tx ${collection.response.signature}`);
+      console.log(
+        `Collection mint ${collection.mintAddress.toBase58()} created in tx ${
+          collection.response.signature
+        }`
+      );
     } catch (error) {
       console.error(error);
     }
   });
 
+// ts-node scripts/nft-tools.ts delegateCollectionToHelius DQCCPUVm89LGu7nftE8LxXwbEhAvFeAyAa9STRqxwvv8 -e devnet -k testKey-MXTPExF3AYg6bW31ucCWHjh2wYaoDsF1Kx8jbHpD41N.json
 program
   .command("delegateCollectionToHelius")
+  .argument("<collectionMint>", "The collection address to delegate to Helius")
   .option(
     "-e, --env <string>",
     "Solana cluster env name. One of: mainnet-beta, testnet, devnet (or URI)",
@@ -92,9 +98,11 @@ program
     `Solana wallet location`,
     "--Solana wallet not provided"
   )
-  .action(async (_, options) => {
+  .action(async (collectionMint, options) => {
     try {
       const { key, env } = options;
+
+      const COLLECTION = new PublicKey(collectionMint);
 
       const HELIUS_COLLECTION_AUTHORITY =
         env === "devnet"
@@ -113,7 +121,7 @@ program
       );
 
       const { response } = await metaplex.nfts().approveCollectionAuthority({
-        mintAddress: MIXTAPE_COLLECTION,
+        mintAddress: COLLECTION,
         collectionAuthority: new PublicKey(HELIUS_COLLECTION_AUTHORITY),
         updateAuthority: keypair,
       });
@@ -123,11 +131,65 @@ program
       }
 
       console.log(
-        `${MIXTAPE_COLLECTION.toBase58()} delegated to ${HELIUS_COLLECTION_AUTHORITY}`
+        `${COLLECTION.toBase58()} delegated to ${HELIUS_COLLECTION_AUTHORITY}`
       );
     } catch (error) {
       console.error(error);
     }
   });
+
+// ts-node scripts/nft-tools.ts revokeCollectionFromHelius DQCCPUVm89LGu7nftE8LxXwbEhAvFeAyAa9STRqxwvv8 -e devnet -k testKey-MXTPExF3AYg6bW31ucCWHjh2wYaoDsF1Kx8jbHpD41N.json
+program
+.command("revokeCollectionFromHelius")
+.argument("<collectionMint>", "The collection address to delegate to Helius")
+.option(
+  "-e, --env <string>",
+  "Solana cluster env name. One of: mainnet-beta, testnet, devnet (or URI)",
+  "devnet"
+)
+.option(
+  "-k, --key <path>",
+  `Solana wallet location`,
+  "--Solana wallet not provided"
+)
+.action(async (collectionMint, options) => {
+  try {
+    const { key, env } = options;
+
+    const COLLECTION = new PublicKey(collectionMint);
+
+    const HELIUS_COLLECTION_AUTHORITY =
+      env === "devnet"
+        ? "2LbAtCJSaHqTnP9M5QSjvAMXk79RNLusFspFN5Ew67TC"
+        : "HnT5KVAywGgQDhmh6Usk4bxRg4RwKxCK4jmECyaDth5R";
+
+    const keyFile = readFileSync(key, "utf8");
+    const keyToJSON = JSON.parse(keyFile);
+    const seed = Uint8Array.from(keyToJSON).slice(0, 32);
+    const keypair = Keypair.fromSeed(seed);
+    const cluster = env.includes("https://") ? env : clusterApiUrl(env);
+
+    const connection = new Connection(cluster, "finalized");
+    const metaplex = new Metaplex(connection).use(
+      walletAdapterIdentity(keypair)
+    );
+
+    const { response } = await metaplex.nfts().revokeCollectionAuthority({
+      mintAddress: COLLECTION,
+      collectionAuthority: new PublicKey(HELIUS_COLLECTION_AUTHORITY),
+      revokeAuthority: keypair,
+    });
+
+    if (!response) {
+      throw new Error("Delegation failed");
+    }
+
+    console.log(
+      `${COLLECTION.toBase58()} revoked authority address ${HELIUS_COLLECTION_AUTHORITY}`
+    );
+  } catch (error) {
+    console.error(error);
+  }
+});
 
 program.parse(process.argv);
