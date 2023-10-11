@@ -1,6 +1,6 @@
 import Head from "next/head";
 import TrackList from "../../components/TrackList";
-import { Box, Container, Link, Typography } from "@mui/material";
+import { Box, Container, Link, Skeleton, Typography } from "@mui/material";
 import { Header } from "../../components/Header";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { GetServerSideProps } from "next";
@@ -72,9 +72,20 @@ const Address: React.FC<AddressProps> = ({
         </Box>
         <Header meta={mixtapeMetaState} />
         {!mixtapeMetaState?.tracks && !trackMeta ? (
-          <Typography variant="h6" align="center" style={{ padding: "100px" }}>
-            No mixtape tracks loaded
-          </Typography>
+          [...Array(3)].map((_, index) => (
+            <Box key={index} mb={2}>
+              <Skeleton variant="text" width="100%" height={60} />
+              <Box display="flex" flexDirection="row" alignItems="center">
+                <Skeleton variant="rectangular" width={80} height={20} />
+                <Skeleton
+                  variant="rectangular"
+                  width={80}
+                  height={20}
+                  sx={{ ml: 2 }}
+                />
+              </Box>
+            </Box>
+          ))
         ) : (
           <TrackList data={mixtapeMetaState?.tracks ?? trackMeta} />
         )}
@@ -95,18 +106,20 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (address) {
     try {
       const req = context.req;
-      const protocol = req.headers['x-forwarded-proto'] || 'http';
-      const host = req.headers['x-forwarded-host'] || req.headers['host'];
+      const protocol = req.headers["x-forwarded-proto"] || "http";
+      const host = req.headers["x-forwarded-host"] || req.headers["host"];
       const baseUrl = `${protocol}://${host}`;
 
-      const response = await fetch(`${baseUrl}/api/nft/read-meta?address=${address}`);
+      const response = await fetch(
+        `${baseUrl}/api/nft/read-meta?address=${address}`
+      );
       const data = await response.json();
       const metadata = data.asset;
 
       if (!metadata) throw new Error("No metadata found");
 
       const contentResponse = await fetch(metadata.content.json_uri);
-      const contentData = await contentResponse.json();      
+      const contentData = await contentResponse.json();
 
       mixtapeImg = contentData.image ?? mixtapeImg;
       mixtapeTitle = contentData.name ?? mixtapeTitle;
