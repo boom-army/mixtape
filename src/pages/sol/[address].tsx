@@ -29,26 +29,29 @@ const Address: React.FC<AddressProps> = ({
   >();
 
   const router = useRouter();
-  const metaplex = useContext(MetaplexContext);
-
   const { address } = router.query;
 
   useEffect(() => {
     const fetchMetadata = async () => {
       if (!address) return;
       try {
-        const metadataAddress = new PublicKey(address);
-        const metadata = await metaplex
-          ?.nfts()
-          .findByMint({ mintAddress: metadataAddress });
-        if (!metadata?.json?.tracks) return;
-        setMixtapeMetaState(metadata.json as ExtendedJsonMetadata);
+        const response = await fetch(`/api/nft/read-meta?address=${address}`);
+        const data = await response.json();
+        const metadata = data.asset;
+        console.log(metadata);
+        if (!metadata) throw new Error("No metadata found");
+
+        const contentResponse = await fetch(metadata.content.json_uri);
+        const contentData = await contentResponse.json();
+        console.log(contentData);
+
+        setMixtapeMetaState(contentData as ExtendedJsonMetadata);
       } catch (error) {
         console.error(error);
       }
     };
     fetchMetadata();
-  }, [address, metaplex]);
+  }, [address]);
 
   return (
     <>
