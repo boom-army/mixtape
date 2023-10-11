@@ -58,13 +58,15 @@ export const TapeGalleryItem: React.FC<GalleryItem> = ({
   useEffect(() => {
     const timer = setInterval(() => {
       const now = dayjs();
-      if (item.endDate && !item.isExpired) {        
+      if (item.endDate && !item.isExpired) {
         const endDate = dayjs(item.endDate);
         const diff = endDate.diff(now, "second");
         if (diff > 0) {
           const duration = dayjs.duration(diff, "seconds");
           const totalDays = duration.asDays();
-          const countdownString = `${Math.floor(totalDays)}d ${duration.hours()}h ${duration.minutes()}m ${duration.seconds()}s`;
+          const countdownString = `${Math.floor(
+            totalDays
+          )}d ${duration.hours()}h ${duration.minutes()}m ${duration.seconds()}s`;
           setCountdown(`Mint closes in ${countdownString}`);
         } else {
           item.isExpired = true;
@@ -121,7 +123,8 @@ export const TapeGalleryItem: React.FC<GalleryItem> = ({
         </Box>
         <CardContent>
           <Typography variant="h5">{`${item.name} - C${item.runtime}`}</Typography>
-          <Typography variant="body2">{`mint: ⦾${item.price}`}</Typography>
+          <Typography variant="body2">FREE NFT mint</Typography>
+          {/* <Typography variant="body2">{`mint: ⦾${item.price}`}</Typography> */}
         </CardContent>
       </Card>
     </Grid>
