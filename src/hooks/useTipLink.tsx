@@ -30,7 +30,7 @@ const useTipLink = () => {
     }
 
     const hasMint = await userOwnsNFT(nftAddress, publicKey as PublicKey);
-    if (hasMint.length === 0) {
+    if (!hasMint) {
       throw new Error("The user does not own the specified NFT");
     }
 

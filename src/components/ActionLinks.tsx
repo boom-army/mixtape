@@ -85,7 +85,7 @@ const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
           router.query.address as string,
           publicKey
         );
-        setIsOwner(!!hasMint);
+        setIsOwner(hasMint);
       } catch (error) {
         console.error("Failed to fetch nft owner:", error);
       }
@@ -99,7 +99,7 @@ const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
       await actionTipLink(router.query.address as string);
       setOpenSendLinkConfirm(false);
       enqueueSnackbar(
-        `Mixtape sent to ${tipLinkURL}. You can click "View tip link" when connected to see the tip link at any time.`
+        `Mixtape sent to tiplink. You can click "View tip link" when connected to see the tip link at any time.`
       );
     } catch (error) {
       enqueueSnackbar((error as Error).message);
@@ -126,7 +126,7 @@ const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
             </LinkAction>
           </ListItem>
         )}
-        {router.pathname === "/sol/[address]" &&
+        {/* {router.pathname === "/sol/[address]" &&
           !isOwner &&
           !isEmpty(isSender) && (
             <ListItem disablePadding>
@@ -134,7 +134,7 @@ const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
                 View<span>&nbsp;your tip link</span>
               </LinkAction>
             </ListItem>
-          )}
+          )} */}
       </List>
       <Modal
         open={openSendLinkConfirm}
