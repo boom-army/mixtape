@@ -131,11 +131,20 @@ const ActionLinks: React.FC<ActionLinksProps> = ({
             Mint<span>&nbsp;a new mix</span>
           </LinkAction>
         </ListItem>
-        <ListItem disablePadding>
-          <LinkAction onClick={handleMenuOpen}>
-            Share<span>&nbsp;this mix</span>
-          </LinkAction>
-        </ListItem>
+        {router.pathname === "/" && (
+          <ListItem disablePadding>
+            <LinkAction href="/leaderboards">
+              Leaderboards
+            </LinkAction>
+          </ListItem>
+        )}
+        {router.pathname === "/sol/[address]" && (
+          <ListItem disablePadding>
+            <LinkAction onClick={handleMenuOpen}>
+              Share<span>&nbsp;this mix</span>
+            </LinkAction>
+          </ListItem>
+        )}
         {router.pathname === "/sol/[address]" && isOwner && (
           <ListItem disablePadding>
             <LinkAction onClick={() => setOpenSendLinkConfirm(true)}>
