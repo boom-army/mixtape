@@ -61,13 +61,11 @@ const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
           },
           body: JSON.stringify({
             mintAddress: router.query.address,
+            publicKey,
           }),
         });
-        if (!response.ok) {
-          return;
-        }
-        const { tipLinkData } = await response.json();
-        if (tipLinkData.sender === publicKey?.toBase58()) {
+        const { tipLinkData } = await response.json();        
+        if (tipLinkData && tipLinkData.sender === publicKey?.toBase58()) {
           setIsSender(tipLinkData.tipLink);
         }
       } catch (error) {
@@ -84,7 +82,7 @@ const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
         const hasMint = await userOwnsNFT(
           router.query.address as string,
           publicKey
-        );
+        );        
         setIsOwner(hasMint);
       } catch (error) {
         console.error("Failed to fetch nft owner:", error);
@@ -126,7 +124,7 @@ const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
             </LinkAction>
           </ListItem>
         )}
-        {/* {router.pathname === "/sol/[address]" &&
+        {router.pathname === "/sol/[address]" &&
           !isOwner &&
           !isEmpty(isSender) && (
             <ListItem disablePadding>
@@ -134,7 +132,7 @@ const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
                 View<span>&nbsp;your tip link</span>
               </LinkAction>
             </ListItem>
-          )} */}
+          )}
       </List>
       <Modal
         open={openSendLinkConfirm}

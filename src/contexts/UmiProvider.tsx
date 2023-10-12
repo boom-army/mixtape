@@ -3,6 +3,7 @@ import { Umi } from "@metaplex-foundation/umi";
 import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { walletAdapterIdentity } from "@metaplex-foundation/umi-signer-wallet-adapters";
+import { mplBubblegum } from "@metaplex-foundation/mpl-bubblegum";
 
 type UmiContext = {
   umi: Umi | null;
@@ -23,7 +24,8 @@ export const UmiProvider = ({
 }) => {
   const wallet = useWallet();
   const umi = createUmi(endpoint)
-    .use(walletAdapterIdentity(wallet));
+    .use(walletAdapterIdentity(wallet))
+    .use(mplBubblegum());
 
   return <UmiContext.Provider value={{ umi }}>{children}</UmiContext.Provider>;
 };

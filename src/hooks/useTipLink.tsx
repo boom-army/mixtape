@@ -1,16 +1,26 @@
 import { useState } from "react";
 import { TipLink } from "@tiplink/api";
-import { SystemProgram, PublicKey } from "@solana/web3.js";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useMetaplex } from "../contexts/MetaplexProvider";
 import useGetNFTOwner from "./useGetNFTOwner";
+import { useUmi } from "../contexts/UmiProvider";
+import {
+  getAssetWithProof,
+  transfer,
+} from "@metaplex-foundation/mpl-bubblegum";
+import { transferSol } from "@metaplex-foundation/mpl-toolbox";
+import {
+  transactionBuilder,
+  publicKey as umiPubKey,
+} from "@metaplex-foundation/umi";
+import { createSignerFromWalletAdapter } from "@metaplex-foundation/umi-signer-wallet-adapters";
+import bs58 from "bs58";
 
 const TIPLINK_MINIMUM_LAMPORTS = 4083560;
 
 const useTipLink = () => {
   const [tipLinkURL, setTipLinkURL] = useState<string | null>(null);
 
-  const Metaplex = useMetaplex();
+  const umi = useUmi();
   const { userOwnsNFT } = useGetNFTOwner();
   const wallet = useWallet();
 
@@ -25,11 +35,11 @@ const useTipLink = () => {
     ) {
       throw new Error("Wallet not connected");
     }
-    if (!Metaplex) {
+    if (!umi) {
       throw new Error("Metaplex not initialized");
     }
 
-    const hasMint = await userOwnsNFT(nftAddress, publicKey as PublicKey);
+    const hasMint = await userOwnsNFT(nftAddress, publicKey);
     if (!hasMint) {
       throw new Error("The user does not own the specified NFT");
     }
@@ -42,37 +52,39 @@ const useTipLink = () => {
         },
         body: JSON.stringify({
           mintAddress: nftAddress,
+          publicKey,
         }),
       });
-      if (readTipLink.ok) {
-        const data = await readTipLink.json();
-        setTipLinkURL(data.tipLinkData.tipLink);
+      const { tipLinkData } = await readTipLink.json();
+
+      if (tipLinkData) {
+        setTipLinkURL(tipLinkData.tipLink);
         return;
       }
-
       const tiplink = await TipLink.create();
 
-      const mintPublicKey = new PublicKey(nftAddress);
-      const nftOrSft = await Metaplex.nfts().findByMint({
-        mintAddress: mintPublicKey,
+      const assetWithProof = await getAssetWithProof(
+        umi,
+        umiPubKey(nftAddress)
+      );
+      const fundAcc = transferSol(umi, {
+        source: createSignerFromWalletAdapter(wallet),
+        destination: umiPubKey(tiplink.keypair.publicKey),
+        amount: {
+          basisPoints: BigInt(TIPLINK_MINIMUM_LAMPORTS),
+          identifier: "SOL",
+          decimals: 9,
+        },
       });
-      const transaction = Metaplex.nfts().builders().transfer({
-        nftOrSft,
-        toOwner: tiplink.keypair.publicKey,
+      const transferNFT = transfer(umi, {
+        ...assetWithProof,
+        leafOwner: umiPubKey(publicKey),
+        newLeafOwner: umiPubKey(tiplink.keypair.publicKey),
       });
-      const fundTiplink = SystemProgram.transfer({
-        fromPubkey: publicKey,
-        toPubkey: tiplink.keypair.publicKey,
-        lamports: TIPLINK_MINIMUM_LAMPORTS,
-      });
-      transaction.add({
-        instruction: fundTiplink,
-        signers: [
-          { publicKey, signTransaction, signMessage, signAllTransactions },
-        ],
-      });
-      const signedTransaction = await transaction.sendAndConfirm(Metaplex);
-      const signature = signedTransaction.response.signature;
+      let transaction = transactionBuilder().add(fundAcc).add(transferNFT);
+
+      const sendTransfer = await transaction.sendAndConfirm(umi);
+      const signature = bs58.encode(sendTransfer.signature);
 
       if (!signature) {
         throw new Error("Transaction failed");
@@ -98,7 +110,7 @@ const useTipLink = () => {
       const data = await response.json();
       setTipLinkURL(data.tipLinkData.tipLink);
     } catch (err) {
-      return err;
+      throw new Error(String(err));
     }
   };
 
