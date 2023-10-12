@@ -17,6 +17,8 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { isEmpty } from "lodash";
 import { useSnackbar } from "../contexts/SnackbarProvider";
 import { Close, LinkRounded } from "@mui/icons-material";
+import { QRCode } from "react-qrcode-logo";
+import { FastAverageColor } from "fast-average-color";
 
 const LinkAction = styled(Link)(({ theme }) => ({
   display: "inline",
@@ -37,19 +39,36 @@ const LinkAction = styled(Link)(({ theme }) => ({
 }));
 
 interface ActionLinksProps {
+  imageUrl: string;
   handleMenuOpen: (event: any) => void;
 }
 
-const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
+const ActionLinks: React.FC<ActionLinksProps> = ({
+  imageUrl,
+  handleMenuOpen,
+}) => {
   const [isOwner, setIsOwner] = useState(false);
   const [isSender, setIsSender] = useState("");
   const [openSendLinkConfirm, setOpenSendLinkConfirm] = useState(false);
+  const [openViewTipLink, setOpenViewTipLink] = useState(false);
+  const [eyeColor, setEyeColor] = useState("#888");
 
   const { publicKey } = useWallet();
   const { actionTipLink, tipLinkURL } = useTipLink();
   const router = useRouter();
   const { userOwnsNFT } = useGetNFTOwner();
   const { enqueueSnackbar } = useSnackbar();
+
+  useEffect(() => {
+    const fac = new FastAverageColor();
+    const img = new Image();
+    img.crossOrigin = "Anonymous";
+    img.src = imageUrl;
+    img.onload = function () {
+      const color = fac.getColor(img);
+      setEyeColor(color.rgb);
+    };
+  }, [imageUrl]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -64,7 +83,7 @@ const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
             publicKey,
           }),
         });
-        const { tipLinkData } = await response.json();        
+        const { tipLinkData } = await response.json();
         if (tipLinkData && tipLinkData.sender === publicKey?.toBase58()) {
           setIsSender(tipLinkData.tipLink);
         }
@@ -82,7 +101,7 @@ const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
         const hasMint = await userOwnsNFT(
           router.query.address as string,
           publicKey
-        );        
+        );
         setIsOwner(hasMint);
       } catch (error) {
         console.error("Failed to fetch nft owner:", error);
@@ -128,7 +147,10 @@ const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
           !isOwner &&
           !isEmpty(isSender) && (
             <ListItem disablePadding>
-              <LinkAction href={isSender} target="_blank">
+              <LinkAction
+                onClick={() => setOpenViewTipLink(true)}
+                target="_blank"
+              >
                 View<span>&nbsp;your tip link</span>
               </LinkAction>
             </ListItem>
@@ -172,6 +194,52 @@ const ActionLinks: React.FC<ActionLinksProps> = ({ handleMenuOpen }) => {
           <Button variant="contained" onClick={handleTipLink}>
             Create tip link and load NFT
           </Button>
+        </Box>
+      </Modal>
+      <Modal
+        open={openViewTipLink}
+        onClose={() => setOpenViewTipLink(false)}
+        aria-labelledby="View tip link for MixtApe NFT"
+        aria-describedby="View tip link for MixtApe NFT"
+        sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <IconButton
+            sx={{ position: "absolute", top: 8, right: 8 }}
+            onClick={() => setOpenViewTipLink(false)}
+          >
+            <Close />
+          </IconButton>
+          <Box mt={1} display="flex" justifyContent="center">
+            <QRCode
+              value={isSender}
+              size={216}
+              bgColor={"transparent"}
+              fgColor="#000"
+              logoImage={imageUrl}
+              logoWidth={60}
+              logoHeight={60}
+              eyeRadius={12}
+              eyeColor={eyeColor}
+            />
+          </Box>
+          <Box mt={1} display="flex" justifyContent="center">
+            <Link href={isSender} target="_blank">
+              <Typography variant="body2">{isSender}</Typography>
+            </Link>
+          </Box>
         </Box>
       </Modal>
     </Box>

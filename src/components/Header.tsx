@@ -28,7 +28,6 @@ export const Header: React.FC<HeaderProps> = ({ meta }) => {
 
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
-  const { publicKey } = useWallet();
   const router = useRouter();
 
   useEffect(() => {
@@ -150,7 +149,10 @@ export const Header: React.FC<HeaderProps> = ({ meta }) => {
               justifyContent="center"
               alignItems="start"
             >
-              <ActionLinks handleMenuOpen={handleMenuOpen} />
+              <ActionLinks
+                imageUrl={meta?.image ?? "/images/mixtape-1024.png"}
+                handleMenuOpen={handleMenuOpen}
+              />
               <Menu
                 anchorEl={anchorEl}
                 keepMounted
@@ -183,7 +185,7 @@ export const Header: React.FC<HeaderProps> = ({ meta }) => {
           </Box>
         </Grid>
       </Grid>
-      {router.pathname.includes('/sol/') && <ReactionMenu />}
+      {router.pathname.includes("/sol/") && <ReactionMenu />}
     </>
   );
 };

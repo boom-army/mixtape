@@ -57,6 +57,7 @@
     "dayjs": "^1.11.9",
     "eslint": "8.46.0",
     "eslint-config-next": "13.4.13",
+    "fast-average-color": "^9.4.0",
     "helius-sdk": "^1.0.15",
     "html-to-image": "^1.11.11",
     "lodash": "^4.17.21",
@@ -64,6 +65,7 @@
     "next": "^13.4.13",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-qrcode-logo": "^2.9.0",
     "recoil": "^0.7.7",
     "sharp": "^0.32.6",
     "swr": "^2.2.4"
