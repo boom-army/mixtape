@@ -1,5 +1,5 @@
 import TrackCards from "../components/TrackCards";
-import { Box, Button, Container, TextField } from "@mui/material";
+import { Box, Button, Container, Pagination, TextField } from "@mui/material";
 import { Header } from "../components/Header";
 import { PublicKey } from "@solana/web3.js";
 import { useEffect, useState } from "react";
@@ -9,12 +9,14 @@ const HomePage: React.FC = () => {
   const [latestTracks, setLatestTracks] = useState([]);
   const [address, setAddress] = useState("");
   const [error, setError] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
     const fetchLatestTracks = async () => {
       try {
-        const response = await fetch("/api/latest");
+        const response = await fetch(`/api/nft/latest?page=${page}`);
         const data = await response.json();
         return data;
       } catch (error) {
@@ -24,8 +26,9 @@ const HomePage: React.FC = () => {
 
     fetchLatestTracks().then((data) => {
       setLatestTracks(data.latestTracks);
+      setTotalPages(Math.ceil(data.totalTracks / 16));
     });
-  }, []);
+  }, [page]);
 
   const handleAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setAddress(event.target.value);
@@ -41,6 +44,13 @@ const HomePage: React.FC = () => {
     } catch {
       setError("Solana NFT mint address is not valid");
     }
+  };
+
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    setPage(value);
   };
 
   return (
@@ -83,6 +93,13 @@ const HomePage: React.FC = () => {
           </Button>
         </Box>
         <TrackCards latestTracks={latestTracks} />
+        <Pagination
+          sx={{ mb: "3rem" }}
+          color="primary"
+          count={totalPages}
+          page={page}
+          onChange={handlePageChange}
+        />
       </Container>
     </>
   );
