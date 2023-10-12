@@ -14,7 +14,6 @@ import ActionLinks from "./ActionLinks";
 import { useSnackbar } from "../contexts/SnackbarProvider";
 import { MusicVideoOutlined, TextSnippetOutlined } from "@mui/icons-material";
 import { indieFlowerFont } from "../utils/theme";
-import { useWallet } from "@solana/wallet-adapter-react";
 import { useRouter } from "next/router";
 import { HeaderProps } from "../types/nftTemplates";
 import { ReactionMenu } from "./ReactionMenu";
