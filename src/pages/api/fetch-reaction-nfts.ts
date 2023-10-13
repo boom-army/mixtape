@@ -4,6 +4,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getCluster } from "../../utils";
 
 const nftCollections = [
+  "DAHSxmjZPPmP3eVgbs2jpNvf4JXYFWprnRjMXbXnAvXb", // null - computers
   "6zGB9MCm52r9vUk14BZA6p9hcZXCXf5NbCEUApGweNHU", // BRGR
   "BXHRjXaTwLoGdXGuoUzbaeUuBQ21E5vWjCqyUGLsD8fM", // TRRP
   "2K7qeDaKJh9GWCZJYqUwuA9Jbiicy8T4yzGS4PWdq4TJ", // SQDR
