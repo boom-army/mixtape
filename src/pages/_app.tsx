@@ -44,7 +44,7 @@ export default function MyApp(props: MyAppProps) {
               />
               <meta property="og:image" content="/images/mixtape-1024.png" />
               <meta property="og:url" content="https://mixt-ape.com" />
-              <meta name="twitter:card" content="summary_large_image" />
+              <meta name="twitter:card" content="summary" />
               <meta name="twitter:title" content="MixtApe" />
               <meta
                 name="twitter:description"
