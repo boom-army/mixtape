@@ -8,32 +8,36 @@ export default async function userLeaders(
 ) {
   if (req.method === "GET") {
     try {
-      const users = await prisma.user.findMany({
-        select: {
-          id: true,
+      const topUsers = await prisma.points.groupBy({
+        by: ['userId'],
+        _sum: {
+          points: true,
         },
+        orderBy: {
+          _sum: {
+            points: 'desc',
+          },
+        },
+        take: 10,
       });
 
-      const topUsers = (await Promise.all(
-        users.map(async (user) => {
-          const totalPoints = await prisma.points.aggregate({
-            _sum: {
-              points: true,
-            },
-            where: {
-              userId: user.id,
-            },
-          });
-          return {
-            user: user,
-            totalPoints: totalPoints._sum.points || 0,
-          };
-        })
-      )).filter(user => user.totalPoints > 0);
+      const topUsersDetails = await Promise.all(topUsers.map(async (user) => {
+        const userDetails = await prisma.user.findUnique({
+          where: {
+            id: user.userId,
+          },
+          select: {
+            id: true,
+          },
+        });
 
-      const sortedUsers = topUsers.sort((a, b) => b.totalPoints - a.totalPoints);
+        return {
+          user: userDetails,
+          totalPoints: user._sum.points || 0,
+        };
+      }));
 
-      res.status(200).json({ topUsers: sortedUsers });
+      res.status(200).json({ topUsers: topUsersDetails });
     } catch (error) {
       res
         .status(500)

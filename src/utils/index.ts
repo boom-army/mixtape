@@ -31,3 +31,8 @@ export const truncatePublicKey = (publicKey: string, sliceLength: number = 4) =>
   return publicKey.slice(0, sliceLength) + '...' + publicKey.slice(-sliceLength);
 };
 
+export const fetcher = async (url: string) => {
+  const response = await fetch(url);
+  return response.json();
+};
+

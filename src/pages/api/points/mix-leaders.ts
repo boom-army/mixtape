@@ -8,33 +8,37 @@ export default async function topMints(
 ) {
   if (req.method === "GET") {
     try {
-      const mints = await prisma.mint.findMany({
-        select: {
-          mintAddress: true,
-          nftMetadata:true,
+      const topMints = await prisma.points.groupBy({
+        by: ['mintAddress'],
+        _sum: {
+          points: true,
         },
-      });
+        orderBy: {
+          _sum: {
+            points: 'desc',
+          },
+        },
+        take: 10,
+      });      
 
-      const topMints = (await Promise.all(
-        mints.map(async (mint) => {
-          const totalPoints = await prisma.points.aggregate({
-            _sum: {
-              points: true,
-            },
-            where: {
-              mintAddress: mint.mintAddress,
-            },
-          });
-          return {
-            mint: mint,
-            totalPoints: totalPoints._sum.points || 0,
-          };
-        })
-      )).filter(mint => mint.totalPoints > 0);
+      const topMintsDetails = await Promise.all(topMints.map(async (mint) => {
+        const mintDetails = await prisma.mint.findUnique({
+          where: {
+            mintAddress: mint.mintAddress as string,
+          },
+          select: {
+            mintAddress: true,
+            nftMetadata: true,
+          },
+        });
 
-      const sortedMints = topMints.sort((a, b) => b.totalPoints - a.totalPoints);
+        return {
+          mint: mintDetails,
+          totalPoints: mint._sum.points || 0,
+        };
+      }));
 
-      res.status(200).json({ topMints: sortedMints });
+      res.status(200).json({ topMints: topMintsDetails });
     } catch (error) {
       res
         .status(500)
