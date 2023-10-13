@@ -7,28 +7,18 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from "@mui/material";
 import Link from "next/link";
 import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
 
-export default function PointsTable() {
-  const [topMints, setTopMints] = useState([]);
+interface TopItem {
+  mint?: any;
+  user?: any;
+  totalPoints: number;
+}
 
-  useEffect(() => {
-    const fetchTopMints = async () => {
-      try {
-        const response = await fetch("/api/points/mix-leaders");
-        const data = await response.json();
-        console.log("data", data);
-
-        setTopMints(data.topMints);
-      } catch (error) {
-        console.error("Failed to fetch top mints:", error);
-      }
-    };
-    fetchTopMints();
-  }, []);
-
+export default function PointsTable({ topItems }: { topItems: TopItem[] }) {
   return (
     <TableContainer>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -41,9 +31,13 @@ export default function PointsTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {topMints.map((row: any, index: number) => {
-            const { totalPoints } = row;
-            const { nftMetadata, mintAddress } = row.mint;
+          {topItems.map((item, index) => {
+            const { totalPoints } = item;
+            const { nftMetadata, mintAddress } = item.mint || {};
+            const { name, description } = nftMetadata || {};
+            const user = item.user || null;
+            const link = mintAddress ? `/sol/${mintAddress}` : null;
+
             let backgroundColor, medalColor;
             if (index === 0) {
               backgroundColor = "#fff8d2";
@@ -57,7 +51,10 @@ export default function PointsTable() {
             }
 
             return (
-              <TableRow key={mintAddress} style={{ backgroundColor }}>
+              <TableRow
+                key={mintAddress || item.user?.id}
+                style={{ backgroundColor }}
+              >
                 <TableCell component="th" scope="row">
                   <Box display="flex" alignItems="center">
                     {index < 3 && (
@@ -65,7 +62,13 @@ export default function PointsTable() {
                         sx={{ fill: medalColor, marginRight: 1 }}
                       />
                     )}
-                    <Link href={`/sol/${mintAddress}`}>{nftMetadata.name} | {nftMetadata.description}</Link>
+                    {link ? (
+                      <Link href={link}>
+                        {name} | {description}
+                      </Link>
+                    ) : (
+                      <Typography variant="body2">{user?.id}</Typography>
+                    )}
                   </Box>
                 </TableCell>
                 <TableCell align="right">{totalPoints}</TableCell>

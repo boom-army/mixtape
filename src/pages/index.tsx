@@ -97,7 +97,7 @@ const HomePage: React.FC = () => {
           sx={{ mb: "3rem" }}
           color="primary"
           count={totalPages}
-          siblingCount={4}
+          siblingCount={3}
           boundaryCount={1}
           page={page}
           onChange={handlePageChange}
