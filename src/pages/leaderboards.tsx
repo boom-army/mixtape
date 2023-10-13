@@ -69,8 +69,8 @@ export default function TopMints() {
             onChange={handleChange}
             aria-label="simple tabs example"
           >
-            <Tab label="Mixtapes" />
-            <Tab label="Mixers" />
+            <Tab label="Mixtapes" sx={{ cursor: "pointer" }} />
+            <Tab label="Mixers" sx={{ cursor: "pointer" }} />
           </Tabs>
           <PointsTable topItems={value === 0 ? topMints : topUsers} />
         </Grid>
