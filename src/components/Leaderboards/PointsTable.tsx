@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   Box,
   Table,
@@ -26,7 +26,11 @@ export default function PointsTable({ topItems }: { topItems: TopItem[] }) {
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell sx={{ fontWeight: 100 }}>MixtApe Address</TableCell>
+            {topItems[0]?.mint ? (
+              <TableCell sx={{ fontWeight: 100 }}>Mixtape Address</TableCell>
+            ) : (
+              <TableCell sx={{ fontWeight: 100 }}>Wallet Address</TableCell>
+            )}
             <TableCell sx={{ fontWeight: 100 }} align="right">
               Points
             </TableCell>

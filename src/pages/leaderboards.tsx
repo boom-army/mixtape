@@ -1,30 +1,45 @@
 import React, { useEffect, useState } from "react";
 import PointsTable from "../components/Leaderboards/PointsTable";
-import { Container, Grid, Typography, Box, Tabs, Tab } from "@mui/material";
+import {
+  Container,
+  Grid,
+  Typography,
+  Box,
+  Tabs,
+  Tab,
+  Skeleton,
+} from "@mui/material";
 import Link from "next/link";
 
 export default function TopMints() {
   const [value, setValue] = useState(0);
   const [topMints, setTopMints] = useState([]);
   const [topUsers, setTopUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchTopMints = async () => {
+    setLoading(true);
     try {
       const response = await fetch("/api/points/mix-leaders");
       const data = await response.json();
       setTopMints(data.topMints);
     } catch (error) {
       console.error("Failed to fetch top mints:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchTopUsers = async () => {
+    setLoading(true);
     try {
       const response = await fetch("/api/points/user-leaders");
       const data = await response.json();
       setTopUsers(data.topUsers);
     } catch (error) {
       console.error("Failed to fetch top users:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -72,7 +87,13 @@ export default function TopMints() {
             <Tab label="Mixtapes" sx={{ cursor: "pointer" }} />
             <Tab label="Mixers" sx={{ cursor: "pointer" }} />
           </Tabs>
-          <PointsTable topItems={value === 0 ? topMints : topUsers} />
+          {!loading ? (
+            [...Array(10)].map((_, i) => (
+              <Skeleton key={i} variant="text" height={50} />
+            ))
+          ) : (
+            <PointsTable topItems={value === 0 ? topMints : topUsers} />
+          )}
         </Grid>
       </Grid>
     </Container>
