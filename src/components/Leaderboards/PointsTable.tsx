@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
+import Image from "next/image";
 
 interface TopItem {
   mint?: any;
@@ -34,7 +35,7 @@ export default function PointsTable({ topItems }: { topItems: TopItem[] }) {
           {topItems.map((item, index) => {
             const { totalPoints } = item;
             const { nftMetadata, mintAddress } = item.mint || {};
-            const { name, description } = nftMetadata || {};
+            const { name, description, properties } = nftMetadata || {};
             const user = item.user || null;
             const link = mintAddress ? `/sol/${mintAddress}` : null;
 
@@ -57,10 +58,22 @@ export default function PointsTable({ topItems }: { topItems: TopItem[] }) {
               >
                 <TableCell component="th" scope="row">
                   <Box display="flex" alignItems="center">
-                    {index < 3 && (
+                    {index < 3 ? (
                       <WorkspacePremiumIcon
                         sx={{ fill: medalColor, marginRight: 1 }}
                       />
+                    ) : (
+                      <Box mr={1}>
+                        <Image
+                          src={
+                            properties?.files[0]?.uri ||
+                            "/images/mixtape-1024.png"
+                          }
+                          alt={name}
+                          width={22}
+                          height={22}
+                        />
+                      </Box>
                     )}
                     {link ? (
                       <Link href={link}>
