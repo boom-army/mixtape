@@ -87,7 +87,7 @@ export default function TopMints() {
             <Tab label="Mixtapes" sx={{ cursor: "pointer" }} />
             <Tab label="Mixers" sx={{ cursor: "pointer" }} />
           </Tabs>
-          {!loading ? (
+          {loading ? (
             [...Array(10)].map((_, i) => (
               <Skeleton key={i} variant="text" height={50} />
             ))
