@@ -8,36 +8,43 @@ export default function TopMints() {
   const [topMints, setTopMints] = useState([]);
   const [topUsers, setTopUsers] = useState([]);
 
+  const fetchTopMints = async () => {
+    try {
+      const response = await fetch("/api/points/mix-leaders");
+      const data = await response.json();
+      setTopMints(data.topMints);
+    } catch (error) {
+      console.error("Failed to fetch top mints:", error);
+    }
+  };
+
+  const fetchTopUsers = async () => {
+    try {
+      const response = await fetch("/api/points/user-leaders");
+      const data = await response.json();
+      setTopUsers(data.topUsers);
+    } catch (error) {
+      console.error("Failed to fetch top users:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchTopMints = async () => {
-      try {
-        const response = await fetch("/api/points/mix-leaders");
-        const data = await response.json();
-        console.log("topMints", data);
-
-        setTopMints(data.topMints);
-      } catch (error) {
-        console.error("Failed to fetch top mints:", error);
-      }
-    };
     fetchTopMints();
-
-    const fetchTopUsers = async () => {
-      try {
-        const response = await fetch("/api/points/user-leaders");
-        const data = await response.json();
-        console.log("topUsers", data);
-        setTopUsers(data.topUsers);
-      } catch (error) {
-        console.error("Failed to fetch top users:", error);
-      }
-    };
-    fetchTopUsers();
   }, []);
 
-  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+  const handleChange = async (
+    event: React.ChangeEvent<{}>,
+    newValue: number
+  ) => {
     setValue(newValue);
+
+    if (newValue === 0) {
+      fetchTopMints();
+    } else if (newValue === 1) {
+      fetchTopUsers();
+    }
   };
+
   return (
     <Container maxWidth="lg" disableGutters>
       <Box mb={1} mt={1}>

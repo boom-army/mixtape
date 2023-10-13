@@ -12,6 +12,7 @@ import {
 import Link from "next/link";
 import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
 import Image from "next/image";
+import { truncatePublicKey } from "../../utils";
 
 interface TopItem {
   mint?: any;
@@ -80,7 +81,7 @@ export default function PointsTable({ topItems }: { topItems: TopItem[] }) {
                         {name} | {description}
                       </Link>
                     ) : (
-                      <Typography variant="body2">{user?.id}</Typography>
+                      <Typography variant="body2">{truncatePublicKey(user?.id, 5)}</Typography>
                     )}
                   </Box>
                 </TableCell>

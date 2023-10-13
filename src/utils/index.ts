@@ -26,3 +26,8 @@ export const getCluster = () => {
     return "mainnet-beta";
   }
 };
+
+export const truncatePublicKey = (publicKey: string, sliceLength: number = 4) => {
+  return publicKey.slice(0, sliceLength) + '...' + publicKey.slice(-sliceLength);
+};
+
