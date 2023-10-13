@@ -42,6 +42,8 @@ export default function PointsTable() {
         </TableHead>
         <TableBody>
           {topMints.map((row: any, index: number) => {
+            const { totalPoints } = row;
+            const { nftMetadata, mintAddress } = row.mint;
             let backgroundColor, medalColor;
             if (index === 0) {
               backgroundColor = "#fff8d2";
@@ -50,23 +52,23 @@ export default function PointsTable() {
               backgroundColor = "#f2f2f2";
               medalColor = "silver";
             } else if (index === 2) {
-              backgroundColor = "#ffe6b8";
+              backgroundColor = "#ffeecf";
               medalColor = "#ffa500";
             }
 
             return (
-              <TableRow key={row.mintAddress} style={{ backgroundColor }}>
+              <TableRow key={mintAddress} style={{ backgroundColor }}>
                 <TableCell component="th" scope="row">
                   <Box display="flex" alignItems="center">
                     {index < 3 && (
-                      <WorkspacePremiumIcon sx={{ fill: medalColor, marginRight: 1 }} />
+                      <WorkspacePremiumIcon
+                        sx={{ fill: medalColor, marginRight: 1 }}
+                      />
                     )}
-                    <Link href={`/sol/${row.mintAddress}`}>
-                      {row.mintAddress}
-                    </Link>
+                    <Link href={`/sol/${mintAddress}`}>{nftMetadata.name} | {nftMetadata.description}</Link>
                   </Box>
                 </TableCell>
-                <TableCell align="right">{row.totalPoints}</TableCell>
+                <TableCell align="right">{totalPoints}</TableCell>
               </TableRow>
             );
           })}

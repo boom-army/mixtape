@@ -11,6 +11,7 @@ export default async function topMints(
       const mints = await prisma.mint.findMany({
         select: {
           mintAddress: true,
+          nftMetadata:true,
         },
       });
 
@@ -25,7 +26,7 @@ export default async function topMints(
             },
           });
           return {
-            mintAddress: mint.mintAddress,
+            mint: mint,
             totalPoints: totalPoints._sum.points || 0,
           };
         })
