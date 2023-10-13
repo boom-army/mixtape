@@ -59,11 +59,12 @@ export default function PointsTable({ topItems }: { topItems: TopItem[] }) {
               >
                 <TableCell component="th" scope="row">
                   <Box display="flex" alignItems="center">
-                    {index < 3 ? (
+                    {index < 3 && (
                       <WorkspacePremiumIcon
                         sx={{ fill: medalColor, marginRight: 1 }}
                       />
-                    ) : (
+                    )}
+                    {nftMetadata && index > 2 && (
                       <Box mr={1}>
                         <Image
                           src={

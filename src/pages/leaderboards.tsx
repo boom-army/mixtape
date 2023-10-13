@@ -59,7 +59,7 @@ export default function TopMints() {
           </Typography>
           <Box mb={2}>
             <Typography variant="body1">
-              Best mixes on MixtApe ranked by points
+              Leaders on MixtApe ranked by points
             </Typography>
           </Box>
         </Grid>
