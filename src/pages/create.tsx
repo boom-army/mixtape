@@ -243,6 +243,7 @@ const Create: React.FC = () => {
       });
     } catch (error) {
       handleNFTError(error);
+      throw new Error("Failed to generate NFT image");
     }
 
     const nftMetadata = nftMetaTemplate();
