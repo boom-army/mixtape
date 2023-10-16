@@ -54,21 +54,16 @@ export const DraggableItem: React.FC<DraggableItemProps> = ({
     ? {
         transform: CSS.Translate.toString(transform),
         transition,
-        cursor: "grabbing",
-        display: "flex",
-        alignItems: "center",
       }
-    : {
-        cursor: "grab",
-        display: "flex",
-        alignItems: "center",
-      };
+    : {};
 
   return (
     <ListItem
       ref={setNodeRef}
       sx={{
         backgroundColor: trackError ? theme.palette.error.light : "inherit",
+        display: "flex",
+        alignItems: "center",
         ...style,
       }}
     >
@@ -76,8 +71,12 @@ export const DraggableItem: React.FC<DraggableItemProps> = ({
         <DragIndicatorIcon
           {...listeners}
           {...attributes}
-          style={{ marginRight: "0.25em", fill: theme.palette.secondary.dark }}
-        />{" "}
+          style={{
+            marginRight: "0.25em",
+            fill: theme.palette.secondary.dark,
+            cursor: transform ? "grabbing" : "grab",
+          }}
+        />
         {track.title ? (
           <>
             {isEditing ? (
