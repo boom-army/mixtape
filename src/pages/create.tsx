@@ -208,11 +208,9 @@ const Create: React.FC = () => {
     if (over && active.id !== over.id) {
       const oldIndex = tracklist.findIndex((track) => track.id === active.id);
       const newIndex = tracklist.findIndex((track) => track.id === over.id);
-
       const newTracklist = [...tracklist];
       const [movedItem] = newTracklist.splice(oldIndex, 1);
       newTracklist.splice(newIndex, 0, movedItem);
-
       setTracklist(newTracklist);
     }
   };
@@ -396,17 +394,12 @@ const Create: React.FC = () => {
       )}
 
       <DndContext onDragEnd={handleDragEnd}>
-        <DroppableArea>
-          {tracklist.map((track, index) => (
-            <DraggableItem
-              key={index}
-              id={track.id}
-              track={track}
-              onRemove={handleRemoveTrack}
-              onEdit={handleEdit}
-              trackError={lastTrackError}
-            />
-          ))}
+        <DroppableArea
+          handleRemoveTrack={handleRemoveTrack}
+          handleEdit={handleEdit}
+          lastTrackError={lastTrackError}
+        >
+          {tracklist}
         </DroppableArea>
       </DndContext>
       <Box mt={3} mb={6}>
@@ -454,7 +447,8 @@ const Create: React.FC = () => {
             </Box>
           </Typography>
           <Typography variant="body2" mb={2}>
-            We&apos;re minting your Mixtape. It will be ready and in your wallet soon. Hang tight!
+            We&apos;re minting your Mixtape. It will be ready and in your wallet
+            soon. Hang tight!
           </Typography>
         </Box>
       </Modal>

@@ -1,4 +1,10 @@
-import { useDraggable, useDroppable } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
+import {
+  SortableContext,
+  rectSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+
 import {
   ListItem,
   Box,
@@ -40,15 +46,14 @@ export const DraggableItem: React.FC<DraggableItemProps> = ({
     setEditedTitle(track.title);
   }, [track]);
 
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id,
-    disabled: isCloseHovered,
-  });
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id });
   const theme = useTheme();
 
   const style = transform
     ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        transform: CSS.Translate.toString(transform),
+        transition,
         cursor: "grabbing",
         display: "flex",
         alignItems: "center",
@@ -136,21 +141,45 @@ export const DraggableItem: React.FC<DraggableItemProps> = ({
 };
 
 interface DroppableAreaProps {
-  children: ReactNode;
+  children: TrackMeta[];
+  handleRemoveTrack: (id: string) => void;
+  handleEdit: (id: string, newTitle: string) => void;
+  lastTrackError: boolean;
 }
 
-export const DroppableArea: React.FC<DroppableAreaProps> = ({ children }) => {
+export const DroppableArea: React.FC<DroppableAreaProps> = ({
+  children,
+  handleRemoveTrack,
+  handleEdit,
+  lastTrackError,
+}) => {
+  const [isOver, setIsOver] = useState(false);
   const theme = useTheme();
-  const { isOver, setNodeRef } = useDroppable({
-    id: "tracklist",
-  });
+
   const style = {
     backgroundColor: isOver ? theme.palette.secondary.main : undefined,
   };
 
+  const items = children.map((child) => child.id);
+
   return (
-    <List ref={setNodeRef} sx={style}>
-      {children}
-    </List>
+    <SortableContext items={items} strategy={rectSortingStrategy}>
+      <List
+        sx={style}
+        onDragOver={() => setIsOver(true)}
+        onDragLeave={() => setIsOver(false)}
+      >
+        {children.map((child, index) => (
+          <DraggableItem
+            key={index}
+            id={child.id}
+            track={child}
+            onRemove={handleRemoveTrack}
+            onEdit={handleEdit}
+            trackError={lastTrackError}
+          />
+        ))}
+      </List>
+    </SortableContext>
   );
 };
