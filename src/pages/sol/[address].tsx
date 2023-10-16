@@ -111,18 +111,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       const response = await fetch(
         `${baseUrl}/api/nft/read-meta?address=${address}`
       );
-      const data = await response.json();
-      const metadata = data.asset;
-
-      if (!metadata) throw new Error("No metadata found");
-
+      const { asset: metadata } = await response.json();
       const contentResponse = await fetch(metadata.content.json_uri);
-      const contentData = await contentResponse.json();
+      const content = await contentResponse.json();
 
-      mixtapeImg = contentData.image ?? mixtapeImg;
-      mixtapeTitle = contentData.name ?? mixtapeTitle;
-      mixtapeDescription = contentData.description ?? mixtapeDescription;
-      trackMeta = contentData.tracks || [];
+      mixtapeImg = content.image ?? mixtapeImg;
+      mixtapeTitle = content.name ?? mixtapeTitle;
+      mixtapeDescription = content.description ?? mixtapeDescription;
+      trackMeta = content.tracks || [];
     } catch (error) {
       console.error(`Failed to fetch metadata: ${error}`);
     }
