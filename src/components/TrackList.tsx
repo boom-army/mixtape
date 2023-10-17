@@ -54,7 +54,6 @@ const TrackList: React.FC<TrackListProps> = ({ data }) => {
     )}${publicKey ? `&publicKey=${publicKey}` : ""}${
       address ? `&mintAddress=${address}` : ""
     }`;
-    console.log("apiUrl", apiUrl);
     
     try {
       setAudioURL(apiUrl);

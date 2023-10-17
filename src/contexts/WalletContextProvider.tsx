@@ -5,7 +5,6 @@ import {
   WalletProvider,
 } from "@solana/wallet-adapter-react";
 import {
-  BraveWalletAdapter,
   PhantomWalletAdapter,
   SolflareWalletAdapter,
   TorusWalletAdapter,
@@ -27,7 +26,6 @@ const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const wallets = useMemo(
     () => [
       new PhantomWalletAdapter(),
-      new BraveWalletAdapter(),
       new SolflareWalletAdapter(),
       new TorusWalletAdapter(),
     ],
