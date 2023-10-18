@@ -35,20 +35,24 @@ const Embeddable = () => {
     const fetchMetadata = async () => {
       if (!address) return;
       try {
-        const metadataAddress = new PublicKey(address);
-        const metadata = await metaplex
-          ?.nfts()
-          .findByMint({ mintAddress: metadataAddress });
-        if (!metadata?.json?.tracks) return;
-        setMixtapeImg(metadata?.json?.image);
-        setMixtapeTitle(metadata?.json?.name);
-        setTrackMeta(metadata?.json?.tracks as TrackMeta[]);
+        const response = await fetch(`/api/nft/read-meta?address=${address}`);
+        const data = await response.json();
+        const metadata = data.asset;
+        if (!metadata) throw new Error("No metadata found");
+
+        const contentResponse = await fetch(metadata.content.json_uri);
+        const contentData = await contentResponse.json();
+
+        if (!contentData?.tracks) return;
+        setMixtapeImg(contentData?.image);
+        setMixtapeTitle(contentData?.name);
+        setTrackMeta(contentData?.tracks as TrackMeta[]);
       } catch (error) {
         console.error(error);
       }
     };
     fetchMetadata();
-  }, [address, metaplex]);
+  }, [address]);
 
   return (
     <Grid container spacing={2} p={1}>
