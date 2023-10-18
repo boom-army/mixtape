@@ -14,7 +14,9 @@ import TrackList from "../../components/TrackList";
 import { Share, Add, Launch } from "@mui/icons-material";
 import Link from "next/link";
 
-{/* <iframe src="https://mixt-ape.com/embed/<:mintAddress>" width="598" height="150"></iframe> */}
+{
+  /* <iframe src="https://mixt-ape.com/embed/<:mintAddress>" width="598" height="150"></iframe> */
+}
 
 const StyledIconButton = styled(IconButton)({
   width: 24,
@@ -59,11 +61,15 @@ const Embeddable = () => {
   return (
     <Grid container spacing={2} p={1}>
       <Grid item xs={3} sx={{ maxHeight: 150, overflow: "hidden" }}>
-        <Box display="flex" justifyContent="center">
+        <Box display="flex" justifyContent="center" alignItems="center">
           <Link href={`/sol/${address}`} target="_blank" passHref>
             <Typography
               variant="h4"
-              sx={{ fontSize: 14, textDecoration: "underline" }}
+              sx={{
+                fontSize: ["8px", "2vw"],
+                textDecoration: "underline",
+                textAlign: "center",
+              }}
             >
               {mixtapeTitle}
             </Typography>
