@@ -14,9 +14,7 @@ import TrackList from "../../components/TrackList";
 import { Share, Add, Launch } from "@mui/icons-material";
 import Link from "next/link";
 
-{
-  /* <iframe src="https://mixt-ape.com/embed/<:mintAddress>" width="598" height="150"></iframe> */
-}
+/* <iframe src="https://mixt-ape.com/embed/<:mintAddress>" width="598" height="150"></iframe> */
 
 const StyledIconButton = styled(IconButton)({
   width: 24,
