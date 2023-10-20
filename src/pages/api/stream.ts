@@ -18,7 +18,7 @@ const stream = async (req: NextApiRequest, res: NextApiResponse) => {
       await prisma.points.create({
         data: {
           points: 1,
-          userId: publicKey,
+          userId: publicKey ? publicKey : null,
           mintAddress,
           awardedId: AwardType.STREAM,
         },
