@@ -4,14 +4,23 @@ import ytdl from "@distube/ytdl-core";
 import { AwardType } from "../../types";
 
 const stream = async (req: NextApiRequest, res: NextApiResponse) => {
-  const url = req.query.url as string;
-  const publicKey = req.query.publicKey as string;
-  const mintAddress = req.query.mintAddress as string;
+  const { url, publicKey, mintAddress } = req.query as {
+    url: string;
+    publicKey: string | null;
+    mintAddress: string;
+  };
   if (!url) {
     return res.status(400).json({ error: "URL is required" });
   }
 
-  if (publicKey && mintAddress) {
+  if (mintAddress) {
+    console.log({
+      points: 1,
+      userId: publicKey,
+      mintAddress,
+      awardedId: AwardType.STREAM,
+    });
+
     try {
       await prisma.points.create({
         data: {

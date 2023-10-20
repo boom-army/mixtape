@@ -95,8 +95,8 @@ model Points {
   awardedId   String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
+  userId      String?
+  user        User?     @relation(fields: [userId], references: [id])
   mintAddress String?
   mint        Mint?    @relation(fields: [mintAddress], references: [mintAddress])
 }
