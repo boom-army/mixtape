@@ -15,14 +15,18 @@ const stream = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (mintAddress) {
     try {
-      await prisma.points.create({
-        data: {
-          points: 1,
-          userId: publicKey ? publicKey : null,
-          mintAddress,
-          awardedId: AwardType.STREAM,
-        },
-      });
+      let data: any = {
+        points: 1,
+        mintAddress,
+        awardedId: AwardType.STREAM,
+      };
+      if (publicKey) {
+        data = {
+          ...data,
+          userId: publicKey,
+        };
+      }
+      await prisma.points.create({ data });
     } catch (error) {
       console.log("streaming points error", error);
     }
