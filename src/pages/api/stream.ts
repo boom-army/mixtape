@@ -6,7 +6,7 @@ import { AwardType } from "../../types";
 const stream = async (req: NextApiRequest, res: NextApiResponse) => {
   const { url, publicKey, mintAddress } = req.query as {
     url: string;
-    publicKey: string | null;
+    publicKey: string | undefined;
     mintAddress: string;
   };
   if (!url) {
@@ -14,13 +14,6 @@ const stream = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   if (mintAddress) {
-    console.log({
-      points: 1,
-      userId: publicKey,
-      mintAddress,
-      awardedId: AwardType.STREAM,
-    });
-
     try {
       await prisma.points.create({
         data: {
