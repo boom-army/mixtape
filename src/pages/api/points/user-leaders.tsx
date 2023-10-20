@@ -18,27 +18,32 @@ export default async function userLeaders(
             points: 'desc',
           },
         },
-        take: 10,
-      });
+        take: 11,
+      });      
 
-      const topUsersDetails = await Promise.all(topUsers.map(async (user) => {
-        const userDetails = await prisma.user.findUnique({
-          where: {
-            id: user.userId,
-          },
-          select: {
-            id: true,
-          },
-        });
-
-        return {
-          user: userDetails,
-          totalPoints: user._sum.points || 0,
-        };
-      }));
+      const topUsersDetails = await Promise.all(
+        topUsers
+          .filter(user => user.userId !== null)
+          .map(async (user) => {
+            const userDetails = await prisma.user.findUnique({
+              where: {
+                id: user.userId as string,
+              },
+              select: {
+                id: true,
+              },
+            });
+      
+            return {
+              user: userDetails,
+              totalPoints: user._sum.points || 0,
+            };
+          })
+      );
 
       res.status(200).json({ topUsers: topUsersDetails });
     } catch (error) {
+      console.log(error);
       res
         .status(500)
         .json({ error: "An error occurred while fetching the top users." });

@@ -33,7 +33,6 @@ export default async function handler(
     res.status(200).json({ asset: data });
   } catch (error) {
     console.log(error);
-    
     res.status(500).json({ error: "Failed to fetch NFT metadata" });
   }
 }
