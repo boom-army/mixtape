@@ -10,7 +10,6 @@ import {
   Typography,
 } from "@mui/material";
 import Link from "next/link";
-import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
 import Image from "next/image";
 import { truncatePublicKey } from "../../utils";
 

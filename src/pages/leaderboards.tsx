@@ -10,15 +10,18 @@ import {
   Skeleton,
 } from "@mui/material";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const templateId = "123e4567-e89b-12d3-a456-426614174004";
 
 export default function TopMints() {
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState("mixtapes");
   const [topMints, setTopMints] = useState([]);
   const [topUsers, setTopUsers] = useState([]);
   const [topNFTs, setTopNFTs] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
 
   const fetchTopMints = async () => {
     setLoading(true);
@@ -60,20 +63,30 @@ export default function TopMints() {
   };
 
   useEffect(() => {
-    fetchTopMints();
-  }, []);
+    const tab = router.query.tab as string;    
+    setValue(tab || "mixtapes");
+  
+    if (tab === "mixtapes" || !tab) {
+      fetchTopMints();
+    } else if (tab === "mixers") {
+      fetchTopUsers();
+    } else if (tab === "nfts") {
+      fetchTopNFT();
+    }
+  }, [router.query.tab]);
 
   const handleChange = async (
     event: React.ChangeEvent<{}>,
-    newValue: number
+    newValue: string
   ) => {
     setValue(newValue);
+    router.push(`/leaderboards?tab=${newValue}`, undefined, { shallow: true });
 
-    if (newValue === 0) {
+    if (newValue === "mixtapes") {
       fetchTopMints();
-    } else if (newValue === 1) {
+    } else if (newValue === "mixers") {
       fetchTopUsers();
-    } else if (newValue === 2) {
+    } else if (newValue === "nfts") {
       fetchTopNFT();
     }
   };
@@ -102,16 +115,20 @@ export default function TopMints() {
             onChange={handleChange}
             aria-label="leaderboard-tabs"
           >
-            <Tab label="Mixtapes" sx={{ cursor: "pointer" }} />
-            <Tab label="Mixers" sx={{ cursor: "pointer" }} />
-            <Tab label="NFTs" sx={{ cursor: "pointer" }} />
+            <Tab label="Mixtapes" value="mixtapes" sx={{ cursor: "pointer" }} />
+            <Tab label="Mixers" value="mixers" sx={{ cursor: "pointer" }} />
+            <Tab label="NFTs" value="nfts" sx={{ cursor: "pointer" }} />
           </Tabs>
           {loading ? (
             [...Array(10)].map((_, i) => (
               <Skeleton key={i} variant="text" height={50} />
             ))
           ) : (
-            <PointsTable topItems={value === 0 ? topMints : value === 1 ? topUsers : topNFTs} />
+            <PointsTable
+              topItems={
+                value === "mixtapes" ? topMints : value === "mixers" ? topUsers : topNFTs
+              }
+            />
           )}
         </Grid>
       </Grid>
