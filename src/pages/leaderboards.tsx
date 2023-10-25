@@ -11,10 +11,13 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 
+const templateId = "123e4567-e89b-12d3-a456-426614174004";
+
 export default function TopMints() {
   const [value, setValue] = useState(0);
   const [topMints, setTopMints] = useState([]);
   const [topUsers, setTopUsers] = useState([]);
+  const [topNFTs, setTopNFTs] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const fetchTopMints = async () => {
@@ -43,6 +46,19 @@ export default function TopMints() {
     }
   };
 
+  const fetchTopNFT = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/points/nft-leaders?id=${templateId}`);
+      const data = await response.json();
+      setTopNFTs(data.topNFTs);
+    } catch (error) {
+      console.error("Failed to fetch top NFTs:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchTopMints();
   }, []);
@@ -57,6 +73,8 @@ export default function TopMints() {
       fetchTopMints();
     } else if (newValue === 1) {
       fetchTopUsers();
+    } else if (newValue === 2) {
+      fetchTopNFT();
     }
   };
 
@@ -82,17 +100,18 @@ export default function TopMints() {
           <Tabs
             value={value}
             onChange={handleChange}
-            aria-label="simple tabs example"
+            aria-label="leaderboard-tabs"
           >
             <Tab label="Mixtapes" sx={{ cursor: "pointer" }} />
             <Tab label="Mixers" sx={{ cursor: "pointer" }} />
+            <Tab label="NFTs" sx={{ cursor: "pointer" }} />
           </Tabs>
           {loading ? (
             [...Array(10)].map((_, i) => (
               <Skeleton key={i} variant="text" height={50} />
             ))
           ) : (
-            <PointsTable topItems={value === 0 ? topMints : topUsers} />
+            <PointsTable topItems={value === 0 ? topMints : value === 1 ? topUsers : topNFTs} />
           )}
         </Grid>
       </Grid>

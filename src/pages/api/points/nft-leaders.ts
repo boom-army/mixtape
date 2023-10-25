@@ -62,7 +62,7 @@ export default async function nftLeaders(
         })
       );
 
-      res.status(200).json({ topMints: topMintsDetails });
+      res.status(200).json({ topNFTs: topMintsDetails });
     } catch (error) {
       res
         .status(500)
