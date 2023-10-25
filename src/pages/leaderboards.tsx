@@ -12,8 +12,6 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-const templateId = "123e4567-e89b-12d3-a456-426614174004";
-
 export default function TopMints() {
   const [value, setValue] = useState("mixtapes");
   const [topMints, setTopMints] = useState([]);
@@ -52,7 +50,7 @@ export default function TopMints() {
   const fetchTopNFT = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/points/nft-leaders?id=${templateId}`);
+      const response = await fetch(`/api/points/nft-leaders?id=${process.env.NEXT_PUBLIC_NFT_LEADER}`);
       const data = await response.json();
       setTopNFTs(data.topNFTs);
     } catch (error) {
@@ -117,7 +115,7 @@ export default function TopMints() {
           >
             <Tab label="Mixtapes" value="mixtapes" sx={{ cursor: "pointer" }} />
             <Tab label="Mixers" value="mixers" sx={{ cursor: "pointer" }} />
-            <Tab label="NFTs" value="nfts" sx={{ cursor: "pointer" }} />
+            {process.env.NEXT_PUBLIC_NFT_LEADER && <Tab label="NFTs" value="nfts" sx={{ cursor: "pointer" }} />}
           </Tabs>
           {loading ? (
             [...Array(10)].map((_, i) => (
