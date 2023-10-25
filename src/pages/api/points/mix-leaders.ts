@@ -1,4 +1,3 @@
-// src/pages/api/mints/top.ts
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../../lib/prisma";
 
