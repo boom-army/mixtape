@@ -68,7 +68,7 @@ export default function TopMints() {
       fetchTopMints();
     } else if (tab === "mixers") {
       fetchTopUsers();
-    } else if (tab === "nfts") {
+    } else if (tab === "thugbirdz") {
       fetchTopNFT();
     }
   }, [router.query.tab]);
@@ -84,7 +84,7 @@ export default function TopMints() {
       fetchTopMints();
     } else if (newValue === "mixers") {
       fetchTopUsers();
-    } else if (newValue === "nfts") {
+    } else if (newValue === "thugbirdz") {
       fetchTopNFT();
     }
   };
