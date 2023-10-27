@@ -16,6 +16,7 @@ import { useRouter } from "next/router";
 import { formatDuration } from "../utils/tracks";
 import Image from "next/image";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { useSnackbar } from "../contexts/SnackbarProvider";
 
 dayjs.extend(duration);
 
@@ -34,6 +35,7 @@ const TrackList: React.FC<TrackListProps> = ({ data }) => {
 
   const theme = useTheme();
   const { publicKey } = useWallet();
+  const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
 
   const { address } = router.query;
@@ -54,14 +56,12 @@ const TrackList: React.FC<TrackListProps> = ({ data }) => {
     )}${publicKey ? `&publicKey=${publicKey}` : ""}${
       address ? `&mintAddress=${address}` : ""
     }`;
-  
+
     try {
-      const response = await fetch(apiUrl);
-      const data = await response.json();
-      
-      setAudioURL(data.url);
+      setAudioURL(apiUrl);
       setCurrentPlayingTrackId(trackId);
     } catch (error) {
+      enqueueSnackbar("Failed to fetch audio URL");
       console.error("Failed to fetch audio URL:", error);
     } finally {
       setIsLoading(false);

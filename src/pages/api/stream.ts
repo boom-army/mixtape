@@ -38,7 +38,22 @@ export default async function handler(
   try {
     const info = await ytdl.getInfo(url);
     const format = ytdl.chooseFormat(info.formats, { quality: "highestaudio" });
-    res.json({ url: format.url });
+
+    res.setHeader("Content-Type", "audio/mpeg");
+    res.setHeader("Content-Disposition", "attachment");
+
+    const stream = ytdl.downloadFromInfo(info, { format: format });
+
+    stream.on("error", (error) => {
+      console.error(error);
+      res.status(500).json({ error: "Failed to stream video" });
+    });
+
+    res.on("close", () => {
+      stream.destroy();
+    });
+
+    stream.pipe(res);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to fetch video info" });
