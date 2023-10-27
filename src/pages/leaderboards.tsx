@@ -8,6 +8,7 @@ import {
   Tabs,
   Tab,
   Skeleton,
+  Button,
 } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -50,7 +51,9 @@ export default function TopMints() {
   const fetchTopNFT = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/points/nft-leaders?id=${process.env.NEXT_PUBLIC_NFT_LEADER}`);
+      const response = await fetch(
+        `/api/points/nft-leaders?id=${process.env.NEXT_PUBLIC_NFT_LEADER}`
+      );
       const data = await response.json();
       setTopNFTs(data.topNFTs);
     } catch (error) {
@@ -61,9 +64,9 @@ export default function TopMints() {
   };
 
   useEffect(() => {
-    const tab = router.query.tab as string;    
+    const tab = router.query.tab as string;
     setValue(tab || "mixtapes");
-  
+
     if (tab === "mixtapes" || !tab) {
       fetchTopMints();
     } else if (tab === "mixers") {
@@ -91,10 +94,10 @@ export default function TopMints() {
 
   return (
     <Container maxWidth="lg" disableGutters>
-      <Box mb={1} mt={1}>
-        <Link href="/">
+      <Box mb={1} mt={2}>
+        <Button component={Link} href="/">
           <Typography>&lt; Home</Typography>
-        </Link>
+        </Button>
       </Box>
       <Grid container spacing={3}>
         <Grid item xs={12}>
@@ -115,7 +118,13 @@ export default function TopMints() {
           >
             <Tab label="Mixtapes" value="mixtapes" sx={{ cursor: "pointer" }} />
             <Tab label="Mixers" value="mixers" sx={{ cursor: "pointer" }} />
-            {process.env.NEXT_PUBLIC_NFT_LEADER && <Tab label="Thugbirdz" value="thugbirdz" sx={{ cursor: "pointer" }} />}
+            {process.env.NEXT_PUBLIC_NFT_LEADER && (
+              <Tab
+                label="Thugbirdz"
+                value="thugbirdz"
+                sx={{ cursor: "pointer" }}
+              />
+            )}
           </Tabs>
           {loading ? (
             [...Array(10)].map((_, i) => (
@@ -124,7 +133,11 @@ export default function TopMints() {
           ) : (
             <PointsTable
               topItems={
-                value === "mixtapes" ? topMints : value === "mixers" ? topUsers : topNFTs
+                value === "mixtapes"
+                  ? topMints
+                  : value === "mixers"
+                  ? topUsers
+                  : topNFTs
               }
             />
           )}

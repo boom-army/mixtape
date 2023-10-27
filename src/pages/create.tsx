@@ -294,10 +294,10 @@ const Create: React.FC = () => {
 
   return (
     <Box p={4}>
-      <Box mb={1}>
-        <Link href="/" passHref>
+      <Box mb={2}>
+        <Button component={Link} href="/">
           <Typography>&lt; Home</Typography>
-        </Link>
+        </Button>
       </Box>
       <Typography variant="h4" gutterBottom>
         Create a Mixtape NFT

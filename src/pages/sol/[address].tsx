@@ -1,6 +1,13 @@
 import Head from "next/head";
 import TrackList from "../../components/TrackList";
-import { Box, Container, Link, Skeleton, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Link,
+  Skeleton,
+  Typography,
+} from "@mui/material";
 import { Header } from "../../components/Header";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -63,10 +70,10 @@ const Address: React.FC<AddressProps> = ({
         <meta name="twitter:image" content={mixtapeImg} />
       </Head>
       <Container maxWidth="lg" disableGutters>
-        <Box mb={1} mt={1}>
-          <Link href="/">
+        <Box mb={1} mt={2}>
+          <Button component={Link} href="/">
             <Typography>&lt; Home</Typography>
-          </Link>
+          </Button>
         </Box>
         <Header meta={mixtapeMetaState} />
         {!mixtapeMetaState?.tracks && !trackMeta ? (
