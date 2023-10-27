@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import TapeGallery from "../components/TapeGallery";
 import { Button, CircularProgress, Stack, TextField } from "@mui/material";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { toPng } from "html-to-image";
+import html2canvas from "html2canvas";
 import { PublicKey } from "@solana/web3.js";
 import { MetaplexContext } from "../contexts/MetaplexProvider";
 import { Sft, SftWithToken, Nft, NftWithToken } from "@metaplex-foundation/js";
@@ -94,11 +94,11 @@ const UpdateNFT = () => {
     if (!tapeElement) throw new Error("Tape not selected");
 
     try {
-      const image = await toPng(tapeElement, {
-        canvasWidth: 1024,
-        canvasHeight: 1024,
-        backgroundColor: "transparent",
+      const canvas = await html2canvas(tapeElement, {
+        backgroundColor: null,
+        scale: window.devicePixelRatio * 2.135,
       });
+      const image = canvas.toDataURL();
       const response = await fetch("/api/update", {
         method: "POST",
         headers: {

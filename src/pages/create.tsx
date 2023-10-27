@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { DndContext } from "@dnd-kit/core";
 import YouTubeIcon from "@mui/icons-material/YouTube";
-import { toPng } from "html-to-image";
+import html2canvas from "html2canvas";
 import {
   Box,
   Button,
@@ -236,11 +236,12 @@ const Create: React.FC = () => {
     let nftImageBlob;
 
     try {
-      nftImageBlob = await toPng(tapeElement, {
-        canvasWidth: 1024,
-        canvasHeight: 1024,
-        backgroundColor: "transparent",
+      // Capture the scaled element with html2canvas
+      const canvas = await html2canvas(tapeElement, {
+        backgroundColor: null,
+        scale: window.devicePixelRatio * 2.135,
       });
+      nftImageBlob = canvas.toDataURL();
     } catch (error) {
       handleNFTError(error);
       throw new Error("Failed to generate NFT image");

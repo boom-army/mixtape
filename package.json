@@ -61,7 +61,7 @@
     "eslint-config-next": "13.5.5",
     "fast-average-color": "^9.4.0",
     "helius-sdk": "^1.2.1",
-    "html-to-image": "^1.11.11",
+    "html2canvas": "^1.4.1",
     "lodash": "^4.17.21",
     "mime-types": "^2.1.35",
     "next": "^13.5.5",
