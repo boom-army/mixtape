@@ -3,7 +3,10 @@ import { NextApiRequest, NextApiResponse } from "next";
 import ytdl from "@distube/ytdl-core";
 import { AwardType } from "../../types";
 
-const stream = async (req: NextApiRequest, res: NextApiResponse) => {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const { url, publicKey, mintAddress } = req.query as {
     url: string;
     publicKey: string | undefined;
@@ -32,13 +35,12 @@ const stream = async (req: NextApiRequest, res: NextApiResponse) => {
     }
   }
 
-  res.setHeader("Content-Type", "audio/mpeg");
-  ytdl(url, { filter: "audioonly" })
-    .pipe(res)
-    .on("error", (error) => {
-      console.error(error);
-      res.status(500).end();
-    });
-};
-
-export default stream;
+  try {
+    const info = await ytdl.getInfo(url);
+    const format = ytdl.chooseFormat(info.formats, { quality: "highestaudio" });
+    res.json({ url: format.url });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch video info" });
+  }
+}

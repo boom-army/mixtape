@@ -54,9 +54,12 @@ const TrackList: React.FC<TrackListProps> = ({ data }) => {
     )}${publicKey ? `&publicKey=${publicKey}` : ""}${
       address ? `&mintAddress=${address}` : ""
     }`;
-    
+  
     try {
-      setAudioURL(apiUrl);
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+      
+      setAudioURL(data.url);
       setCurrentPlayingTrackId(trackId);
     } catch (error) {
       console.error("Failed to fetch audio URL:", error);
