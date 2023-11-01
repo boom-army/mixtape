@@ -85,5 +85,6 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:h4rkl:mixt-ape.git"
-  }
+  },
+  "license": "Apache-2.0"
 }
