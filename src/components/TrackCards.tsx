@@ -1,4 +1,5 @@
 import {
+  Box,
   Card,
   CardContent,
   CardMedia,
@@ -9,6 +10,7 @@ import {
   useTheme,
 } from "@mui/material";
 import Link from "next/link";
+import { useState } from "react";
 
 interface TrackCardProps {
   latestTracks: any[];
@@ -16,6 +18,11 @@ interface TrackCardProps {
 
 const TrackCards: React.FC<TrackCardProps> = ({ latestTracks }) => {
   const theme = useTheme();
+  const [loading, setLoading] = useState<number | null>(null);
+
+  const handleClick = (index: number) => {
+    setLoading(index);
+  };
 
   return (
     <Grid container mb={4} mt={1}>
@@ -39,7 +46,7 @@ const TrackCards: React.FC<TrackCardProps> = ({ latestTracks }) => {
           ))}
         </Grid>
       ) : null}
-      {latestTracks.map((track: any) => (
+      {latestTracks.map((track: any, index: number) => (
         <Grid
           item
           xs={12}
@@ -48,7 +55,7 @@ const TrackCards: React.FC<TrackCardProps> = ({ latestTracks }) => {
           key={`track-${track.mint}`}
           sx={{ pb: 1 }}
         >
-          <Link href={`/sol/${track.mint}`}>
+          <Link href={`/sol/${track.mint}`} onClick={() => handleClick(index)}>
             <Card
               variant="outlined"
               sx={{
@@ -64,43 +71,63 @@ const TrackCards: React.FC<TrackCardProps> = ({ latestTracks }) => {
                 },
               }}
             >
-              <Grid container>
-                <Grid
-                  item
-                  xs={4}
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100px",
-                    width: "100px",
-                  }}
-                >
-                  <CardMedia
-                    component="img"
-                    sx={{ height: "80px", width: "80px", objectFit: "contain" }}
-                    image={
-                      track.meta.properties.files[0]?.uri ||
-                      track.image ||
-                      "/images/mixtape-1024.png"
-                    }
-                    alt={track.title}
-                  />
-                </Grid>
-                <Grid item xs={8}>
-                  <CardContent>
-                    <Typography variant="h6" component="div">
-                      {track.meta.name}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{ textDecoration: "none" }}
+              <Grid container justifyContent="space-between">
+                {!(loading === index) && (
+                  <>
+                    <Grid
+                      item
+                      xs={4}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100px",
+                        width: "100px",
+                      }}
                     >
-                      {track.meta.description}
-                    </Typography>
-                  </CardContent>
-                </Grid>
+                      <CardMedia
+                        component="img"
+                        sx={{
+                          height: "80px",
+                          width: "80px",
+                          objectFit: "contain",
+                        }}
+                        image={
+                          track.meta.properties.files[0]?.uri ||
+                          track.image ||
+                          "/images/mixtape-1024.png"
+                        }
+                        alt={track.title}
+                      />
+                    </Grid>
+                    <Grid item xs={8}>
+                      <CardContent>
+                        <Typography variant="h6" component="div">
+                          {track.meta.name}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{ textDecoration: "none" }}
+                        >
+                          {track.meta.description}
+                        </Typography>
+                      </CardContent>
+                    </Grid>
+                  </>
+                )}
+                {loading === index && (
+                  <Grid item xs={12}>
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      sx={{ minHeight: "100px" }}
+                    >
+                      <CircularProgress />
+                    </Box>
+                  </Grid>
+                )}
               </Grid>
             </Card>
           </Link>
