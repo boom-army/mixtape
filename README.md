@@ -16,3 +16,5 @@
 ## Helius delegation 
 
 Minting is currently done via the Helius API. Season 1 NFTs were standard programmable NFTs. The new Helius NFTs are compressed so need a different collection id, and any subsequent season will need a new collection id. The Season 2 collection is currently configured with delegate to the Helius account using `scripts/nft-tools.ts` so it can mint NFTs to the collection. Delegation can also be revoked using this command tool.
+
+Next 14
