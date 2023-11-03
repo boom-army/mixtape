@@ -41,7 +41,7 @@ export const ReactionMenu: React.FC = () => {
       if (!address) return;
       const response = await fetch(`/api/reaction/read?mintAddress=${address}`);
       const data = await response.json();
-      setReactions(data.mintEmotes.map((d: EmoteData) => d.emote));
+      setReactions(data?.mintEmotes?.map((d: EmoteData) => d.emote));
 
       if (!publicKey) return;
       const userEmote = data.mintEmotes.find(
@@ -122,7 +122,7 @@ export const ReactionMenu: React.FC = () => {
         spacing={-0.7}
         sx={{ position: "fixed", bottom: "4.3rem", right: "2.2rem" }}
       >
-        {reactions.map((item, i) => (
+        {reactions?.map((item, i) => (
           <Image
             key={`${item.name}-${i}`}
             src={item.cImage}
@@ -132,7 +132,7 @@ export const ReactionMenu: React.FC = () => {
           />
         ))}
       </Stack>
-      {!publicKey && reactions.length ? (
+      {!publicKey && reactions?.length ? (
         <Box
           sx={{
             width: 40,
