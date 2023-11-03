@@ -63,8 +63,6 @@ const TrackList: React.FC<TrackListProps> = ({ data }) => {
     } catch (error) {
       enqueueSnackbar("Failed to fetch audio URL");
       console.error("Failed to fetch audio URL:", error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
