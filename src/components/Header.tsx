@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Grid,
@@ -21,24 +21,10 @@ import { ReactionMenu } from "./ReactionMenu";
 export const Header: React.FC<HeaderProps> = ({ meta }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [showCoverNotes, setShowCoverNotes] = useState(false);
-  const [randomImage, setRandomImage] = useState(
-    meta?.image ?? "/images/mixtape-1024.png"
-  );
 
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
   const router = useRouter();
-
-  useEffect(() => {
-    const images = [
-      "/images/mixtape-shoey.png",
-      "/images/mixtape-1024.png",
-      "/images/mixtape-sol-1024.png",
-    ];
-
-    const randomIndex = Math.floor(Math.random() * images.length);
-    setRandomImage(images[randomIndex]);
-  }, []);
 
   let currentURL = "";
   if (typeof window !== "undefined") {
@@ -97,7 +83,7 @@ export const Header: React.FC<HeaderProps> = ({ meta }) => {
               </Box>
             ) : (
               <Image
-                src={meta?.image ?? randomImage}
+                src={meta?.image ?? "/images/mixtape-1024.png"}
                 alt="cassette"
                 width={360}
                 height={360}
