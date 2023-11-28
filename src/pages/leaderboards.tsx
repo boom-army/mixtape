@@ -118,13 +118,13 @@ export default function TopMints() {
           >
             <Tab label="Mixtapes" value="mixtapes" sx={{ cursor: "pointer" }} />
             <Tab label="Mixers" value="mixers" sx={{ cursor: "pointer" }} />
-            {process.env.NEXT_PUBLIC_NFT_LEADER && (
+            {/* {process.env.NEXT_PUBLIC_NFT_LEADER && (
               <Tab
                 label="Thugbirdz"
                 value="thugbirdz"
                 sx={{ cursor: "pointer" }}
               />
-            )}
+            )} */}
           </Tabs>
           {loading ? (
             [...Array(10)].map((_, i) => (
