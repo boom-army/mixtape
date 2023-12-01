@@ -24,8 +24,7 @@
     "docker:build": "docker build . --platform=linux/amd64 -t mixtape/p1",
     "docker:push": "docker push mixtape/p1",
     "docker:deploy": "yarn docker:build && yarn docker:push",
-    "docker:run": "docker run -p 3000:3000 mixtape",
-    "deploy:prod": "bash scripts/deploy-prod.sh"
+    "docker:run": "docker run -p 3000:3000 mixtape"
   },
   "dependencies": {
     "@bundlr-network/client": "^0.11.17",
