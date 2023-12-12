@@ -43,7 +43,7 @@ const Profile: React.FC = () => {
       <Container maxWidth="lg" disableGutters>
         <Header />
         <TrackCards
-          title={`Mixtapes mints${
+          title={`Mixtape mints${
             address ? ` for ${truncatePublicKey(address as string)}` : ""
           }:`}
           latestTracks={latestTracks}

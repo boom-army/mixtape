@@ -133,15 +133,13 @@ const ActionLinks: React.FC<ActionLinksProps> = ({
         </ListItem>
         {router.pathname === "/" && (
           <ListItem disablePadding>
-            <LinkAction href="/leaderboards">
-              Leaderboards
-            </LinkAction>
+            <LinkAction href="/leaderboards">Leaderboards</LinkAction>
           </ListItem>
         )}
-        {router.pathname === "/sol/[address]" && (
+        {["/sol/[address]", "/profile/[address]"].includes(router.pathname) && (
           <ListItem disablePadding>
             <LinkAction onClick={handleMenuOpen}>
-              Share<span>&nbsp;this mix</span>
+              Share {router.pathname === "/sol/[address]" && <span>this mix</span>}
             </LinkAction>
           </ListItem>
         )}
