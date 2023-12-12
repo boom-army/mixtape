@@ -12,8 +12,15 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 
+interface LatestTrack {
+  meta: any[];
+  image: string;
+  mint: string;
+}
+
+
 interface TrackCardProps {
-  latestTracks: any[];
+  latestTracks: LatestTrack[];
 }
 
 const TrackCards: React.FC<TrackCardProps> = ({ latestTracks }) => {
@@ -29,7 +36,7 @@ const TrackCards: React.FC<TrackCardProps> = ({ latestTracks }) => {
       <Grid item xs={12}>
         <h3>Latest mixes: {!latestTracks && <CircularProgress size={12} />}</h3>
       </Grid>
-      {!latestTracks.length ? (
+      {!latestTracks?.length ? (
         <Grid container spacing={3}>
           {[...Array(16)].map((_, index) => (
             <Grid item xs={12} sm={6} md={3} key={index}>
@@ -46,7 +53,7 @@ const TrackCards: React.FC<TrackCardProps> = ({ latestTracks }) => {
           ))}
         </Grid>
       ) : null}
-      {latestTracks.map((track: any, index: number) => (
+      {latestTracks?.map((track: any, index: number) => (
         <Grid
           item
           xs={12}
@@ -93,7 +100,7 @@ const TrackCards: React.FC<TrackCardProps> = ({ latestTracks }) => {
                           objectFit: "contain",
                         }}
                         image={
-                          track.meta.properties.files[0]?.uri ||
+                          track?.meta?.properties?.files[0]?.uri ||
                           track.image ||
                           "/images/mixtape-1024.png"
                         }
