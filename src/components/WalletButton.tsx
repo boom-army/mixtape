@@ -1,12 +1,14 @@
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import CloseIcon from "@mui/icons-material/Close";
+import HomeIcon from "@mui/icons-material/Home";
+import Image from "next/image";
+import MenuIcon from "@mui/icons-material/Menu";
 import React, { useState } from "react";
 import { Box, IconButton, Menu, MenuItem, Tooltip } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import MenuIcon from "@mui/icons-material/Menu";
+import { FabMenu } from "./FabMenu";
+import { useRouter } from "next/router";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useWalletDialog } from "./WalletAdapter/useWalletDialog";
-import { FabMenu } from "./FabMenu";
-import Image from "next/image";
-import { useRouter } from "next/router";
 
 const WalletButton: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -94,16 +96,27 @@ const WalletButton: React.FC = () => {
               onClose={handleMenuClose}
               sx={{ mt: 3 }}
             >
-              <MenuItem onClick={() => handleRouterClick("/")}>Home</MenuItem>
+              <MenuItem onClick={() => handleRouterClick("/")}>
+                <HomeIcon sx={{ mr: 1 }} />
+                Home
+              </MenuItem>
               <MenuItem
                 onClick={() =>
                   publicKey &&
                   handleRouterClick(`/profile/${publicKey.toBase58()}`)
                 }
               >
+                <AccountCircleIcon sx={{ mr: 1 }} />
                 View profile
               </MenuItem>
               <MenuItem onClick={handleDisconnectClick}>
+                <Box mr={1}>
+                  <img
+                    src={wallet?.adapter.icon}
+                    alt={wallet?.adapter.name}
+                    width={20}
+                  />
+                </Box>
                 Disconnect wallet
               </MenuItem>
             </Menu>

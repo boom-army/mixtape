@@ -1,11 +1,12 @@
 import TrackCards from "../../components/TrackCards";
-import { Container } from "@mui/material";
+import { Container, Grid } from "@mui/material";
 import { Header } from "../../components/Header";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useSnackbar } from "../../contexts/SnackbarProvider";
 import { truncatePublicKey } from "../../utils";
 import { useWallet } from "@solana/wallet-adapter-react";
+import PsychologyAltIcon from '@mui/icons-material/PsychologyAlt';
 
 const Profile: React.FC = () => {
   const [latestTracks, setLatestTracks] = useState([]);
@@ -42,12 +43,23 @@ const Profile: React.FC = () => {
     <>
       <Container maxWidth="lg" disableGutters>
         <Header />
-        <TrackCards
-          title={`Mixtape mints${
-            address ? ` for ${truncatePublicKey(address as string)}` : ""
-          }:`}
-          latestTracks={latestTracks}
-        />
+        {latestTracks.length > 0 ? (
+          <TrackCards
+            title={`Mixtape mints${
+              address ? ` for ${truncatePublicKey(address as string)}` : ""
+            }:`}
+            latestTracks={latestTracks}
+          />
+        ) : (
+          <Grid container mb={4} mt={1}>
+            <Grid item xs={12}>
+              <h3>No tracks found for {truncatePublicKey(address as string)}</h3>
+            </Grid>
+            <Grid item xs={12} display="flex" justifyContent="center">
+              <PsychologyAltIcon sx={{ fontSize: 100 }} />
+            </Grid>
+          </Grid>
+        )}
       </Container>
     </>
   );
