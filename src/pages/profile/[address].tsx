@@ -4,6 +4,7 @@ import { Header } from "../../components/Header";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useSnackbar } from "../../contexts/SnackbarProvider";
+import { truncatePublicKey } from "../../utils";
 
 const Profile: React.FC = () => {
   const [latestTracks, setLatestTracks] = useState([]);
@@ -39,7 +40,12 @@ const Profile: React.FC = () => {
     <>
       <Container maxWidth="lg" disableGutters>
         <Header />
-        <TrackCards latestTracks={latestTracks} />
+        <TrackCards
+          title={`Mixtapes mints${
+            address ? ` for ${truncatePublicKey(address as string)}` : ""
+          }:`}
+          latestTracks={latestTracks}
+        />
       </Container>
     </>
   );

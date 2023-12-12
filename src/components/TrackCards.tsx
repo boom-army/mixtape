@@ -21,9 +21,10 @@ interface LatestTrack {
 
 interface TrackCardProps {
   latestTracks: LatestTrack[];
+  title?: string;
 }
 
-const TrackCards: React.FC<TrackCardProps> = ({ latestTracks }) => {
+const TrackCards: React.FC<TrackCardProps> = ({ latestTracks, title }) => {
   const theme = useTheme();
   const [loading, setLoading] = useState<number | null>(null);
 
@@ -34,7 +35,7 @@ const TrackCards: React.FC<TrackCardProps> = ({ latestTracks }) => {
   return (
     <Grid container mb={4} mt={1}>
       <Grid item xs={12}>
-        <h3>Latest mixes: {!latestTracks && <CircularProgress size={12} />}</h3>
+        <h3>{title ?? "Latest mixes:"} {!latestTracks && <CircularProgress size={12} />}</h3>
       </Grid>
       {!latestTracks?.length ? (
         <Grid container spacing={3}>
