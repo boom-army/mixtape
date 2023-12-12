@@ -10,7 +10,6 @@ import { RecoilRoot } from "recoil";
 import { SnackbarProvider } from "../contexts/SnackbarProvider";
 import theme from "../utils/theme";
 import { useRouter } from "next/router";
-import { ProfileMenu } from "../components/ProfileMenu";
 
 import "../styles/global.css";
 
@@ -62,7 +61,6 @@ export default function MyApp(props: MyAppProps) {
               {!router.pathname.includes("embed") && (
                 <>
                   <WalletButton />
-                  {/* <ProfileMenu /> */}
                 </>
               )}
               <Component {...pageProps} />
