@@ -10,6 +10,9 @@ import { RecoilRoot } from "recoil";
 import { SnackbarProvider } from "../contexts/SnackbarProvider";
 import theme from "../utils/theme";
 import { useRouter } from "next/router";
+import { ProfileMenu } from "../components/ProfileMenu";
+
+import "../styles/global.css";
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -20,6 +23,8 @@ interface MyAppProps extends AppProps {
 
 export default function MyApp(props: MyAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+
+  // const { publicKey } = useWallet();
   const router = useRouter();
   return (
     <RecoilRoot>
@@ -54,7 +59,12 @@ export default function MyApp(props: MyAppProps) {
             </Head>
             <ThemeProvider theme={theme}>
               <CssBaseline />
-              {!router.pathname.includes("embed") && <WalletButton />}
+              {!router.pathname.includes("embed") && (
+                <>
+                  <WalletButton />
+                  {/* <ProfileMenu /> */}
+                </>
+              )}
               <Component {...pageProps} />
             </ThemeProvider>
           </CacheProvider>

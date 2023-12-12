@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useSnackbar } from "../../contexts/SnackbarProvider";
 import { truncatePublicKey } from "../../utils";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 const Profile: React.FC = () => {
   const [latestTracks, setLatestTracks] = useState([]);
@@ -12,6 +13,7 @@ const Profile: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
   const { address } = router.query;
+  const { publicKey } = useWallet();
 
   useEffect(() => {
     if (!address) return;
@@ -34,7 +36,7 @@ const Profile: React.FC = () => {
     };
 
     fetchProfileNfts();
-  }, [address]);
+  }, [address, publicKey]);
 
   return (
     <>
