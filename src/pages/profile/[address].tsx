@@ -1,15 +1,18 @@
+import PsychologyAltIcon from "@mui/icons-material/PsychologyAlt";
 import TrackCards from "../../components/TrackCards";
-import { Container, Grid } from "@mui/material";
+import { Avatar, Box, Container, Grid, Paper, Typography } from "@mui/material";
 import { Header } from "../../components/Header";
+import { truncatePublicKey } from "../../utils";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useSnackbar } from "../../contexts/SnackbarProvider";
-import { truncatePublicKey } from "../../utils";
 import { useWallet } from "@solana/wallet-adapter-react";
-import PsychologyAltIcon from '@mui/icons-material/PsychologyAlt';
+import { createAvatar } from "@dicebear/core";
+import { bigSmile } from "@dicebear/collection";
 
 const Profile: React.FC = () => {
   const [latestTracks, setLatestTracks] = useState([]);
+  const [avatarSvg, setAvatarSvg] = useState("");
 
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
@@ -37,24 +40,42 @@ const Profile: React.FC = () => {
     };
 
     fetchProfileNfts();
+
+    const generateAvatar = async () => {
+      const avatar = createAvatar(bigSmile, { seed: address as string });
+      const avatarUri = await avatar.toDataUri();
+      console.log(avatarUri);
+      setAvatarSvg(avatarUri);
+    };
+    
+    generateAvatar();
   }, [address, publicKey]);
 
   return (
     <>
       <Container maxWidth="lg" disableGutters>
+        {address && (
+          <Paper elevation={0} sx={{ padding: 3, marginBottom: 2, background: 'linear-gradient(to right, #EEE 1%, #FFF)' }}>
+            <Box display="flex" alignItems="center">
+              <Avatar sx={{ bgcolor: "#000" }} src={avatarSvg} />
+              <Typography variant="h6" sx={{ marginLeft: 2 }}>
+                {address}
+              </Typography>
+            </Box>
+          </Paper>
+        )}
         <Header />
         {latestTracks.length > 0 ? (
-          <TrackCards
-            title={`Mixtape mints${
-              address ? ` for ${truncatePublicKey(address as string)}` : ""
-            }:`}
-            latestTracks={latestTracks}
-          />
+          <TrackCards title={`Mixtape NFTs:`} latestTracks={latestTracks} />
         ) : (
           <Grid container mb={4} mt={1}>
-            <Grid item xs={12}>
-              <h3>No tracks found for {truncatePublicKey(address as string)}</h3>
-            </Grid>
+            {address && (
+              <Grid item xs={12}>
+                <h3>
+                  No tracks found for {truncatePublicKey(address as string)}
+                </h3>
+              </Grid>
+            )}
             <Grid item xs={12} display="flex" justifyContent="center">
               <PsychologyAltIcon sx={{ fontSize: 100 }} />
             </Grid>
