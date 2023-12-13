@@ -17,10 +17,22 @@ import { useSnackbar } from "../../contexts/SnackbarProvider";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { createAvatar } from "@dicebear/core";
 import { bigSmile } from "@dicebear/collection";
+import { GetServerSideProps } from "next";
+import Head from "next/head";
 
-const Profile: React.FC = () => {
-  const [latestTracks, setLatestTracks] = useState([]);
-  const [avatarSvg, setAvatarSvg] = useState("");
+interface ProfileProps {
+  avatarSvg: string;
+  latestTracks: any[];
+  shortAddress: string;
+}
+
+const Profile: React.FC<ProfileProps> = ({
+  avatarSvg: initialAvatarSvg,
+  latestTracks: initialLatestTracks,
+  shortAddress,
+}) => {
+  const [latestTracks, setLatestTracks] = useState(initialLatestTracks);
+  const [avatarSvg, setAvatarSvg] = useState(initialAvatarSvg);
   const [loading, setLoading] = useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
@@ -54,7 +66,6 @@ const Profile: React.FC = () => {
     const generateAvatar = async () => {
       const avatar = createAvatar(bigSmile, { seed: address as string });
       const avatarUri = await avatar.toDataUri();
-      console.log(avatarUri);
       setAvatarSvg(avatarUri);
     };
 
@@ -63,6 +74,16 @@ const Profile: React.FC = () => {
 
   return (
     <>
+      <Head>
+        <title>Mixtapes from {shortAddress}</title>
+        <meta name="description" content={`Mixtape profile`} />
+        <meta property="og:title" content={`Mixtape profile`} />
+        <meta
+          property="og:description"
+          content={`Straight dope from the brain of ${shortAddress}`}
+        />
+        <meta property="og:image" content={avatarSvg} />
+      </Head>
       <Container maxWidth="lg" disableGutters>
         {address && (
           <Paper
@@ -102,7 +123,7 @@ const Profile: React.FC = () => {
             {address && (
               <Grid item xs={12}>
                 <h3>
-                  No tracks found for {truncatePublicKey(address as string)}
+                  No tracks found for {shortAddress}
                 </h3>
               </Grid>
             )}
@@ -114,6 +135,45 @@ const Profile: React.FC = () => {
       </Container>
     </>
   );
+};
+
+// Add this at the end of your file
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const params = context.params as { address: string };
+  const { address } = params;
+
+  let avatarSvg = "";
+  let latestTracks: any = null;
+  let shortAddress = truncatePublicKey(address as string);
+
+  if (address) {
+    try {
+      const req = context.req;
+      const protocol = req.headers["x-forwarded-proto"] || "http";
+      const host = req.headers["x-forwarded-host"] || req.headers["host"];
+      const baseUrl = `${protocol}://${host}`;
+
+      const response = await fetch(
+        `${baseUrl}/api/nft/get-profile-nfts?address=${address}`
+      );
+      const data = await response.json();
+      latestTracks = data.profileNfts || [];
+
+      const avatar = createAvatar(bigSmile, { seed: address });
+      const avatarUri = await avatar.toDataUri();
+      avatarSvg = avatarUri;
+    } catch (error) {
+      console.error(`Failed to fetch profile NFTs: ${error}`);
+    }
+  }
+
+  return {
+    props: {
+      avatarSvg,
+      latestTracks,
+      shortAddress,
+    },
+  };
 };
 
 export default Profile;
