@@ -1,6 +1,14 @@
 import PsychologyAltIcon from "@mui/icons-material/PsychologyAlt";
 import TrackCards from "../../components/TrackCards";
-import { Avatar, Box, Container, Grid, Paper, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  CircularProgress,
+  Container,
+  Grid,
+  Paper,
+  Typography,
+} from "@mui/material";
 import { Header } from "../../components/Header";
 import { truncatePublicKey } from "../../utils";
 import { useEffect, useState } from "react";
@@ -13,6 +21,7 @@ import { bigSmile } from "@dicebear/collection";
 const Profile: React.FC = () => {
   const [latestTracks, setLatestTracks] = useState([]);
   const [avatarSvg, setAvatarSvg] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
@@ -20,6 +29,7 @@ const Profile: React.FC = () => {
   const { publicKey } = useWallet();
 
   useEffect(() => {
+    setLoading(true);
     if (!address) return;
     const fetchProfileNfts = async () => {
       try {
@@ -30,8 +40,6 @@ const Profile: React.FC = () => {
           throw new Error(response.statusText);
         }
         const data = await response.json();
-        console.log(data);
-        
         setLatestTracks(data.profileNfts);
       } catch (error) {
         console.error("Failed to fetch profile NFTs:", error);
@@ -41,7 +49,7 @@ const Profile: React.FC = () => {
       }
     };
 
-    fetchProfileNfts();
+    fetchProfileNfts().then(() => setLoading(false));
 
     const generateAvatar = async () => {
       const avatar = createAvatar(bigSmile, { seed: address as string });
@@ -83,7 +91,11 @@ const Profile: React.FC = () => {
           </Paper>
         )}
         <Header />
-        {latestTracks.length > 0 ? (
+        {loading ? (
+          <Grid container justifyContent="center">
+            <CircularProgress />
+          </Grid>
+        ) : latestTracks.length > 0 ? (
           <TrackCards title={`Mixtape NFTs:`} latestTracks={latestTracks} />
         ) : (
           <Grid container mb={4} mt={1}>
