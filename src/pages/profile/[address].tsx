@@ -83,6 +83,13 @@ const Profile: React.FC<ProfileProps> = ({
           content={`Straight dope from the brain of ${shortAddress}`}
         />
         <meta property="og:image" content={avatarSvg} />
+        <meta name="twitter:card" content="summary" />
+        <meta property="twitter:title" content={`Mixtape profile`} />
+        <meta
+          property="twitter:description"
+          content={`Straight dope from the brain of ${shortAddress}`}
+        />
+        <meta property="twitter:image" content={avatarSvg} />
       </Head>
       <Container maxWidth="lg" disableGutters>
         {address && (
