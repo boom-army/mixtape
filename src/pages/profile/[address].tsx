@@ -47,7 +47,7 @@ const Profile: React.FC = () => {
       console.log(avatarUri);
       setAvatarSvg(avatarUri);
     };
-    
+
     generateAvatar();
   }, [address, publicKey]);
 
@@ -55,10 +55,26 @@ const Profile: React.FC = () => {
     <>
       <Container maxWidth="lg" disableGutters>
         {address && (
-          <Paper elevation={0} sx={{ padding: 3, marginBottom: 2, background: 'linear-gradient(to right, #EEE 1%, #FFF)' }}>
+          <Paper
+            elevation={0}
+            sx={{
+              padding: 3,
+              marginBottom: 2,
+              background: "linear-gradient(to right, #EEE 1%, #FFF)",
+            }}
+          >
             <Box display="flex" alignItems="center">
               <Avatar sx={{ bgcolor: "#000" }} src={avatarSvg} />
-              <Typography variant="h6" sx={{ marginLeft: 2 }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  marginLeft: 2,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  maxWidth: "calc(100vw - 200px)",
+                }}
+              >
                 {address}
               </Typography>
             </Box>

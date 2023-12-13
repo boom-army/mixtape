@@ -36,22 +36,20 @@ export default async function handler(
   }
 
   try {
-    const data = await getNFTsByOwner(address as string, Number(page) ?? 1);
-    console.log(data);
-    
-    // const filteredData = data.items
-    //   .filter((nft) =>
-    //     nft?.authorities?.some(
-    //       (authority) =>
-    //         authority.address === "MXTPExF3AYg6bW31ucCWHjh2wYaoDsF1Kx8jbHpD41N"
-    //     )
-    //   )
-    //   .map((nft) => ({
-    //     mint: nft.id,
-    //     image: nft?.content?.links?.image,
-    //     meta: nft?.content?.metadata,
-    //   }));
-    // res.status(200).json({ profileNfts: filteredData });
+    const data = await getNFTsByOwner(address as string, Number(page) ?? 1);    
+    const filteredData = data.items
+      .filter((nft) =>
+        nft?.authorities?.some(
+          (authority) =>
+            authority.address === "MXTPExF3AYg6bW31ucCWHjh2wYaoDsF1Kx8jbHpD41N"
+        )
+      )
+      .map((nft) => ({
+        mint: nft.id,
+        image: nft?.content?.links?.image,
+        meta: nft?.content?.metadata,
+      }));
+    res.status(200).json({ profileNfts: filteredData });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Failed to fetch NFTs by owner" });
