@@ -95,7 +95,7 @@ const Profile: React.FC<ProfileProps> = ({
             }}
           >
             <Box display="flex" alignItems="center">
-              <Avatar sx={{ bgcolor: "#000" }} src={avatarSvg} />
+              <Avatar sx={{ bgcolor: "#b4d7e3" }} src={avatarSvg} />
               <Typography
                 variant="h6"
                 sx={{
