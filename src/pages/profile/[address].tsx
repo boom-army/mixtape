@@ -160,8 +160,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       latestTracks = data.profileNfts || [];
 
       const avatar = createAvatar(bigSmile, { seed: address });
-      const avatarUri = await avatar.toDataUri();
-      avatarSvg = avatarUri;
+      const avatarUri = await avatar.png().toDataUri();
+      avatarSvg = avatarUri
     } catch (error) {
       console.error(`Failed to fetch profile NFTs: ${error}`);
     }
