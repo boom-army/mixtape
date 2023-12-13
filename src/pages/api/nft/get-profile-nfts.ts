@@ -61,9 +61,9 @@ export default async function handler(
     const data = await getNFTsByOwner(address as string, Number(page) ?? 1);
     const filteredData = data.items
       .filter((nft) =>
-        nft?.authorities?.some(
-          (authority) =>
-            authority.address === "MXTPExF3AYg6bW31ucCWHjh2wYaoDsF1Kx8jbHpD41N"
+        nft?.creators?.some(
+          (item) =>
+            item.address === "MXTPExF3AYg6bW31ucCWHjh2wYaoDsF1Kx8jbHpD41N"
         )
       )
       .map((nft) => ({

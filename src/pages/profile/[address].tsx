@@ -30,6 +30,8 @@ const Profile: React.FC = () => {
           throw new Error(response.statusText);
         }
         const data = await response.json();
+        console.log(data);
+        
         setLatestTracks(data.profileNfts);
       } catch (error) {
         console.error("Failed to fetch profile NFTs:", error);
