@@ -34,7 +34,7 @@ async function getNFTsByOwner(ownerAddress: string, page = 1) {
 //           showCollectionMetadata: true,
 //           showUnverifiedCollections: false,
 //         },
-//         disableCaching: true,
+//         disableCache: true,
 //       },
 //     }),
 //   });
