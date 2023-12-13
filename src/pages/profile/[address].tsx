@@ -137,7 +137,6 @@ const Profile: React.FC<ProfileProps> = ({
   );
 };
 
-// Add this at the end of your file
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const params = context.params as { address: string };
   const { address } = params;
