@@ -1,18 +1,33 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { Helius } from "helius-sdk";
 import { getCluster } from "../../../utils";
+import { DasApiAssetList } from "@metaplex-foundation/digital-asset-standard-api";
 
 const helius = new Helius(process.env.NEXT_HELIUS_RPC_KEY!, getCluster());
 
 async function getNFTsByOwner(ownerAddress: string, page = 1) {
-  const response = await helius.rpc.getAssetsByOwner({
-    ownerAddress,
-    page,
-    displayOptions: {
-      showCollectionMetadata: true,
-      showUnverifiedCollections: false,
-    },
-  });
+  const response: DasApiAssetList = await fetch(
+    process.env.NEXT_PUBLIC_SOLANA_NETWORK!,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: "",
+        method: "getAssetsByOwner",
+        params: {
+          ownerAddress,
+          page,
+          displayOptions: {
+            showCollectionMetadata: true,
+            showUnverifiedCollections: false,
+          },
+        },
+      }),
+    }
+  ).then((res) => res.json());
   return response;
 }
 
@@ -68,7 +83,9 @@ export default async function handler(
       )
       .map((nft) => ({
         mint: nft.id,
-        image: nft?.content?.links?.image,
+        image: nft?.content?.links?.find(
+          (link) => link.type === "image"
+        )?.uri,
         meta: nft?.content?.metadata,
       }));
     res.status(200).json({ profileNfts: filteredData });

@@ -11,6 +11,7 @@ import {
 import { Connection, Keypair } from "@solana/web3.js";
 import sharp from "sharp";
 import { getCluster } from "../../utils";
+import { DasApiAssetList } from "@metaplex-foundation/digital-asset-standard-api";
 
 interface NftEmote {
   id: string;
@@ -55,11 +56,23 @@ export default async function loadNFTs(
     );
 
     try {
-      const nfts = await helius.rpc.getAssetsByGroup({
-        groupKey: "collection",
-        groupValue: collectionId,
-        page: 1,
+      const response = await fetch(process.env.NEXT_PUBLIC_SOLANA_NETWORK!, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: "text",
+          method: "getAssetsByOwner",
+          params: {
+            groupKey: "collection",
+            groupValue: collectionId,
+            page: 1,
+          },
+        }),
       });
+      const nfts: DasApiAssetList = await response.json();
 
       const uniqueNfts = uniqBy(nfts.items, (nft) =>
         JSON.stringify(nft.content?.metadata?.name)
@@ -120,7 +133,7 @@ export default async function loadNFTs(
       res.status(200).json({ nftEmotes });
     } catch (error) {
       console.log(error);
-    return res.status(500).json({ error: (error as Error).message });
+      return res.status(500).json({ error: (error as Error).message });
     }
   } else {
     res.status(405).json({ error: "Method not allowed" });

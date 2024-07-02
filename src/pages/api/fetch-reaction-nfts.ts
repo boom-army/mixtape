@@ -2,6 +2,8 @@ import prisma from "../../../lib/prisma";
 import { Helius } from "helius-sdk";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getCluster } from "../../utils";
+import { GetAssetsByOwnerRpcInput } from "@metaplex-foundation/js";
+import { DasApiAssetList } from "@metaplex-foundation/digital-asset-standard-api";
 
 const nftCollections = [
   "DAHSxmjZPPmP3eVgbs2jpNvf4JXYFWprnRjMXbXnAvXb", // null - computers
@@ -27,11 +29,25 @@ export default async function fetchReactions(
     const helius = new Helius(process.env.NEXT_HELIUS_RPC_KEY!, getCluster());
 
     try {
-      const nfts = await helius.rpc.getAssetsByOwner({
-        ownerAddress,
-        page: 1,
-        limit: 50,
-      });
+      const nfts: DasApiAssetList = await fetch(
+        process.env.NEXT_PUBLIC_SOLANA_NETWORK!,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            jsonrpc: "2.0",
+            id: "",
+            method: "getAssetsByOwner",
+            params: {
+              ownerAddress,
+              page: 1,
+              limit: 50,
+            },
+          }),
+        }
+      ).then((res) => res.json());
 
       const filteredNfts = nfts.items.filter((nft) =>
         nft.grouping?.some(
