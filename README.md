@@ -1,3 +1,7 @@
+# Mixtape
+
+![Mixtape](public/mixtape.png)
+
 ### local build docker
 - `DOCKER_DEFAULT_PLATFORM=linux/amd64 docker compose build`
 - `docker build . --platform=linux/amd64 -t mixtape/p1`
